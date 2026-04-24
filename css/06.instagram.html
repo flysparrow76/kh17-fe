@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 수업</title>
+    <link rel="icon" href="./images/instagram icon.jpg" type="image/jpeg">
+
+    <!-- 디자인을 작성하기 위한 역영 -->
+     <style>
+         *{ 
+            /* 이제부터 폭과 높이는 테두리가 기준이야 */
+            box-sizing: border-box;
+         }
+         body{
+            text-align: center;
+            margin-top: 300px;
+         }
+         input{
+            font-family: sans-serif;
+            font-size: 18px;
+            width: 500px;
+            padding: 0.5em;
+            outline: none;
+            margin: 15px auto;
+            display: block;
+            border-radius: 0.5em;
+            border-style: solid;
+            border-color: darkgray;
+            border-width: 1px;
+         }
+         button{
+            font-family: sans-serif;
+            font-size: 20px;
+            width: 500px;
+            padding: 0.5em;
+            background-color:#1B9CFC ;
+            border-color: #1B9CFC;
+            color: aliceblue;
+            display: block;
+            margin: 20px auto;
+            border-width: 0px;
+            border-radius: 50px;
+            border-style: solid ;
+
+         }
+         hr{
+            width: 530px;
+            margin-top: 20px;
+            margin-bottom: 100px;
+         }
+         h3{
+            width: 530px;
+            margin: 30px auto;
+            text-align: left;
+         }
+         a{
+            color: darkslategrey;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+
+         }
+
+
+     </style>
+</head>
+<body>
+    <img src="./images/instagram icon.jpg" width="100">
+    <hr>
+    
+    <h3>Instagram으로 로그인</h3>
+    
+    <form autocomplete="off">
+        <input type="text" name="memberId"
+            placeholder="휴대폰 번호,사용자 이름 또는 이메일 주소">
+
+        <input type="text" name="memberPassword"
+            placeholder="비밀번호">
+
+        <button>로그인</button>
+        
+    </form>
+    <a href="#">비밀번호를 잊으셨나요?</a>
+
+</body>
+</html>
