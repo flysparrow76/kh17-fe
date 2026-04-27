@@ -116,6 +116,19 @@
 .me-40 { margin-right: 40px; }
 .me-50 { margin-right: 50px; }
 
+/* 글자 색상 유틸리티 클래스 */
+.red { color: #eb4d4b; }     /* 산뜻한 레드 */
+.orange { color: #f0932b; }  /* 따뜻한 오렌지 */
+.yellow { color: #f9ca24; }  /* 명확한 옐로우 */
+.green { color: #6ab04c; }   /* 편안한 그린 */
+.blue { color: #0984e3; }    /* 신뢰감 있는 블루 */
+.purple { color: #6c5ce7; }  /* 세련된 퍼플 (오타 수정 권장) */
+.white { color: #ffffff; }   /* 순백색 */
+.black { color: #2d3436; }   /* 너무 진하지 않은 고급스러운 블랙 */
+.gray { color: #636e72; }    /* 표준 회색 */
+.silver { color: #b2bec3; }  /* 은은한 실버 (오타 수정 권장) */
+.gold { color: #f1c40f; }    /* 선명한 골드 느낌 */
+
 
 /* 컴포넌트(Component) 디자인 */
 
