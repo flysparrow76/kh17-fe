@@ -231,13 +231,15 @@ a.btn {
 */
 .pagination {
     text-align: center;
+    font-size: 16px;
+    color: black;
 }
 .pagination > a {
-    color: black;
+    color: inherit;
     text-decoration: none;
     /* border: 1px solid transparent; */
     display: inline-block;
-    font-size: 16px;
+    font-size: inherit;
     min-width:2em;
     padding: 0.25em;
     text-align: center;
@@ -248,4 +250,19 @@ a.btn {
     box-shadow: 0 0 0 1px #b2bec3;
     font-weight: bold;
     color: #e17055;
+}
+/* 테이블 확장 스타일 - 마우스 감지 색상 변경 테이블 */
+.table.talbe-hover > tbody > tr:hover{
+    background-color: lightgray;
+}
+
+/* 
+    테이블 확장 스타일 - 줄무늬 테이블
+    -nth-child라는 조건은 "N번쨰 자식"이라는 뜻
+    -값에 n을 포함시키면 n=1,2,3,4,5,....로 변하며 적용
+*/
+.table.talbe-stripe > thead > tr,
+.table.talbe-stripe > tbody > tr:nth-child(2n)
+{
+    background-color: #dfe6e9;
 }
