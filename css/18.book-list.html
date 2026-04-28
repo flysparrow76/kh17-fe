@@ -3,123 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도서 검색 및 목록</title>
+    <title>도서 목록</title>
     <link rel="icon" href="/kh.jpg" type="image/jpeg">
 
     <!-- 아이콘 -->
-     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    
-     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+
+    <!-- 디자인을 작성하기 위한 영역 -->
     <link rel="stylesheet" type="text/css" href="./commons.css">
-    
     <style>
+        
         /* 테이블 확장 스타일 - 마우스 감지 색상 변경 테이블 */
-        .table.talbe-hover > tbody > tr:hover{
-            background-color: lightgray;
+        .table.table-hover > tbody > tr:hover {
+            background-color: #dfe6e9;
         }
 
         /* 
-            테이블 확장 스타일 - 줄무늬 테이블
-            -nth-child라는 조건은 "N번쨰 자식"이라는 뜻
-            -값에 n을 포함시키면 n=1,2,3,4,5,....로 변하며 적용
+            테이블 확장 스타일 - 줄무늬 테이블 
+            - nth-child라는 조건은 "N번째 자식"이라는 뜻
+            - 값에 n을 포함시키면 n=1,2,3,4,5,... 로 변하며 적용
         */
-        .table.talbe-stripe > thead > tr,
-        .table.talbe-stripe > tbody > tr:nth-child(2n)
+        .table.table-stripe > thead > tr,
+        .table.table-stripe > tbody > tr:nth-child(2n) 
         {
             background-color: #dfe6e9;
         }
-        .pagination{
-            font-size: 20px;
+
+        .pagination {
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
+    
     <div class="container w-1000 mt-50 mb-50">
         <div class="cell center">
-            <h1>도서 검색 및 목록</h1>
+            <h1>도서 목록</h1>
         </div>
-        <div class="cell">
-            <form autocomplete="off">
+
+        <div class="cell right">
+            <a href="#" class="btn btn-neutral">신규 도서 등록</a>
+        </div>
+
+        <div class="cell mt-40 center">
+            <form>
                 <select name="column" class="field">
                     <option value="book_title">도서명</option>
-                    <option value="book_author">작가명</option>
+                    <option value="book_author">저자</option>
                     <option value="book_publisher">출판사</option>
+                    <option value="book_genre">장르</option>
+                    <option value="book_publication_date">출간일</option>
                 </select>
-                <input type="text" name="keyword" class="field"
-                    placeholder="검색어 입력" required>
-                <button class="btn btn-positive" >
+                <input type="text" name="keyword" required
+                    class="field">
+                <button type="submit" class="btn btn-positive">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <span>검색어</span>
+                    <span>검색</span>
                 </button>
             </form>
         </div>
-        <div class="cell right">
-            <a href="#" class="btn btn-neutral">신규등록</a>
+
+        <div class="cell">
+            총 ?개의 도서가 검색되었습니다
         </div>
         <div class="cell">
-            <table class="table talbe-stripe">
+            <table class="table table-stripe">
                 <thead>
                     <tr>
                         <th>번호</th>
-                        <th>제목</th>
-                        <th>작가</th>
-                        <th>출판일</th>
-                        <th>가격</th>
+                        <th width="30%">도서명</th>
+                        <th>저자</th>
                         <th>출판사</th>
-                        <th>페이지수</th>
+                        <th>출간일</th>
+                        <th>판매가</th>
+                        <th>페이지</th>
                         <th>장르</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td>제목11</td>
-                        <td>작가11</td>
-                        <td class="right">2020-01-01</td>
-                        <td class="right">20000</td>
-                        <td>출판사11</td>
-                        <td class="right">200</td>
-                        <td>소설</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
                     </tr>
                     <tr>
-                        <td>2</td>
-                        <td>제목22</td>
-                        <td>작가22</td>
-                        <td class="right">2022-02-02</td>
-                        <td class="right">22000</td>
-                        <td>출판사22</td>
-                        <td class="right">200</td>
-                        <td>소설</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
                     </tr>
                     <tr>
-                        <td>3</td>
-                        <td>제목33</td>
-                        <td>작가33</td>
-                        <td class="right">2020-03-03</td>
-                        <td class="right">33000</td>
-                        <td>출판사33</td>
-                        <td class="right">300</td>
-                        <td>수험서</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
                     </tr>
                     <tr>
-                        <td>4</td>
-                        <td>제목44</td>
-                        <td>작가44</td>
-                        <td class="right">2020-04-04</td>
-                        <td class="right">44000</td>
-                        <td>출판사44</td>
-                        <td class="right">400</td>
-                        <td>교양</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>yyyy-MM-dd</td>
+                        <td>?</td>
+                        <td>?</td>
+                        <td>?</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="cell">
+
+        <div class="cell mt-40">
             <div class="pagination">
-                <a href="#">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>               
-                <a href="#">1</a>               
+                <a href="#">&lt;</a>
+                <a href="#">1</a>
                 <a href="#">2</a>
                 <a href="#">3</a>
                 <a href="#">4</a>
@@ -129,11 +198,10 @@
                 <a href="#">8</a>
                 <a href="#">9</a>
                 <a href="#">10</a>
-                <a href="#">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>               
+                <a href="#">&gt;</a>
             </div>
         </div>
-    </div> 
+    </div>
+
 </body>
 </html>
