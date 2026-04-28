@@ -103,6 +103,7 @@
 .mb-50 { margin-bottom: 50px !important; }
 
 .ms-0 { margin-left: 0px !important; }
+.ms-5 { margin-left: 5px !important; }
 .ms-10 { margin-left: 10px !important; }
 .ms-20 { margin-left: 20px !important; }
 .ms-30 { margin-left: 30px !important; }
@@ -110,6 +111,7 @@
 .ms-50 { margin-left: 50px !important; }
 
 .me-0 { margin-right: 0px !important; }
+.me-5 { margin-right: 5px !important; }
 .me-10 { margin-right: 10px !important; }
 .me-20 { margin-right: 20px !important; }
 .me-30 { margin-right: 30px !important; }
