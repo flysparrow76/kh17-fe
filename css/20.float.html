@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>float 속성</title>
+    <link rel="icon" href="/kh.jpg" type="image/jpeg">
+
+    <!-- 아이콘 -->
+     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    
+     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="./commons.css">
+    
+    <style>
+        .first-char{
+            font-size: 100px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container w-600 mt-50 mb-50">
+        <div class="cell center">
+            <h1>Float 속성 다루기</h1>
+        </div>
+        <div class="cell">
+            <span class="first-char">L</span>orem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis pharetra condimentum. Nam aliquam, enim vel fermentum scelerisque, sem quam imperdiet lacus, sed venenatis lacus eros ac risus. Vivamus porttitor pulvinar pharetra. Morbi sit amet pellentesque odio, nec malesuada odio. Vestibulum dolor justo, volutpat quis posuere sed, rhoncus sed enim. Aliquam fringilla leo at massa accumsan aliquet. Nunc tempus elementum velit ac pretium. Pellentesque nec ligula purus. Quisque facilisis efficitur dolor et maximus. Proin scelerisque porttitor turpis a aliquam. Praesent quis pulvinar arcu.
+            <span class="first-char">M</span>Aenean hendrerit aliquam sapien, ut aliquam mi eleifend ac. Fusce libero urna, imperdiet molestie pharetra eget, pretium id libero. Nunc sapien nulla, pharetra in laoreet id, tristique vitae ligula. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer at pretium nibh. Phasellus rhoncus tortor volutpat ligula iaculis, sed semper arcu suscipit. Pellentesque semper eros luctus metus eleifend bibendum. Nam eros risus, egestas ut lacus non, condimentum lobortis arcu.
+        </div>
+
+        <div class="cell">
+            inline-block은 반씩 나눠서 배치할 수 없다
+        </div>
+
+        <div class="cell">
+            <button class="btn" style="width: 49.63%">좌측</button>
+            <button class="btn" style="width: 49.63%">우측</button>            
+        </div>
+
+        <div class="cell mt-50">
+            float를 써서 배치하면 여백이 안생긴다
+        </div>
+
+        <div>
+            <button class="btn w-50" style="float:left">좌측</button>
+            <button class="btn w-50" style="float:left">우측</button>
+        </div>
+        <div class="cell">
+            <div class="w-50" style="float: left;">좌측</div>
+            <!-- <div class="w-50" style="float: left;">우측</div> -->
+        </div>
+
+        <!-- 
+            *중요*
+            -float는 여백이 없고 배치방향 설정이 쉽지만...
+            -우리가 여태까지 설계한 레이아웃을 무시한다
+            -float는 제한된 공간에서 자기들끼리만 놀게 해야한다(격리) 
+            -float속성을 정리할 수 있는 별도의 공간이 필요
+        -->
+        <div style="clear:both;"></div>
+
+        <div class="cell mt-50">
+            일반글자
+        </div>
+
+        <!-- 
+            최종목표 : 
+            -float 좋아! 근데 위험해!
+            -float-area라는 클래스를 만들어서 float끼리 놀게하자
+            -이 영역이 끝나면 자동으로 clear까지 되도록 처리
+        -->
+    </div>
+</body>
+</html>
