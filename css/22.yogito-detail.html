@@ -3,97 +3,724 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디자인 수업</title>
+    <title>요기요</title>
     <link rel="icon" href="/kh.jpg" type="image/jpeg">
 
     <!-- 아이콘 -->
-     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    
-     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+
+    <!-- 디자인을 작성하기 위한 영역 -->
     <link rel="stylesheet" type="text/css" href="./commons.css">
-    
     <style>
-        /* div{
-            box-shadow: 0 0 0 1px red;
-        } */
-        .outer{
+        .outer {
             width: 50%;
-            aspect-ratio: 3/1;
-            padding: 5px;
-            
+            padding: 5px 10px;
         }
-        .outer > .inner{
-            border: 1px solid gray;
-            width: 100%;
-            height: 100%;
-            background-repeat: no-repeat;
-            background-size:20% 60% ;
-            background-position-x: 3%;
-            background-position-y: 50%;
+        .outer > .inner {
+            box-shadow: 0 0 1px 1px gray;
+            padding: 1em;
         }
-        .outer > .inner > .inner2{
-            border: 1px solid red;
-            width: 70%;
-            height: 90%;
-            float: right;
-            margin-top: 15px;
+        .shop-name {
+            margin: 0;
         }
-        .outer > .inner > .inner2 > .inner3{
-             border: 1px solid green;
-             width: 100%;
-             height: 80%;
-        }
-        
     </style>
 </head>
 <body>
-    <div class="container w-1000 mt-50">
-        <div class="float-area">
-            <div class="outer">
-                <div class="inner" style="background-image: url('./images/noodle.png');">
-                    <div class="inner2">
-                        <div>라이박스</div>
-                        <div class="inner3">
-                            <div class="cell">
-                                별점 ㅣ 리뷰588ㅣ 사장님댓글618
+    <div class="container w-1000 mt-50 mb-50">
+
+        <div class="cell center">
+            <h1>요기요 매장 목록</h1>
+        </div>
+
+        <div class="cell">
+            <div class="float-area">
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
                             </div>
-                            <div class="cell">
-                                요기서결제 ㅣ5000원이상이면 배달
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
-                    <div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
 
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    <span class="ms-10 me-10">|</span>
+                                    <span class="black">리뷰 83</span> 
+                                    <span class="ms-10 me-10">|</span>
+                                    <span class="black">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red">요기서결제</span>
+                                    <span class="ms-10 me-10">|</span>
+                                    <span class="gray">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="outer">
+                    <div class="inner">
+                        
+                        <div class="float-area">
+                            <div class="w-20">
+                                <img src="https://www.dummyimage.com/500x500?text=M" width="100%">
+                            </div>
+                            <div class="w-80" style="padding-left: 15px;">
+                                <h2 class="shop-name">서울숲쭈꾸미-강남역점</h2>
+                                <div>
+
+                                    <span class="yellow me-10">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </span>
+                                    |
+                                    <span class="black ms-10 me-10">리뷰 83</span> 
+                                    | 
+                                    <span class="black ms-10">사장님댓글 1</span>
+                                </div>
+                                <div>
+                                    <span class="red me-10">요기서결제</span>
+                                    |
+                                    <span class="gray ms-10">8,500원 이상 배달</span>
+                                </div>
+                                <div class="float-area">
+                                    <div class="w-50">
+                                        <!-- 세스코,즉시할인 등이 표시될 영역 -->
+                                        &nbsp;
+                                    </div>
+                                    <div class="w-50 right gray">25~40분</div>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
-            <div class="outer">
-                <div class="inner" style="background-image: url('./images/noodle.png');">
-                    <div class="inner2">한식전문-솔낭구</div>
-                </div>
-            </div>
-            <div class="outer">
-                <div class="inner" style="background-image: url('./images/noodle.png');">
-                    <div class="inner2">한식밥상-강남논현점</div>
-                </div>
-            </div>
-            <div class="outer">
-                <div class="inner" style="background-image: url('./images/noodle.png');">
-                    <div class="inner2">연스시-논현직영점</div>
-                </div>
-            </div>
-            <div class="outer">
-                <div class="inner" style="background-image: url('./images/noodle.png');">
-                    <div class="inner2">파스타스트릿</div>
-                </div>
-            </div>
-            <div class="outer">
-                <div class="inner" style="background-image: url('./images/noodle.png');">
-                    <div class="inner2">그리너리 강남점</div>
-                </div>
-            </div>
-            
         </div>
+        
     </div>
 </body>
 </html>
