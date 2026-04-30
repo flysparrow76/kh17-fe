@@ -13,68 +13,63 @@
     <link rel="stylesheet" type="text/css" href="./commons.css">
     <style>
         /* 시각화 테스트 */
-        ul{ box-shadow: 0 0 0 1px black;}
-        li{ box-shadow: 0 0 0 1px blue;}
-        a{ box-shadow: 0 0 0 1px red;}
+        ul { box-shadow: 0 0 0 1px black; }
+        li { box-shadow: 0 0 0 1px blue; }
+        a { box-shadow: 0 0 0 1px red; }
 
         /* (1) ul 태그의 기본 스타일 제거 */
-        .menu,.menu ul /* 서브메뉴 대신*/   
+        .menu , 
+        .menu ul /* .sub-menu 대신 */
         {
             list-style: none;
-            margin: 0;
             padding: 0;
+            margin: 0;
         }
-        /* (2) 하위메뉴를 숨긴다 */
+        /* (2) 서브메뉴를 숨김 */
         .menu ul {
             display: none;
         }
         /* (3) 메뉴를 가로로 나오게 배치 */
-        .menu{
+        .menu {
             display: flex;
         }
-        /* (4) 1차 메뉴에 폭 지정  */
-        .menu li{
+        /* (4) 모든 메뉴에 폭과 여백 지정 */
+        .menu li {
             width: 120px;
             font-size: 20px;
             font-weight: bold;
             padding: 0.25em;
             text-align: center;
         }
-
         /* (5) 메뉴에 마우스가 올라가면 하위 메뉴를 출력 */
         .menu li:hover > ul {
             display: block;
         }
-
-        /* (6) 하위메뉴는 absolute 배치를 통해 다음 컨텐츠의 위치에 영향을 주지 않도록 변경 */
-        .menu li{
+        /* (6) 하위메뉴는 absolute 배치를 통해 다음 컨텐츠의 위치에 영향을 주지 않도록 변경 (+기준영역 설정) */
+        .menu li {
             position: relative;
         }
-        .menu ul{
+        .menu ul {
             position: absolute;
             left: 0;
-            top: 100%;
+            top:100%;
             width: 120px;
         }
         /* (7) 좌우 분리를 위한 .divider 생성 */
-        .divider {
+        .menu > .divider {
             width: 0px !important;
             margin-left: auto !important;
             margin-right: auto !important;
-
         }
-
     </style>
 </head>
 <body>
-    <!-- 
-        메뉴를 ul,li를 이용해서 구현해보자!
-    -->
+    <!-- 메뉴를 ul, li를 이용해서 구현해보자! -->
     <ul class="menu">
-        <!-- 1차메뉴:가로막대에 보이는 항목들 -->
+        <!-- 1차메뉴 : 가로막대에 보이는 항목들 -->
         <li>
             <a href="#">1차메뉴</a>
-            <!-- 2차메뉴: 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
+            <!-- 2차메뉴 : 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
             <ul class="sub-menu">
                 <li>
                     <a href="#">2차메뉴</a>
@@ -88,12 +83,12 @@
                 <li>
                     <a href="#">2차메뉴</a>
                 </li>
-                
             </ul>
         </li>
+        <!-- 1차메뉴 : 가로막대에 보이는 항목들 -->
         <li>
             <a href="#">1차메뉴</a>
-            <!-- 2차메뉴: 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
+            <!-- 2차메뉴 : 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
             <ul class="sub-menu">
                 <li>
                     <a href="#">2차메뉴</a>
@@ -107,12 +102,12 @@
                 <li>
                     <a href="#">2차메뉴</a>
                 </li>
-                
             </ul>
         </li>
+        <!-- 1차메뉴 : 가로막대에 보이는 항목들 -->
         <li>
             <a href="#">1차메뉴</a>
-            <!-- 2차메뉴: 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
+            <!-- 2차메뉴 : 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
             <ul class="sub-menu">
                 <li>
                     <a href="#">2차메뉴</a>
@@ -126,13 +121,16 @@
                 <li>
                     <a href="#">2차메뉴</a>
                 </li>
-                
             </ul>
         </li>
+        
+        <!-- 좌/우 메뉴 경계선 -->
         <li class="divider"></li>
+
+        <!-- 1차메뉴 : 가로막대에 보이는 항목들 -->
         <li>
             <a href="#">1차메뉴</a>
-            <!-- 2차메뉴: 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
+            <!-- 2차메뉴 : 1차메뉴에 마우스가 올라가면 펼쳐지게 될 하위메뉴 -->
             <ul class="sub-menu">
                 <li>
                     <a href="#">2차메뉴</a>
@@ -146,11 +144,10 @@
                 <li>
                     <a href="#">2차메뉴</a>
                 </li>
-                
             </ul>
         </li>
-    </ul> 
-    
+    </ul>
+
     <hr>
     실제 홈페이지의 내용 컨텐츠들
 </body>
