@@ -508,3 +508,6 @@ a.btn {
     /* display: flex; */
     opacity: 1;
 }
+a {
+    text-decoration: none !important;
+}
