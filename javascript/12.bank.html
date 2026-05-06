@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 수업</title>
+    <link rel="icon" href="/kh.jpg" type="image/jpeg">
+
+    <!-- 아이콘 -->
+     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    
+     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="../css/commons.css">
+    
+    <style>
+        div { box-shadow: 0 0 0 1px #cccccc;}
+    </style>
+    
+    <!-- 자바스크립트 작성 영역 -->
+<!-- 자바스크립트 작성 영역 -->
+<script>
+    function numberButton(number) {
+        // 1. 입력창(input) 요소를 찾습니다.
+        var displayInput = document.querySelector("input.display");
+        // 2. 하단 글자가 찍힐 영역(div)을 찾습니다.
+        var displayText = document.querySelector(".total-display");
+
+        // 3. 현재 입력창의 값을 숫자로 변환하여 합산합니다.
+        var total = Number(displayInput.value) + Number(number);
+
+        // 4. 합산된 값을 입력창에 넣습니다.
+        displayInput.value = total;
+
+        // 5. 하단 영역에 문자열로 내보냅니다. (toLocaleString은 3자리 콤마 서비스!)
+        displayText.innerText = total.toLocaleString() + "원";
+    }
+
+    function numberClear() {
+        var displayInput = document.querySelector("input.display");
+        var displayText = document.querySelector(".total-display");
+
+        displayInput.value = "";
+        displayText.innerText = "0원";
+    }
+</script>
+
+<!-- 본문 영역 -->
+<div class="container w-600 mt-50 mb-50">
+    <div class="cell center">
+        <h1>은행 이체</h1>
+    </div>
+    
+    <div class="cell">
+        <!-- class를 구분하기 위해 input.display로 사용 -->
+        <input class="field w-100 display" placeholder="이체할 금액을 입력하세요" readonly>
+    </div>
+
+    <div class="cell">
+        <button type="button" onclick="numberButton('10000000');">천만</button>
+        <button type="button" onclick="numberButton('1000000');">백만</button>
+        <button type="button" onclick="numberButton('100000');">십만</button>
+        <button type="button" onclick="numberButton('10000');">만</button>
+        <button type="button" onclick="numberButton('1000');">천</button>
+        <button type="button" onclick="numberButton('100');">백</button>
+        <button type="button" onclick="numberButton('10');">십</button>
+        <button type="button" onclick="numberButton('1');">일</button>
+        <button type="button" class="btn btn-negative" onclick="numberClear();">전체지움</button>
+    </div>
+
+    <!-- 하단 출력 영역 -->
+    <div class="cell">
+        <div class="flex-area w-100">
+            이체하시려는 금액은 총 
+            <div class="total-display">0원</div>
+            입니다.
+        </div>
+    </div>
+</div>
+</body>
+</html>
