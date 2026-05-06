@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 수업</title>
+    <link rel="icon" href="/kh.jpg" type="image/jpeg">
+
+    <!-- 아이콘 -->
+     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    
+     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="../css/commons.css">
+    
+    <style>
+        div { box-shadow: 0 0 0 1px #cccccc;}
+    </style>
+    
+    <!-- 자바스크립트 작성 영역 -->
+<script>
+    function pressText(n) {       
+        var display = document.querySelector(".display");
+        display.value += n; 
+    }
+    function deleteText(){
+        //마지막 한 글자를 지운다
+        // = 입력글자를 꺼내와서 끝부분을 잘라낸 뒤 재설정
+        // = 잘라내는 명령 - substring(시작점,끝점)
+        // = 글자수 구하기 - length
+        var display = document.querySelector(".display");
+        var origin = display.value;
+        var cut = origin.substring(0,origin.length-1);
+        display.value = cut;
+    }
+    function clearText(){
+        var display = document.querySelector(".display");
+        display.value = "";
+    }
+</script>
+</head>
+<body>
+    <div class="container w-600 mt-50 mb-50">
+        <div class="cell center">
+            <h1>휴대전화 키패드 문제</h1>
+        </div>
+        <div>
+            <input type="text" class="field w-100 display">
+        </div>
+        <div class="cell">
+            <button type="button" class="btn btn-positive" onclick="pressText('1');">1</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('2');">2</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('3');">3</button>
+        </div>
+        <div class="cell">   
+            <button type="button" class="btn btn-positive" onclick="pressText('4');">4</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('5');">5</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('6');">6</button>
+        </div>
+        <div class="cell">  
+            <button type="button" class="btn btn-positive" onclick="pressText('7');">7</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('8');">8</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('9');">9</button>
+        </div>
+        <div class="cell">   
+            <button type="button" class="btn btn-positive" onclick="pressText('#');">#</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('0');">0</button>
+            <button type="button" class="btn btn-positive" onclick="pressText('*');">*</button>
+        </div>
+        
+        
+        <div class="cell flex-area">
+            <button type="button" class="btn btn-negative" onclick="deleteText();">한글자 지우기</button>
+            <button type="button" class="btn btn-negative" onclick="clearText();">전부 지우기</button>
+        </div>
+    </div>
+</body>
+</html>
