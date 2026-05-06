@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 수업</title>
+    <link rel="icon" href="/kh.jpg" type="image/jpeg">
+
+    <!-- 아이콘 -->
+     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    
+     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="../css/commons.css">
+    
+    <style>
+        div { box-shadow: 0 0 0 1px #cccccc;}
+        .target {
+            word-break: break-all;
+            transition: font-size 0.1s ease-out;
+            font-size: 16px;
+        }
+        .target.small{
+            font-size: 12px;
+        }
+        .target.big{
+            font-size: 20px;
+        }
+    </style>
+    
+    <!-- 자바스크립트 작성 영역 -->
+     <script>
+        
+         function changeToSmall(){
+            var target = document.querySelector(".target");
+            target.classList.remove("small","big");
+            target.classList.add("small");
+        }
+         function changeToNormal(){
+            var target = document.querySelector(".target");
+            target.classList.remove("small","big");
+            target.classList.add("normal");
+        }
+         function changeToBig(){
+            var target = document.querySelector(".target");
+            target.classList.remove("small","big");
+            target.classList.add("big");
+        }        
+     </script>
+</head>
+<body>
+    <div class="container w-600 mt-50 mb-50">
+        <div class="cell center">
+            <h1>글자 크기 변경</h1>
+        </div>
+        <div class="cell center">
+            <button type="button" class="btn btn-neutral" onclick="changeToSmall();">작게</button>
+            <button type="button" class="btn btn-neutral" onclick="changeToNormal();">보통</button>
+            <button type="button" class="btn btn-neutral" onclick="changeToBig();">크게</button>
+        </div>
+        <div class="cell target">
+            <p>wwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsd
+            frecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g g</p>
+            <p>htrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds h
+            dftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g g
+            htrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhv
+            gh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g
+             gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsd</p>
+             <p>frecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g g
+            htrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds h
+            dftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g g
+            htrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhv
+            gh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g
+             gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsd
+            frecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g g</p>
+            <p>htrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds h
+            dftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g g
+            htrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhv
+            gh  htrds hdftwwecaeafafsdfrecr g gdf g ghtrh tfdhvgh  htrds hdftwwecaeafafsdfrecr g
+             gdf g ghtrh tfdhvgh  htrds hdft</p>
+        </div>
+
+    </div>
+</body>
+</html>
