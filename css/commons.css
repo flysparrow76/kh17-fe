@@ -542,12 +542,16 @@ a {
     background-position-y: center;
     padding-right: 2em;
 }
+select.field{
+    background-position-x: right 1em;
+}
+
 .field.success{
-    background-image: url("./images/valid.png");
+    background-image: url("https://flysparrow76.github.io/cdn/valid.png");
     border-color: blue;
 }
 
 .field.fail{
-    background-image: url("./images/invalid.png");
+    background-image: url("https://flysparrow76.github.io/cdn//invalid.png");
     border-color: red;
 }

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 수업</title>
+    <link rel="icon" href="/kh.jpg" type="image/jpeg">
+
+    <!-- 아이콘 -->
+     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    
+     <!-- 디자인을 작성하기 위한 영역 -->
+    <link rel="stylesheet" type="text/css" href="../css/commons.css">
+    
+    <style>
+        div { box-shadow: 0 0 0 1px #cccccc;}
+    </style>
+    
+    <!-- 자바스크립트 작성 영역 -->
+     <script>
+        function checkCountryRegion(){
+            var tag = document.querySelector("[name=countryRegion]");
+            var valid = tag.valid.length > 0 ;
+            tag.classList.remove("success","fail");//클래스 초기화
+            tag.classList.add(valid ? "success" : "fail");//클래스 추가
+
+        }
+        function checkCountryName(){
+            var tag = document.querySelector("[name=countryName]")//태그선택
+            var regex = /^[가-힣]{1,10}$/;
+            var valid = regex.test(tag.value);
+            tag.classList.remove("success","fail");//클래스 초기화
+            tag.classList.add(valid ? "success" : "fail");//클래스 추가
+        }
+        function checkCountryCapital(){
+            var tag = document.querySelector("[name=countryCapital]")//태그선택
+            var regex = /^[가-힣]{1,12}$/;
+            var valid = regex.test(tag.value);
+            tag.classList.remove("success","fail");//클래스 초기화
+            tag.classList.add(valid ? "success" : "fail");//클래스 추가
+        }
+        function checkCountryPopulation(){
+            var tag = document.querySelector("[name=countryPopulation]")//태그선택 
+            // var valid = parseInt(tag.value || 0) > 0 ;//tag.value가 비어있으면 0으로 대체
+            var valid = parseInt(tag.value) > 0 && tag.value.length > 0 ;//tag.value가 비어있으면 0으로 대체
+
+            //음수만 아니면
+            
+            tag.classList.remove("success","fail");//클래스 초기화
+            tag.classList.add(valid ? "success" : "fail");//클래스 추가
+        }
+
+     </script>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data" autocomplete="off">
+
+        <div class="container w-600 mt-50 mb-50">
+            <div class="cell center">
+                <h1>국가정보 등록</h1>
+            </div>
+
+            <div class="cell">
+                <label>대륙명<i class="fa-solid fa-asterisk red"></i></label> 
+                <select class="field w-100" name="countryRegion" oninput="checkCountryRegion();">
+                    <option value="">선택하세요</option>
+                    <option>아시아</option>
+                    <option>아프리카</option>
+                    <option>북아메리카</option>
+                    <option>남아메리카</option>
+                    <option>유럽</option>
+                    <option>오세아니아</option>
+                </select>
+                <!-- <div class="success-feedback"></div> -->
+                <div class="fail-feedback">필수 항목입니다.</div>
+            </div>
+
+            <div class="cell">
+                <label>국가명<i class="fa-solid fa-asterisk red"></i></label>
+                    <input type="text" name="countryName" onblur="checkCountryName();"
+                        class="field w-100" placeholder="e.g., 대한민국">
+                    <div class="success-feedback">올바른 형식의 이름입니다.</div>
+                    <div class="fail-feedback">한글 10글자 이내로만 작성 가능합니다.</div>
+            </div>
+
+            <div class="cell">
+                <label>수도명<i class="fa-solid fa-asterisk red"></i></label>
+                    <input type="text" name="countryCapital" onblur="checkCountryCapital();"
+                            class="field w-100" placeholder="e.g., 서울">
+                    <!-- <div class="success-feedback">올바른 형식의 이름입니다.</div> -->
+                    <div class="fail-feedback">미입력이거나 허용 그기를 초과했습니다.</div>
+            </div>
+            <div class="cell">
+                <label>인구수<i class="fa-solid fa-asterisk red"></i></label>
+                    <input type="text" name="countryPopulation" oninput="checkCountryPopulation();"
+                        inputmode="numeric" class="field w-100" placeholder="e.g., 55000000">
+                    <!-- <div class="success-feedback">가능한 숫자입니다.</div> -->
+                    <div class="fail-feedback">숫자를 적어주세요.</div>
+            </div>
+            <div class="cell">
+                <label>국기</label>
+                <input type="file" name="attach" class="field w-100">
+            </div>   
+
+            <div class="cell mt-40 right">
+                <button class="btn btn-positive w-100">
+                    등록하기
+                </button>
+            </div>
+
+        </div>
+    </form>
+</body>
+</html>
