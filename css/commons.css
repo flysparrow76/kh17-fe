@@ -511,3 +511,43 @@ a.btn {
 a {
     text-decoration: none !important;
 }
+
+/* 
+    피드백 디자인
+    -자바스크립트와 결합하여 입력창의 피드뱍을 표시하기 위한 디자인
+    - .field에 .success가 붙으면 뒤에 있는 .success-feedback을 출력
+    - .field에 .fail이 붙으면 뒤에 있는 .fail-feedback을 출력
+    - .field에 .success.fail이 붙으면 상황에 맞게 입력창도 디자인을 변경
+    - .field에
+*/
+
+.field ~ .success-feedback{
+    color: blue;
+    display: none;
+}
+.field ~ .fail-feedback{
+    color: red;
+    display: none;
+}
+.field.success ~ .success-feedback{
+    display: block;
+}
+.field.fail ~ .fail-feedback{
+    display: block;
+}
+.field{
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position-x: right 0.5em;
+    background-position-y: center;
+    padding-right: 2em;
+}
+.field.success{
+    background-image: url("./images/valid.png");
+    border-color: blue;
+}
+
+.field.fail{
+    background-image: url("./images/invalid.png");
+    border-color: red;
+}
