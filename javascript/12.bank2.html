@@ -21,12 +21,9 @@
         function addMoney(amount){
             var target = document.querySelector(".target");
             var newAmount = parseInt(target.value) + amount;
-            console.log(target.value, parseInt(target.value), amount);
             target.value = newAmount;
 
-            //(+추가) newAmount를 외부 화면에 출력
-            var display = document.querySelector(".display");
-            display.textContent = newAmount.toLocaleString();
+            displayAmount();
         }
         function deleteOne() {
             var target = document.querySelector(".target");
@@ -37,17 +34,23 @@
                 target.value = "0";
             }
 
-            //(+추가) 입력값을 외부 화면에 출력
-            var display = document.querySelector(".display");
-            var money = parseInt(target.value);
-            display.textContent = money.toLocaleString();
+            displayAmount();
         }
         function deleteAll() {
             var target = document.querySelector(".target");
             target.value = "0";
 
+            displayAmount();
+        }
+
+        //.target의 입력값을 .display에 옮겨 표시하는 함수
+        function displayAmount() {
+            //(+추가) 입력값을 외부 화면에 출력
+            var target = document.querySelector(".target");
+            var money = parseInt(target.value);
+            
             var display = document.querySelector(".display");
-            display.textContent = "0";
+            display.textContent = money.toLocaleString();
         }
     </script>
 </head>

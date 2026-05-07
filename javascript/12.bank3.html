@@ -20,34 +20,47 @@
         //입력창에 이미 입력된 값은 어떠한 경우에도 문자열이기 때문에 계산 과정에서 숫자 변환이 필요
         function addMoney(amount){
             var target = document.querySelector(".target");
-            var newAmount = parseInt(target.value) + amount;
-            console.log(target.value, parseInt(target.value), amount);
-            target.value = newAmount;
+            //target.value가 비어있는 경우를 고려하여 코드를 작성
+            //if(target.value == "") {
+            //if(target.value == '') {
+            //if(!target.value) {
+            if(target.value.length == 0) {//앞으로 사용할 방식
+                target.value = amount;
+            }
+            else {
+                var newAmount = parseInt(target.value) + amount;
+                target.value = newAmount;
+            }
 
-            //(+추가) newAmount를 외부 화면에 출력
-            var display = document.querySelector(".display");
-            display.textContent = newAmount.toLocaleString();
+            displayAmount();
         }
         function deleteOne() {
             var target = document.querySelector(".target");
             var origin = target.value;
             target.value = origin.substring(0, origin.length-1);
 
-            if(target.value.length == 0) {//입력창 입력 글자수가 0이면 = 입력값이 없으면
-                target.value = "0";
-            }
-
-            //(+추가) 입력값을 외부 화면에 출력
-            var display = document.querySelector(".display");
-            var money = parseInt(target.value);
-            display.textContent = money.toLocaleString();
+            displayAmount();
         }
         function deleteAll() {
             var target = document.querySelector(".target");
-            target.value = "0";
+            target.value = "";
 
+            displayAmount();
+        }
+
+        //.target의 입력값을 .display에 옮겨 표시하는 함수
+        function displayAmount() {
+            //(+추가) 입력값을 외부 화면에 출력
+            var target = document.querySelector(".target");
             var display = document.querySelector(".display");
-            display.textContent = "0";
+
+            if(target.value.length == 0) {//비어있으면
+                display.textContent = "금액을 입력하세요";
+            }
+            else {
+                var money = parseInt(target.value);
+                display.textContent = "이체 금액은 총 " + money.toLocaleString()+"원 입니다";
+            }
         }
     </script>
 </head>
@@ -58,7 +71,7 @@
         </div>
 
         <div class="cell mt-40">
-            <input class="field w-100 target right" placeholder="이체할 금액을 입력하세요" value="0">
+            <input class="field w-100 target right" placeholder="이체할 금액을 입력하세요">
         </div>
 
         <div class="cell">
@@ -78,8 +91,8 @@
             </button>
         </div>
 
-        <div class="cell mt-50" style="font-size: 24px;">
-            이체하시려는 금액은 총 <span class="display">0</span>원 입니다.
+        <div class="cell mt-50 display" style="font-size: 24px;">
+            금액을 입력하세요
         </div>
     </div>
 </body>
