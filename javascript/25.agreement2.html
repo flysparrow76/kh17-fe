@@ -29,6 +29,29 @@
                 checkboxes[i].checked = all.checked;
             }
         }
+
+        //개별 항목 검사
+        //- 개별 항목들이 모두 선택되어 있으면 전체 선택을 체크, 아니면 해제
+        //- 모두 체크되어 있는지 어떻게 알지?
+        //      1. 전체 체크박스를 불러와서 체크된 항목을 카운트한다
+        //      2. :checked 선택자를 활용
+
+        function checkItem1() {
+            //전체 체크아이템을 불러온다
+            var checkboxes = document.querySelectorAll(".check-item");
+            var count = 0;
+            for(var i=0; i < checkboxes.length; i++) {
+                if(checkboxes[i].checked) {//체크가 되어있다면
+                    count++;
+                }
+            }
+            //var allChecked = count가 전체 체크박수의 개수와 같은가?
+            var allChecked = count == checkboxes.length;
+
+            //allChecked에 따라 전체선택 체크박스를 처리
+            var all = document.querySelector(".check-all");
+            all.checked = allChecked;
+        }
     </script>
 </head>
 <body>
@@ -50,13 +73,13 @@
 
         <div class="cell">
             <label>
-                <input type="checkbox" class="check-item"> 
+                <input type="checkbox" class="check-item" oninput="checkItem1();"> 
                 <span>(필수) 개인정보 취급방침에 동의합니다</span>
             </label>
         </div>
         <div class="cell">
             <label>
-                <input type="checkbox" class="check-item"> 
+                <input type="checkbox" class="check-item" oninput="checkItem1();"> 
                 <span>(필수) 홈페이지 이용규정을 준수하겠습니다</span>
             </label>
         </div>
