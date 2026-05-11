@@ -26,18 +26,15 @@
         window.addEventListener("load", function(){
             var buttons = document.querySelectorAll(".btn");
 
-            buttons[0].addEventListener("click", function(){
-                var target = document.querySelector(".target");
-                target.style.fontSize = "12px";
-            });
-            buttons[1].addEventListener("click", function(){
-                var target = document.querySelector(".target");
-                target.style.fontSize = "16px";
-            });
-            buttons[2].addEventListener("click", function(){
-                var target = document.querySelector(".target");
-                target.style.fontSize = "20px";
-            });
+            for(var i=0; i < buttons.length; i++) {
+                buttons[i].addEventListener("click", function(){
+                    var target = document.querySelector(".target");
+                    //dataset.size는 태그에 적힌 data-size의 값을 불러오라는 의미
+                    var size = this.dataset.size;//this는 이벤트가 발생한 주인공
+                    target.style.fontSize = size;
+                });
+            }
+
         });
     </script>
 </head>
@@ -48,9 +45,16 @@
         </div>
 
         <div class="cell center">
-            <button type="button" class="btn btn-neutral">작게(12px)</button>
-            <button type="button" class="btn btn-neutral">보통(16px)</button>
-            <button type="button" class="btn btn-neutral">크게(20px)</button>
+            <!-- 
+                데이터셋(dataset) : 
+                - 필요에 의해 태그에 저장해두는 커스텀 데이터 
+                - 반드시 `data-`로 시작해야한다
+                - 자바스크립트에서 불러올 수 있다 (dataset이란 이름으로)
+            -->
+            <button type="button" class="btn btn-neutral" data-size="12px">작게(12px)</button>
+            <button type="button" class="btn btn-neutral" data-size="16px">보통(16px)</button>
+            <button type="button" class="btn btn-neutral" data-size="20px">크게(20px)</button>
+            <button type="button" class="btn btn-neutral" data-size="24px">아주크게(24px)</button>
         </div>
 
         <div class="cell target">
