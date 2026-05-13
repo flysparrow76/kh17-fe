@@ -28,12 +28,14 @@
         var size = 16;
         //-버튼
         $(".btn-minus").on("click",function(){
+            if(size == 6)reutrn;
             size--;
             $(".target").css("font-size",size+"px");
             $(".current").text(size);
         });
         //+버튼
         $(".btn-plus").on("click",function(){
+            if(size == 48)reutrn;
             size++;
             $(".target").css("font-size",size+"px");
             $(".current").text(size);
