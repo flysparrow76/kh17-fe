@@ -22,8 +22,8 @@
         $(function(){
             var state = {
                 bookTitleValid : false,
-                bookAuthorValid : false,
-                bookPublisherValid : false,
+                bookAuthorValid : true,
+                bookPublisherValid : true,
                 bookPublicationDateValid : false,
                 bookPriceValid : false,
                 bookPageCountValid : false,
@@ -89,7 +89,35 @@
 
                 return state.ok();
             });
+            
+            //파일처리
+            //- [name=attach]에 input이벤트가 발생하면 선택된 파일이 있을 경우.preview에 미리보기 표시
+            //(1) 진짜로 파일을 읽어와서 미리보기가 가능한 형태의 src를 생성한 뒤 설정하는 방법
+            // - 장점 : 브라우저 무관하고 동일한 처리가 가능
+            // - 단점 : 오래걸리고 코드 작성 난이도가 높음
+            //(2) 브라우저가 제공하는 미리보기 기능을 활용하는 방법
+            // - 장점 : 파일을 읽을 필요가 없음
+            // - 단점 : 생성한 주소를 반드시 수동으로 제가해야 메모리 관리가 가능
+
+            $("[name=attach]").on("input",function(){
+                //this == 파일 입력창(files 라는 내부 속성이 존재)
+                var originSrc = $(".preview").attr("src");//현재 .preview의 src를 가져와서
+                if(originSrc.startsWith("blob:")){//생성된 주소가 존재한다면
+                    URL.revokeObjectURL(originSrc);//생성된 주소를 제거(회수)하세요
+                    console.log("이미 표시중인 이미지를 회수");
+                }
+
+                if(this.files.length >0){//파일을 선택한 경우 (미리보기 생성)
+                    var address = URL.createObjectURL(this.files[0]);//파일을 주고 주소 생성 요청
+                    $(".preview").attr("src",address);//이미지에 주소로 설정
+                }
+                else{//파일 선택을 취소한 경우 (미리보기 지우기)
+                    //.preview의 src를 "http://dummyimage.com/200x200?text=NO"로 설정
+                    $(".preview").attr("src","http://dummyimage.com/200x200?text=NO");
+                }
+            });
         });
+
      </script>
 </head>
 <body>
@@ -159,6 +187,10 @@
                 <input type="file" name="attach" class="field w-100">
             </div>
 
+            <!-- 미리보기 추가 -->
+            <div class="cell">
+                <img class="preview" src = "http://dummyimage.com/200x200?text=NO" width="200" height="200">
+            </div>
             <div class="cell mt-40">
                 <button class="btn btn-positive w-100">
                     등록

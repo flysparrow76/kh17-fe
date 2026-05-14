@@ -87,6 +87,23 @@
 
                 return state.ok();//state.ok() 상태에 따라 전송해!
             });
+            $("[name=attach]").on("input",function(){
+                //this == 파일 입력창(files 라는 내부 속성이 존재)
+                var originSrc = $(".preview").attr("src");//현재 .preview의 src를 가져와서
+                if(originSrc.startsWith("blob:")){//생성된 주소가 존재한다면
+                    URL.revokeObjectURL(originSrc);//생성된 주소를 제거(회수)하세요
+                    console.log("이미 표시중인 이미지를 회수");
+                }
+
+                if(this.files.length >0){//파일을 선택한 경우 (미리보기 생성)
+                    var address = URL.createObjectURL(this.files[0]);//파일을 주고 주소 생성 요청
+                    $(".preview").attr("src",address);//이미지에 주소로 설정
+                }
+                else{//파일 선택을 취소한 경우 (미리보기 지우기)
+                    //.preview의 src를 "http://dummyimage.com/200x200?text=NO"로 설정
+                    $(".preview").attr("src","http://dummyimage.com/200x200?text=NO");
+                }
+            });
         });
     </script>
 </head>
