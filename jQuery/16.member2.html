@@ -40,6 +40,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="./preview.js"></script>
 
+    <!-- kakao postapi cdn -->
+    <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
     <!-- 자바스크립트 작성 영역 -->
     <script>
         $(function(){
@@ -155,6 +158,40 @@
                     .attr("type", check ? "text" : "password");//체크되면 password, 아니면 text
             });
         
+            //주소 검색 서비스 추가를 위한 코드
+            $("[name=memberPost], [name=memberAddress1], .btn-address-search")
+            .on("click", function(){
+                new kakao.Postcode({
+                    oncomplete: function(data) {
+                        // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                        // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                        // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                        var addr = ''; // 주소 변수
+
+                        //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                            addr = data.roadAddress;
+                        } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                            addr = data.jibunAddress;
+                        }
+
+                        // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                        //document.getElementById('sample6_postcode').value = data.zonecode;
+                        //document.querySelector("[name=memberPost]").value = data.zonecode;
+                        $("[name=memberPost]").val(data.zonecode);
+
+                        //document.getElementById("sample6_address").value = addr;
+                        //document.querySelector("[name=memberAddress1]").value = addr;
+                        $("[name=memberAddress1]").val(addr);
+
+                        // 커서를 상세주소 필드로 이동한다.
+                        //document.getElementById("sample6_detailAddress").focus();
+                        //document.querySelector("[name=memberAddress2]").focus();
+                        $("[name=memberAddress2]").trigger("focus");
+                    }
+                }).open();
+            });
         });
     </script>
 </head>
