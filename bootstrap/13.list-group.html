@@ -12,12 +12,21 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/flatly/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- 국기 제작 CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.5.0/css/flag-icons.min.css">
     <style>
-        
+        /* bootstrap에 없는 조건부 폭 설정을 추가 */
+        .w-sm-25 { width: 100% !important; }
+        .w-sm-75 { width: 100% !important; }
+        @media (min-width:576px) {
+            .w-sm-25 { width: 25% !important; }
+            .w-sm-75 { width: 75% !important; }
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container my-5">
         <!-- 제목 부분을 점보트론(jumbotron)이라고 부른다 -->
         <div class="row">
             <div class="col">
@@ -28,40 +37,85 @@
             </div>
         </div>
 
-        <!-- 실제로 구현할 내용들 -->
+        <!-- 리스트 그룹은 ul과 li로 구현 -->
         <div class="row mt-4">
             <div class="col">
+
                 <ul class="list-group">
-                    <li class="list-group-item">첫번째 항목</li>
-                    <li class="list-group-item">두번째 항목</li>
-                    <li class="list-group-item">세번째 항목</li>
-                    <li class="list-group-item">네번째 항목</li>
-                    <li class="list-group-item">다섯번째 항목</li>
+                    <li class="list-group-item">첫 번째 항목</li>
+                    <li class="list-group-item">두 번째 항목</li>
+                    <li class="list-group-item">세 번째 항목</li>
+                    <li class="list-group-item">네 번째 항목</li>
+                    <li class="list-group-item">다섯 번째 항목</li>
                 </ul>
+
             </div>
         </div>
 
-        <!-- 메뉴 형태일 때 벳지를 추가 -->
+        <!-- 메뉴 형태일 때 뱃지를 추가 -->
         <div class="row mt-4">
             <div class="col">
+
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>오늘일정</div>
+                        <div>오늘 일정</div>
                         <span class="badge text-bg-primary">10</span>
                     </li>
                     <li class="list-group-item d-flex align-items-center">
-                        <div class="flex-grow-1">오늘일정</div>
+                        <div class="flex-grow-1">오늘 일정</div>
                         <span class="badge text-bg-primary">10</span>
                     </li>
-
-                    <li class="list-group-item d-flex">
-                        <div>오늘일정</div>
-                        <span class="badge text-bg-primary">10</span>
+                    <li class="list-group-item d-flex align-items-center">
+                        <div>오늘 일정</div>
+                        <span class="badge text-bg-primary ms-2">10</span>
                     </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <div>오늘 일정</div>
+                        <span class="badge text-bg-danger ms-2">10</span>
+                    </li>
+                </ul>
 
-                    <li class="list-group-item d-flex">
-                        <div>오늘일정</div>
-                        <span class="badge text-bg-danger">10</span>
+            </div>
+        </div>
+        
+        <!-- 표 대신 사용한다면...? -->
+        <div class="row mt-4">
+            <div class="col">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span class="fi fi-kr fs-1"></span>
+                        <h3 class="mt-2">대한민국</h3>
+                        <p>수도 : 서울<br>인구수 5500만</p>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex flex-column">
+                            <span class="fi fi-kr fs-1"></span>
+                            <h3 class="mt-2">대한민국</h3>
+                            <p>수도 : 서울<br>인구수 5500만</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex">
+                            <div class="w-25 d-flex justify-content-center align-items-center">
+                                <span class="fi fi-kr fs-1"></span>
+                            </div>
+                            <div class="w-75">
+                                <h3 class="mt-2">대한민국</h3>
+                                <p>수도 : 서울<br>인구수 5500만</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- 폭의 변화를 감지하여 가로 세로를 설정 -->
+                    <li class="list-group-item">
+                        <div class="d-flex flex-column flex-sm-row">
+                            <div class="w-100 w-sm-25 d-flex justify-content-start justify-content-sm-center align-items-center">
+                                <span class="fi fi-kr fs-1"></span>
+                            </div>
+                            <div class="w-100 w-sm-75 mt-4 mt-sm-2">
+                                <h3>대한민국</h3>
+                                <p>수도 : 서울<br>인구수 5500만</p>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
