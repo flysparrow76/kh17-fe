@@ -1,0 +1,34 @@
+<script type="text/javascript">
+
+    //(Q) data에 들어 있는 값을 이용해서 다음 결과를 만들어 내세요
+    //1. 홀수만 필터링
+    //2. 1번에서 필터링된 결과 데이터를 각각 제곱
+    //3. 2번의 결과에서 20이하만 필터링
+    //4. 3번의 결과를 출력
+    //추가로 알아야 할 함수 : map(검색해보세요)
+
+    const data = [5,3,2,7,8,1,6];
+
+    // const step1 = [],step2 = [],step3 = [];
+    //     for(var i = 0; data.length >= i ; i++){
+    //         if(data[i] % 2 ==1){
+    //             step1.push(data[i]);//홀수 추가
+    //         }
+    //     }
+    //     for(var i = 0; step1.length >= i ; i++){
+    //          var square =step[i] * step[i]
+    //          step2.push(result[i]);
+    //     }
+            // for(var i =0; i <step2.length; i++)
+            //     if(step2[i] <=20){
+            //         step3.push(step2[i]);
+            //     }
+
+    //es6
+    data.filter( n => n % 2==1)
+        .map(n=>n*n)
+        .filter(n=>n<=20)
+        .sort((a,b)=>a-b)
+        .forEach(n=>console.log(n));
+
+</script>
