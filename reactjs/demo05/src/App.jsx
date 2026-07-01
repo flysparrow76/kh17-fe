@@ -9,7 +9,7 @@ function App() {
 
         <input value={amount} readOnly/>
 
-      <div class="cell">
+      <div>
             <button onClick={()=>setAmount(amount+10000000)}>천만</button>
             <button onClick={()=>setAmount(amount+1000000)}>백만</button>
             <button onClick={()=>setAmount(amount+100000)}>십만</button>
