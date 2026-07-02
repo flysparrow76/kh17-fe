@@ -22,17 +22,26 @@ function Exam04() {
     //- 입력함수들
     const changeStringValue = useCallback(e=>{
         const { name, value } = e.target;
-        setLecture({ ...lecture, [name] : value });
+        setLecture({
+             ...lecture,
+              [name] : value 
+        });
     }, [lecture]);
     const changeNumericValue = useCallback(e=>{
         const { name, value } = e.target;
         const regex = /[^0-9]/g;
         const replacement = value.replace(regex, "");
         if(replacement.length === 0) {
-            setLecture({ ...lecture, [name] : replacement })
+            setLecture({
+                 ...lecture,
+                [name] : replacement
+             })
         }
         else {
-            setLecture({ ...lecture, [name] : parseInt(replacement) });
+            setLecture({
+                 ...lecture, 
+                 [name] : parseInt(replacement) 
+            });
         }
     }, [lecture]);
 
@@ -40,14 +49,20 @@ function Exam04() {
     const checkLectureTitle = useCallback(()=>{
         const valid = lecture.lectureTitle.length > 0;
         const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({ ...result, lectureTitle : clazz });
+        setResult({
+             ...result,
+            lectureTitle : clazz 
+        });
     }, [lecture, result]);
     const checkLectureCategory = useCallback(()=>{
         //const regex = /^(이론|실습|시험)$/;
         //const valid = regex.test(lecture.lectureCategory);
         const valid = ['이론','실습','시험'].includes(lecture.lectureCategory);
         const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({ ...result, lectureCategory : clazz });
+        setResult({
+            ...result,
+            lectureCategory : clazz 
+        });
     }, [lecture, result]);
     const checkLectureDuration = useCallback(()=>{
         const valid = lecture.lectureDuration !== "" 
@@ -55,20 +70,29 @@ function Exam04() {
                         && lecture.lectureDuration > 0
                         && lecture.lectureDuration <= 300;
         const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({ ...result, lectureDuration : clazz });
+        setResult({
+            ...result, 
+            lectureDuration : clazz 
+        });
     }, [lecture, result]);
     const checkLecturePrice = useCallback(()=>{
         const valid = lecture.lecturePrice !== "" 
                         && lecture.lecturePrice >= 0;
         const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({ ...result, lecturePrice : clazz });
+        setResult({
+            ...result,
+            lecturePrice : clazz
+        });
     }, [lecture, result]);
     const checkLectureType = useCallback(()=>{
         //const regex = /^(오프라인|온라인|혼합)$/;
         //const valid = regex.test(lecture.lectureType);
         const valid = ['오프라인','온라인','혼합'].includes(lecture.lectureType);
         const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({ ...result, lectureType : clazz });
+        setResult({
+             ...result,
+            lectureType : clazz
+            });
     }, [lecture, result]);
 
     //memo
