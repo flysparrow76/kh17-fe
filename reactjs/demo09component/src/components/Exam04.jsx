@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Jumbotron from "./Jumbotron";
+//axios라는 라이브러리에서 제공하는 기본 JS파일을 불어와서 axios라는 이름으로 쓰겠다
+import axios from "axios";
+import { Bounce, toast } from "react-toastify";
+import Swal from 'sweetalert2'
 
 function Exam04() {
     //state
@@ -95,6 +99,51 @@ function Exam04() {
             });
     }, [lecture, result]);
 
+    //-데이터 전송(등록)
+    const send = useCallback(()=>{
+        // $.ajax({
+        //     url:"http://localhost:8080/api/lecture/insert",
+        //     method:"post",
+        //     data:lecture,
+        //     success:function(response){
+        //         console.log("등록완료");
+        //     }
+        // });
+
+        axios({
+            url:"http://localhost:8080/api/lecture/insert",
+            method:"post",
+            data:lecture,
+
+        })
+        .then(response=>{
+            //console.log("등록완료");
+            // toast.success('등록완료!');
+            Swal.fire({
+                title: "등록완료!",
+                icon: "success"
+            });
+
+            //입력값 정리
+            setLecture({
+                lectureTitle: "",
+                lectureCategory: "",
+                lectureDuration: "",
+                lecturePrice: "",
+                lectureType: ""
+            })
+            //검사 결과 정리
+            setResult({
+                lectureTitle: "",
+                lectureCategory: "",
+                lectureDuration: "",
+                lecturePrice: "",
+                lectureType: ""
+            })
+        });
+
+    },[lecture]);
+
     //memo
     const allValid = useMemo(()=>{
         if(result.lectureTitle !== "is-valid") return false;
@@ -188,7 +237,7 @@ function Exam04() {
         <div className="row mt-5">
             <div className="col text-end">
                 <button type="button" className="btn btn-lg btn-success" 
-                    disabled={!allValid}>
+                    disabled={!allValid} onClick={send}>
                     + 신규 등록하기
                 </button>
             </div>
