@@ -26,6 +26,7 @@ function Exam03() {
         return country.countryPopulation > 0;
     }, [country.countryPopulation]);
 
+    //전체검사
     const valid = useMemo(()=>{
         return countryRegionValid && countryNameValid && countryCapitalValid && countryPopulationValid;
     }, [
