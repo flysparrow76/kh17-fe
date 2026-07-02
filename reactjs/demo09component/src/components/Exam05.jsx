@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Jumbotron from "./Jumbotron";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 function Exam05() {
     //state
@@ -121,53 +123,44 @@ function Exam05() {
     }, [book, result]);
 
     // -데이터 전송(등록)
-    // const send = useCallback(()=>{
-    //      $.ajax({
-    //          url:"http://localhost:8080/api/lecture/insert",
-    //          method:"post",
-    //          data:lecture,
-    //          success:function(response){
-    //              console.log("등록완료");
-    //          }
-    //      });
+    const send = useCallback(()=>{
+        axios({
+            url:"http://localhost:8080/api/book/insert",
+            method:"post",
+            data:book,
 
-    //     axios({
-    //         url:"http://localhost:8080/api/lecture/insert",
-    //         method:"post",
-    //         data:book,
+        })
+        .then(response=>{
+            //console.log("등록완료");
+            // toast.success('등록완료!');
+            Swal.fire({
+                title: "등록완료!",
+                icon: "success"
+            });
 
-    //     })
-    //     .then(response=>{
-    //         //console.log("등록완료");
-    //         // toast.success('등록완료!');
-    //         Swal.fire({
-    //             title: "등록완료!",
-    //             icon: "success"
-    //         });
+            //입력값 정리
+            setBook({
+                bookTitle : "",
+                bookAuthor : "",
+                bookPublisher : "",
+                bookPublicationDate : "",
+                bookPrice : "",
+                bookPageCount : "",
+                bookGenre : ""
+            })
+            //검사 결과 정리
+            setResult({
+                bookTitle : "",
+                bookAuthor : "",
+                bookPublisher : "",
+                bookPublicationDate : "",
+                bookPrice : "",
+                bookPageCount : "",
+                bookGenre : ""
+            })
+        });
 
-    //         //입력값 정리
-    //         setBook({
-    //             bookTitle : "",
-    //             bookAuthor : "",
-    //             bookPublisher : "",
-    //             bookPublicationDate : "",
-    //             bookPrice : "",
-    //             bookPageCount : "",
-    //             bookGenre : ""
-    //         })
-    //         //검사 결과 정리
-    //         setResult({
-    //             bookTitle : "",
-    //             bookAuthor : "",
-    //             bookPublisher : "",
-    //             bookPublicationDate : "",
-    //             bookPrice : "",
-    //             bookPageCount : "",
-    //             bookGenre : ""
-    //         })
-    //     });
-
-    // },[book]);
+    },[book]);
 
     //memo
     const allValid = useMemo(()=>{
@@ -291,8 +284,7 @@ function Exam05() {
         <div className="row mt-5">
             <div className="col text-end">
                 <button type="button" className="btn btn-lg btn-success" 
-                    disabled={!allValid}>
-                        {/* onClick={send} */}
+                    disabled={!allValid} onClick={send}>
                     + 신규 등록하기
                 </button>
             </div>
