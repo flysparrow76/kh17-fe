@@ -15,6 +15,7 @@ import Exam07_1 from "./components/Exam07_1";
 import Exam08 from "./components/Exam08";
 import Exam09 from "./components/Exam09";
 import Exam10 from "./components/Exam10";
+import Exam11 from "./components/Exam11";
 
 
 function App() {
@@ -38,14 +39,16 @@ function App() {
     <Exam06/>
     <hr/>
     <Exam07/>
-    <hr/> */}
-    {/* <Exam07_1/>
+    <hr/>
+    <Exam07_1/>
     <hr/>
     <Exam08/>
     <hr/>
     <Exam09/>
-    <hr/> */}
+    <hr/>
     <Exam10/>
+    <hr/> */}
+    <Exam11/>
 
     {/* react-toastify */}
     <ToastContainer
