@@ -1,166 +1,144 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Jumbotron from "./Jumbotron";
-import axios from "axios";
-import Swal from "sweetalert2";
 import { FaAsterisk, FaPlus } from "react-icons/fa6";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ClockLoader } from "react-spinners";
 
 function Exam05() {
     //state
     const [book, setBook] = useState({
-        bookTitle : "",
-        bookAuthor : "",
-        bookPublisher : "",
-        bookPublicationDate : "",
-        bookPrice : "",
-        bookPageCount : "",
-        bookGenre : ""
+        bookTitle:"",
+        bookAuthor:"",
+        bookPublisher:"",
+        bookPublicationDate:"",
+        bookPrice:0,
+        bookPageCount:0,
+        bookGenre:"",
     });
     const [result, setResult] = useState({
-        bookTitle : null,
-        bookAuthor : null,
-        bookPublisher : null,
-        bookPublicationDate : null,
-        bookPrice : null,
-        bookPageCount : null,
-        bookGenre : null
+        bookTitle:null,
+        bookAuthor:null,
+        bookPublisher:null,
+        bookPublicationDate:null,
+        bookPrice:null,
+        bookPageCount:null,
+        bookGenre:null,
     });
+    const [loading, setLoading] = useState(false);    
 
     //callback
-    //- 입력함수들
     const changeStringValue = useCallback(e=>{
-        const { name, value } = e.target;
-        setBook({
-             ...book,
-              [name] : value 
-        });
+        const {name, value} = e.target;
+        setBook({ ...book, [name] : value});
     }, [book]);
-
     const changeNumericValue = useCallback(e=>{
-        const { name, value } = e.target;
-        const regex = /[^0-9]/g;
+        const {name, value} = e.target;
+        const regex = /[^0-9]+/g;
         const replacement = value.replace(regex, "");
-        if(replacement.length === 0) {
-            setBook({
-                 ...book,
-                [name] : replacement
-             })
-        }
-        else {
-            setBook({
-                 ...book, 
-                 [name] : parseInt(replacement) 
-            });
-        }
+        const newValue = parseInt(replacement);
+        setBook({ ...book, [name] : newValue });
     }, [book]);
 
-    //- 검사함수들
     const checkBookTitle = useCallback(()=>{
         const valid = book.bookTitle.length > 0;
-        const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({
-             ...result,
-            bookTitle : clazz 
-        });
-    }, [book, result]);
-
-    const checkBookAuthor = useCallback(()=>{
-        const regex = /^[^!@#$]+$/;
-        const valid = book.bookAuthor.length > 0 || regex.test(book.bookAuthor);
-        const clazz = valid ? "is-valid" : "is-invalid"
         setResult({
             ...result,
-            bookAuthor : clazz 
-        });
+            bookTitle : valid ? "is-valid" : "is-invalid"
+        })
     }, [book, result]);
-
     const checkBookPublisher = useCallback(()=>{
         setResult({
-            ...result, 
+            ...result,
             bookPublisher : "is-valid"
-        });
+        })
     }, [book, result]);
-
-    const checkBookPublicationDate = useCallback(()=>{
-        const regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/;
-        const valid = book.bookPublicationDate.length === 0 
-                        ||regex.test(book.bookPublicationDate);
-        const clazz = valid ? "is-valid" : "is-invalid";
+    const checkBookAuthor = useCallback(()=>{
+        const regex = /^[^!@#$]+$/;
+        const valid = book.bookAuthor.length === 0 
+                        || regex.test(book.bookAuthor);//없거나 형식에 맞거나
         setResult({
             ...result,
-            bookPublicationDate : clazz
+            bookAuthor : valid ? "is-valid" : "is-invalid"
+        })
+    }, [book, result]);
+    const checkBookPublicationDate = useCallback(()=>{
+        const regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/;
+        const valid = book.bookPublicationDate.length === 0
+                        || regex.test(book.bookPublicationDate);
+        setResult({
+            ...result,
+            bookPublicationDate : valid ? "is-valid" : "is-invalid"
         });
     }, [book, result]);
-
     const checkBookPrice = useCallback(()=>{
-        const valid = book.bookPrice !== ""
-                        && book.bookPrice >=0;
-        const clazz = valid ? "is-valid" : "is-invalid";
+        const valid = book.bookPrice >= 0;
         setResult({
-             ...result,
-            bookPrice : clazz
-            });
-    }, [book, result]);
-
-    const checkBookPageCount = useCallback(()=>{
-        const valid = book.bookPageCount !==""
-                        && book.bookPageCount > 0;
-        const clazz = valid ? "is-valid" : "is-invalid";
-        setResult({
-            ...result, 
-            bookPageCount : clazz 
+            ...result,
+            bookPrice : valid ? "is-valid" : "is-invalid"
         });
     }, [book, result]);
-
-     const checkBookGenre = useCallback(()=>{
-        const valid = ['판타지','교양','소설','역사','과학','추리소설','자기계발','수험서']
-                        .includes(book.bookGenre);
-        const clazz = valid ? "is-valid" : "is-invalid";
+    const checkBookPageCount = useCallback(()=>{
+        const valid = book.bookPageCount > 0;
         setResult({
-             ...result,
-            bookGenre : clazz
-            });
+            ...result,
+            bookPageCount : valid ? "is-valid" : "is-invalid"
+        });
     }, [book, result]);
+    const checkBookGenre = useCallback(()=>{
+        const valid = ["판타지","교양","소설","역사","과학","추리소설","자기계발","수험서"].includes(book.bookGenre);
+        setResult({
+            ...result,
+            bookGenre: valid ? "is-valid" : "is-invalid"
+        });
+    }, [book, result]);
+    const clear = useCallback(()=>{
+        setBook({
+            bookTitle:"",
+            bookAuthor:"",
+            bookPublisher:"",
+            bookPublicationDate:"",
+            bookPrice:0,
+            bookPageCount:0,
+            bookGenre:"",
+        });
+        setResult({
+            bookTitle:null,
+            bookAuthor:null,
+            bookPublisher:null,
+            bookPublicationDate:null,
+            bookPrice:null,
+            bookPageCount:null,
+            bookGenre:null,
+        });
+    }, []);
 
-    // -데이터 전송(등록)
     const send = useCallback(()=>{
+        //로딩 상태로 변경
+        setLoading(true);
+
         axios({
             url:"http://localhost:8080/api/book/insert",
             method:"post",
-            data:book,
-
+            data:book
         })
         .then(response=>{
-            //console.log("등록완료");
-            // toast.success('등록완료!');
-            Swal.fire({
-                title: "등록완료!",
-                icon: "success"
-            });
-
-            //입력값 정리
-            setBook({
-                bookTitle : "",
-                bookAuthor : "",
-                bookPublisher : "",
-                bookPublicationDate : "",
-                bookPrice : "",
-                bookPageCount : "",
-                bookGenre : ""
-            })
-            //검사 결과 정리
-            setResult({
-                bookTitle : "",
-                bookAuthor : "",
-                bookPublisher : "",
-                bookPublicationDate : "",
-                bookPrice : "",
-                bookPageCount : "",
-                bookGenre : ""
-            })
+            toast.success("도서 등록 완료");
+            clear();
+        })
+        .finally(()=>{//성공실패 관계없이 무조건 실행
+            setLoading(false);
         });
+    }, [book]);
 
-    },[book]);
-
+    //effect
+    useEffect(()=>{
+        if(book.bookGenre === "" && result.bookGenre === null) 
+            return;
+        
+        checkBookGenre();
+    }, [book.bookGenre, result.bookGenre]);
+    
     //memo
     const allValid = useMemo(()=>{
         if(result.bookTitle !== "is-valid") return false;
@@ -174,121 +152,107 @@ function Exam05() {
         return true;
     }, [result]);
 
-    //effect
-    useEffect(()=>{
-        if(result.bookGenre === null && book.bookGenre === "")return;
-        checkBookGenre();
-    },[result.bookGenre, book.bookGenre]);
-
     //view
-    return (
-    <>
-        <Jumbotron title="도서정보등록 화면" content="수업 실습 예제"/>
+    return (<>
+        <Jumbotron title="도서 등록 화면"/>
 
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">
-                <span>도서명</span><FaAsterisk className="text-danger"/>
+                <span>도서명</span>
+                <FaAsterisk className="text-danger"/>
             </label>
             <div className="col-sm-9">
-                <input type="text" name="bookTitle" value={book.bookTitle}
-                    onChange={changeStringValue} className={`form-control ${result.bookTitle}`}
+                <input type="text" name="bookTitle" placeholder="e.g.,어린왕자"
+                    value={book.bookTitle} onChange={changeStringValue}
                     onBlur={checkBookTitle}
-                    placeholder="e.g.,백만장자"/>
-                <div className="valid-feedback">도서 설정되었습니다</div>
-                <div className="invalid-feedback">필수 입력 항목입니다</div>
+                    className={`form-control ${result.bookTitle}`}/>
+                <div className="invalid-feedback">필수 작성 항목입니다</div>
             </div>
         </div>
 
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">
-                <span>작가</span>    
+                <span>출판사</span>
             </label>
             <div className="col-sm-9">
-                <input type="text" name="bookAuthor" value={book.bookAuthor}
-                    onChange={changeStringValue}
-                    onBlur={checkBookAuthor}
-                    className={`form-control ${result.bookAuthor}`}
-                    placeholder="e.g.,홍길동"/>
-                <div className="valid-feedback">이름 설정되었습니다</div>
-                <div className="invalid-feedback">필수 입력 항목입니다</div>
-            </div>
-        </div>
-
-        <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">
-                <span>출판사</span>    
-            </label>
-            <div className="col-sm-9">
-                <input type="text" name="bookPublisher" value={book.bookPublisher}
-                    onChange={changeStringValue} 
+                <input type="text" name="bookPublisher" placeholder="e.g.,책과사람들"
+                    value={book.bookPublisher} onChange={changeStringValue}
                     onBlur={checkBookPublisher}
-                    className={`form-control ${result.bookPublisher}`}
-                    placeholder="e.g.,출판사"/>
-                <div className="valid-feedback">이름 설정되었습니다.</div>
+                    className={`form-control ${result.bookPublisher}`}/>
             </div>
         </div>
 
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">
-                <span>출판일</span><FaAsterisk className="text-danger"/>    
+                <span>지은이</span>
             </label>
             <div className="col-sm-9">
-                <input type="date" name="bookPublicationDate" value={book.bookPublicationDate}
-                    onChange={changeStringValue} 
+                <input type="text" name="bookAuthor" placeholder="e.g.,셰익스피어"
+                    value={book.bookAuthor} onChange={changeStringValue}
+                    onBlur={checkBookAuthor}
+                    className={`form-control ${result.bookAuthor}`}/>
+            </div>
+        </div>
+
+        <div className="row mt-4">
+            <label className="col-sm-3 col-form-label">
+                <span>출간일</span>
+            </label>
+            <div className="col-sm-9">
+                <input type="date" name="bookPublicationDate"
+                    value={book.bookPublicationDate} onChange={changeStringValue}
                     onBlur={checkBookPublicationDate}
                     className={`form-control ${result.bookPublicationDate}`}/>
-                <div className="valid-feedback">날짜 설정되었습니다.</div>
-                <div className="invalid-feedback">필수 입력 항목입니다.</div>
             </div>
         </div>
 
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">
-                <span>가격</span><FaAsterisk className="text-danger"/>    
+                <span>판매가</span>
+                <FaAsterisk className="text-danger"/>
             </label>
             <div className="col-sm-9">
-                <input type="text" name="bookPrice" value={book.bookPrice}
-                    onChange={changeNumericValue} 
+                <input type="text" name="bookPrice"
+                    value={book.bookPrice} onChange={changeNumericValue}
                     onBlur={checkBookPrice}
-                    className={`form-control ${result.bookPrice}`}
-                    placeholder="0 이상으로만 설정 가능"/>
-                <div className="valid-feedback">도서가격이 올바르게 설정되었습니다</div>
-                <div className="invalid-feedback">가격은 0 이상으로만 설정 가능합니다</div>
+                    className={`form-control ${result.bookPrice}`}/>
+                <div className="valid-feedback">가격 설정이 완료되었습니다</div>
+                <div className="invalid-feedback">0 이상 숫자로 설정하세요</div>
             </div>
         </div>
 
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">
-                <span>페이지 수</span><FaAsterisk className="text-danger"/>    
+                <span>페이지</span>
+                <FaAsterisk className="text-danger"/>
             </label>
             <div className="col-sm-9">
-                <input type="text" name="bookPageCount" value={book.bookPageCount}
-                    onChange={changeNumericValue} 
+                <input type="text" name="bookPageCount"
+                    value={book.bookPageCount} onChange={changeNumericValue}
                     onBlur={checkBookPageCount}
-                    className={`form-control ${result.bookPageCount}`}
-                    placeholder="0 이상으로만 설정 가능"/>
-                <div className="valid-feedback">올바르게 설정되었습니다</div>
-                <div className="invalid-feedback">페이지 수 0 이상으로만 설정 가능합니다</div>
+                    className={`form-control ${result.bookPageCount}`}/>
+                <div className="valid-feedback">페이지수 설정이 완료되었습니다</div>
+                <div className="invalid-feedback">0보다 큰 값으로 설정하세요</div>
             </div>
         </div>
 
         <div className="row mt-4">
             <label className="col-sm-3 col-form-label">
-                <span>장르</span><FaAsterisk className="text-danger"/>    
+                <span>장르</span>
+                <FaAsterisk className="text-danger"/>
             </label>
             <div className="col-sm-9">
-                <select name="bookGenre" 
-                    className={`form-select ${result.bookGenre}`}
-                    value={book.bookGenre} onChange={changeStringValue}>
-                    <option value="">선택하세요</option>                        
+                <select name="bookGenre" value={book.bookGenre} onChange={changeStringValue}
+                    className={`form-control ${result.bookGenre}`}>
+                    <option value="">선택하세요</option>
                     <option>판타지</option>
                     <option>교양</option>
-                    <option>소설</option> 
-                    <option>역사</option> 
-                    <option>과학</option> 
-                    <option>추리소설</option> 
-                    <option>자기계발</option> 
-                    <option>수험서</option> 
+                    <option>소설</option>
+                    <option>역사</option>
+                    <option>과학</option>
+                    <option>추리소설</option>
+                    <option>자기계발</option>
+                    <option>수험서</option>
                 </select>
                 <div className="invalid-feedback">필수 선택 항목입니다</div>
             </div>
@@ -296,15 +260,29 @@ function Exam05() {
 
         <div className="row mt-5">
             <div className="col text-end">
-                <button type="button" className="btn btn-lg btn-success" 
-                    disabled={!allValid} onClick={send}><FaPlus/>
-                    <span>신규 등록하기</span>
+                <button className="btn btn-success btn-lg" disabled={!allValid}
+                        onClick={send}>
+                    <FaPlus className="me-2"/>
+                    <span>등록하기</span>
                 </button>
             </div>
         </div>
-    </>
-    )
-}
 
+        {/* 로딩상태 (loading === true) 일 때 보여질 화면 */}
+        {/* { loading === true ? <h1>로딩중</h1> : false } */}
+        {/* { loading === true && <h1>로딩중</h1> } */}
+        { loading === true && (
+        <div className="position-fixed top-0 start-0 
+                        w-100 h-100 bg-dark bg-opacity-25
+                        d-flex justify-content-center align-items-center">
+            <div className="d-flex flex-column text-center">
+                <ClockLoader size={75} loading={loading}/>
+                <p className="mt-2">등록중</p>
+            </div>
+        </div>
+        ) }
+        
+    </>)
+}
 
 export default Exam05;
