@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Jumbotron from "./Jumbotron";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { FaAsterisk, FaPlus } from "react-icons/fa6";
 
 function Exam05() {
     //state
@@ -15,13 +16,13 @@ function Exam05() {
         bookGenre : ""
     });
     const [result, setResult] = useState({
-        bookTitle : "",
-        bookAuthor : "",
-        bookPublisher : "",
-        bookPublicationDate : "",
-        bookPrice : "",
-        bookPageCount : "",
-        bookGenre : ""
+        bookTitle : null,
+        bookAuthor : null,
+        bookPublisher : null,
+        bookPublicationDate : null,
+        bookPrice : null,
+        bookPageCount : null,
+        bookGenre : null
     });
 
     //callback
@@ -64,7 +65,7 @@ function Exam05() {
 
     const checkBookAuthor = useCallback(()=>{
         const regex = /^[^!@#$]+$/;
-        const valid = book.bookAuthor.length > 0 && regex.test(book.bookAuthor);
+        const valid = book.bookAuthor.length > 0 || regex.test(book.bookAuthor);
         const clazz = valid ? "is-valid" : "is-invalid"
         setResult({
             ...result,
@@ -73,17 +74,16 @@ function Exam05() {
     }, [book, result]);
 
     const checkBookPublisher = useCallback(()=>{
-        const valid = book.bookPublisher.length > 0 ;
-        const clazz = valid ? "is-valid" : "is-invalid";
         setResult({
             ...result, 
-            bookPublisher : clazz 
+            bookPublisher : "is-valid"
         });
     }, [book, result]);
 
     const checkBookPublicationDate = useCallback(()=>{
         const regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/;
-        const valid = regex.test(book.bookPublicationDate);
+        const valid = book.bookPublicationDate.length === 0 
+                        ||regex.test(book.bookPublicationDate);
         const clazz = valid ? "is-valid" : "is-invalid";
         setResult({
             ...result,
@@ -93,8 +93,7 @@ function Exam05() {
 
     const checkBookPrice = useCallback(()=>{
         const valid = book.bookPrice !== ""
-                        && book.bookPrice >=0
-                        && book.bookPrice <=10000000000;
+                        && book.bookPrice >=0;
         const clazz = valid ? "is-valid" : "is-invalid";
         setResult({
              ...result,
@@ -165,9 +164,9 @@ function Exam05() {
     //memo
     const allValid = useMemo(()=>{
         if(result.bookTitle !== "is-valid") return false;
-        if(result.bookAuthor !== "is-valid") return false;
-        if(result.bookPublisher !== "is-valid") return false;
-        if(result.bookPublicationDate !== "is-valid") return false;
+        if(result.bookAuthor === "is-invalid") return false;
+        if(result.bookPublisher === "is-invalid") return false;
+        if(result.bookPublicationDate === "is-invalid") return false;
         if(result.bookPrice !== "is-valid") return false;
         if(result.bookPageCount !== "is-valid") return false;
         if(result.bookGenre !== "is-valid") return false;
@@ -177,7 +176,7 @@ function Exam05() {
 
     //effect
     useEffect(()=>{
-        if(result.bookGenre === "" && book.bookGenre === "")return;
+        if(result.bookGenre === null && book.bookGenre === "")return;
         checkBookGenre();
     },[result.bookGenre, book.bookGenre]);
 
@@ -187,7 +186,9 @@ function Exam05() {
         <Jumbotron title="도서정보등록 화면" content="수업 실습 예제"/>
 
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">도서명</label>
+            <label className="col-sm-3 col-form-label">
+                <span>도서명</span><FaAsterisk className="text-danger"/>
+            </label>
             <div className="col-sm-9">
                 <input type="text" name="bookTitle" value={book.bookTitle}
                     onChange={changeStringValue} className={`form-control ${result.bookTitle}`}
@@ -199,7 +200,9 @@ function Exam05() {
         </div>
 
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">작가</label>
+            <label className="col-sm-3 col-form-label">
+                <span>작가</span>    
+            </label>
             <div className="col-sm-9">
                 <input type="text" name="bookAuthor" value={book.bookAuthor}
                     onChange={changeStringValue}
@@ -210,8 +213,11 @@ function Exam05() {
                 <div className="invalid-feedback">필수 입력 항목입니다</div>
             </div>
         </div>
+
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">출판사</label>
+            <label className="col-sm-3 col-form-label">
+                <span>출판사</span>    
+            </label>
             <div className="col-sm-9">
                 <input type="text" name="bookPublisher" value={book.bookPublisher}
                     onChange={changeStringValue} 
@@ -219,12 +225,13 @@ function Exam05() {
                     className={`form-control ${result.bookPublisher}`}
                     placeholder="e.g.,출판사"/>
                 <div className="valid-feedback">이름 설정되었습니다.</div>
-                <div className="invalid-feedback">필수 입력 항목입니다</div>
             </div>
         </div>
 
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">출판일</label>
+            <label className="col-sm-3 col-form-label">
+                <span>출판일</span><FaAsterisk className="text-danger"/>    
+            </label>
             <div className="col-sm-9">
                 <input type="date" name="bookPublicationDate" value={book.bookPublicationDate}
                     onChange={changeStringValue} 
@@ -236,7 +243,9 @@ function Exam05() {
         </div>
 
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">가격</label>
+            <label className="col-sm-3 col-form-label">
+                <span>가격</span><FaAsterisk className="text-danger"/>    
+            </label>
             <div className="col-sm-9">
                 <input type="text" name="bookPrice" value={book.bookPrice}
                     onChange={changeNumericValue} 
@@ -249,7 +258,9 @@ function Exam05() {
         </div>
 
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">페이지 수</label>
+            <label className="col-sm-3 col-form-label">
+                <span>페이지 수</span><FaAsterisk className="text-danger"/>    
+            </label>
             <div className="col-sm-9">
                 <input type="text" name="bookPageCount" value={book.bookPageCount}
                     onChange={changeNumericValue} 
@@ -262,7 +273,9 @@ function Exam05() {
         </div>
 
         <div className="row mt-4">
-            <label className="col-sm-3 col-form-label">장르</label>
+            <label className="col-sm-3 col-form-label">
+                <span>장르</span><FaAsterisk className="text-danger"/>    
+            </label>
             <div className="col-sm-9">
                 <select name="bookGenre" 
                     className={`form-select ${result.bookGenre}`}
@@ -284,8 +297,8 @@ function Exam05() {
         <div className="row mt-5">
             <div className="col text-end">
                 <button type="button" className="btn btn-lg btn-success" 
-                    disabled={!allValid} onClick={send}>
-                    + 신규 등록하기
+                    disabled={!allValid} onClick={send}><FaPlus/>
+                    <span>신규 등록하기</span>
                 </button>
             </div>
         </div>
