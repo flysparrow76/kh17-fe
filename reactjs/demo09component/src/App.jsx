@@ -45,9 +45,9 @@ function App() {
     <Exam08/>
     <hr/>
     <Exam09/>
-    <hr/>
-    <Exam10/>
     <hr/> */}
+    <Exam10/>
+    <hr/>
     <Exam11/>
 
     {/* react-toastify */}
