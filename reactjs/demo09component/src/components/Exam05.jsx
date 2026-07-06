@@ -14,7 +14,7 @@ function Exam05() {
         bookPublicationDate:"",
         bookPrice:0,
         bookPageCount:0,
-        bookGenre:"",
+        bookGenre:""
     });
     const [result, setResult] = useState({
         bookTitle:null,

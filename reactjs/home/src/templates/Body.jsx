@@ -8,6 +8,8 @@ import CountryAdd from "../components/country/CountryAdd";
 import CountryDetail from "../components/country/CountryDetail";
 import LectureAdd from "../components/lecture/LectureAdd";
 import LectureDetail from "../components/lecture/LectureDetail";
+import BookAdd from "../components/book/BookAdd";
+import BookDetail from "../components/book/BookDetail";
 
 
 export default function Body() {
@@ -26,7 +28,8 @@ export default function Body() {
         <Route path="/lecture/detail/:lectureNo" element={<LectureDetail/>}/>
 
         <Route path="/book/list" element={<BookList/>}/>
-
+        <Route path="/book/add" element={<BookAdd/>}/>
+        <Route path="/book/detail/:bookId" element={<BookDetail/>}/>
         {/* fallback route */}
         <Route path="*" element={<NotFound/>}/>
     </Routes>

@@ -1,45 +1,36 @@
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import Jumbotron from "../../templates/Jumbotron";
-import { useState } from "react";
-import { useEffect } from "react";
 import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import Jumbotron from "../../templates/Jumbotron";
 import { Button, Col, Row } from "react-bootstrap";
 import { FaList, FaPenToSquare, FaTrash } from "react-icons/fa6";
-import { useCallback } from "react";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-export default function CountryDetail() {
-    // Route에 선언된 파라미터 변수를 읽으려면 useParams()를 사용해야 한다
-    // <Route path="/countr/detail/:countryNo">로 써있으면 구조분해할당으로 추출이 가능
-    const { countryNo } = useParams();
 
-    // 만약 countryNo가 원치 않는 값(ex : 숫자가 아닌 경우)을 가지면 다른 화면을 반환시켜야 한다
-    // 스프링에서는 redirect라고 불렀는데... React에서는 어떻게 처리하느냐?
-    // useNavigate()를 이용해서 처리가 가능한가? (불가능)
-    // → 이런 상황을 대비해서 화면이면서 이동이 가능한 태그를 제공 : <Navigate>
-    if(/^[0-9]+$/.test(countryNo) === false) {//숫자가 아니면
-        return <Navigate to="/country/list" replace/>;
-    }
+export default function BookDetail(){
+    const { bookId } = useParams();
 
+    if(/^[0-9]+$/.test(bookId) === false) {//숫자가 아니면
+            return <Navigate to="/book/list" replace/>;
+        }
+    
     const navigate = useNavigate();
 
-    //countryNo가 정상적인 숫자인 경우의 처리내용 작성
-    const [country, setCountry] = useState(null);
+    const [book, setBook] = useState(null);
     useEffect(()=>{
         axios({
-            url:"http://localhost:8080/api/country/detail",
+            url:"http://localhost:8080/api/book/detail",
             method : "get",
-            params: { countryNo : countryNo }
+            params: { bookId : bookId }
         })
         .then(response=>{
-            setCountry(response.data);
+            setBook(response.data);
         });
-    }, []);
+    }, [bookId]);
 
-    const deleteCountry = useCallback(()=>{
-        // const choice = window.confirm("정말 삭제하시겠습니까?\n삭제 후에는 복구가 안됩니다");
-        // if(choice === false) return;
+    const deleteBook = useCallback(()=>{
+
         Swal.fire({
             title:"정말 삭제하시겠습니까?",
             text:"삭제한 데이터는 복구하실 수 없습니다",
@@ -53,62 +44,83 @@ export default function CountryDetail() {
         .then(result=>{
             if(result.isConfirmed) {
                 axios({
-                    url:"http://localhost:8080/api/country/delete",
+                    url:"http://localhost:8080/api/book/delete",
                     method:"get",
-                    params:{ countryNo : countryNo }
+                    params:{ bookId : bookId }
                 })
                 .then(response=>{
                     toast.error("국가 삭제가 완료되었습니다");
-                    navigate("/country/list");
+                    navigate("/book/list");
                 });
             }
         });
         
-    }, [countryNo]);
-
-    return (<>
-        <Jumbotron title="국가 상세 정보" content={`${countryNo}번 국가의 상세 정보 화면입니다`}/>
-
-        {/* 상태를 나누어서 출력 */}
-        { country === null ? (
+    }, [bookId]);
+    return(<>
+        <Jumbotron title="도서 상세 정보" content={`${bookId}번 도서의 상세 정보 화면입니다`}/>
+        { book === null ? (
             <h1>로딩중입니다...</h1>
         ) : (<>
         <Row className="mt-4 fs-4">
             <Col sm={3} className="text-info fw-bold">
-                국가명
+                도서명
             </Col>
             <Col sm={9}>
-                {country.countryName}
+                {book.bookTitle}
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
             <Col sm={3} className="text-info fw-bold">
-                소속대륙
+                작가
             </Col>
             <Col sm={9}>
-                {country.countryRegion}
+                {book.bookAuthor}
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
             <Col sm={3} className="text-info fw-bold">
-                수도
+                출판사
             </Col>
             <Col sm={9}>
-                {country.countryCapital}
+                {book.bookPublisher}
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
             <Col sm={3} className="text-info fw-bold">
-                인구수
+                출판일
             </Col>
             <Col sm={9}>
-                {country.countryPopulation.toLocaleString()}명
+                {book.bookPublicationDate}
+            </Col>
+        </Row>
+        <Row className="mt-4 fs-4">
+            <Col sm={3} className="text-info fw-bold">
+                가격
+            </Col>
+            <Col sm={9}>
+                {book.bookPrice.toLocaleString()}원
+            </Col>
+        </Row>
+        <Row className="mt-4 fs-4">
+            <Col sm={3} className="text-info fw-bold">
+                페이지 수
+            </Col>
+            <Col sm={9}>
+                {book.bookPageCount.toLocaleString()}페이지
+            </Col>
+        </Row>
+        <Row className="mt-4 fs-4">
+            <Col sm={3} className="text-info fw-bold">
+                장르
+            </Col>
+            <Col sm={9}>
+                {book.bookGenre}
             </Col>
         </Row>
 
         <Row className="mt-5">
             <Col className="text-end">
-                <Button className="ms-2" variant="danger" onClick={deleteCountry}>
+                <Button className="ms-2" variant="danger" onClick={deleteBook}>
                     <FaTrash className="me-2"/>
                     <span>삭제하기</span>
                 </Button>
@@ -117,7 +129,7 @@ export default function CountryDetail() {
                     <span>수정하기</span>
                 </Button>
                 <Button className="ms-2" variant="secondary"
-                        as={Link} to="/country/list">
+                        as={Link} to="/book/list">
                     <FaList className="me-2"/>
                     <span>목록으로</span>
                 </Button>

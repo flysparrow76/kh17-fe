@@ -1,7 +1,11 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"
+import { useCallback, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify";
+import Jumbotron from "../../templates/Jumbotron";
+import Swal from "sweetalert2";
+import { Button, Col, Row } from "react-bootstrap";
+import { FaList, FaPenToSquare, FaTrash } from "react-icons/fa6";
 
 export default function LectureDetail(){
     
@@ -21,6 +25,9 @@ export default function LectureDetail(){
             params : {lectureNo : lectureNo}
         })
         .then(response=>{
+            console.log(response);
+            console.log(response.status);
+            console.log(response.data);
             setLecture(response.data);
         })
     },[])
@@ -43,14 +50,14 @@ export default function LectureDetail(){
                     axios({
                         url : "http://localhost:8080/api/lecture/delete",
                         method : "get",
-                        params : {lectureNo : lecture}
+                        params : {lectureNo : lectureNo}
                     })
                     .then(response=>{
                         toast.error("강의 삭제가 완료되었습니다.");
                         navigate("/lecture/list");
                     });
                 }
-            })
+            });
     },[lectureNo]);
     return(<>
         <Jumbotron title="강의 상세 정보" content={`${lectureNo}번 국가의 상세 정보 화면입니다`}/>
