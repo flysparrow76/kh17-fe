@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Jumbotron from "../../templates/Jumbotron";
 import axios from "axios"
-import { FaChevronDown } from "react-icons/fa6";
+import { FaChevronDown, FaPlus } from "react-icons/fa6";
 import { ClockLoader } from "react-spinners";
 // import Row from "react-bootstrap/esm/Row";
 // import Col from "react-bootstrap/esm/Col";
@@ -63,7 +63,13 @@ export default function CountryList() {
                 </Form.Select>
             </Col>
             <Col xs={6} className="text-end">
-                <Link to="/country/add">신규 등록</Link>
+                {/* <Link to="/country/add" className="btn btn-success">
+                    <FaPlus/>
+                </Link> */}
+                <Button as={Link} to="/country/add" variant="success">
+                    <FaPlus/>
+                    <span className="ms-2">신규등록</span>
+                </Button>
             </Col>
         </Row>
 
@@ -84,7 +90,11 @@ export default function CountryList() {
                             {countryList.map(country=>(
                             <tr key={country.countryNo}>
                                 <td>{country.countryNo}</td>
-                                <td>{country.countryName}</td>
+                                <td>
+                                    <Link to={`/country/detail/${country.countryNo}`}>
+                                        {country.countryName}
+                                    </Link>
+                                </td>
                                 <td>{country.countryRegion}</td>
                                 <td>{country.countryCapital}</td>
                                 <td className="text-end">{country.countryPopulation.toLocaleString()}</td>

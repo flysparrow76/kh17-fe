@@ -7,6 +7,7 @@ import Footer from "./templates/Footer"
 import Container from "react-bootstrap/esm/Container"
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { Bounce, ToastContainer } from "react-toastify";
 
 export default function App() {
 
@@ -39,6 +40,20 @@ export default function App() {
           <Footer/>
         </Col>
       </Row>
+      {/* react-toastify- container */}
+      <ToastContainer
+      position="bottom-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="colored"
+      transition={Bounce}
+      />
     </Container>
   )
 }
