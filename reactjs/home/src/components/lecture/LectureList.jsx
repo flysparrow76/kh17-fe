@@ -1,56 +1,73 @@
-import { useCallback, useEffect, useState } from "react";
 import Jumbotron from "../../templates/Jumbotron";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { FaChevronDown, FaPlus } from "react-icons/fa6";
 import { ClockLoader } from "react-spinners";
-import { Button, Col, Row, Table,Form } from "react-bootstrap";
+import { Row, Col, Form, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function LectureList() {
-
     //state
-    const [lectureList , setLectureList] = useState([]);
-    const [last , setLast] = useState(false);
-    const [size , setSize] = useState(10);
-    const [loading , setLoading] = useState(false);
-
+    const [lectureList, setLectureList] = useState([]);
+    const [last, setLast] = useState(false);
+    const [size, setSize] = useState(10);
+    const [loading, setLoading] = useState(false);
+    
     //effect
     useEffect(()=>{
         loadMoreList();
-    },[]);
-
+    }, []);
+    
     //callback
-    const loadMoreList = useCallback(()=>{
-        if(loading === true)return;
+    // const loadMoreList = useCallback(()=>{
+    //     //이미 로딩중이면 차단
+    //     if(loading === true) return;
+    //     setLoading(true);
+
+    //     const dataSize = lectureList.length;
+    //     const lastLectureNo = dataSize === 0 ? 
+    //                         0 : lectureList[dataSize-1].lectureNo;
+
+    //     axios({
+    //         url:"http://localhost:8080/api/lecture/listForReact",
+    //         method:"get",
+    //         params: {//GET방식일 때
+    //             lastLectureNo: lastLectureNo,
+    //             size : size
+    //         }
+    //     })
+    //     .then(response=>{
+    //         //덮어쓰기가 아니라 추가(이어쓰기)가 필요
+    //         setLectureList([...lectureList, ...response.data.list]);
+    //         setLast(response.data.last);
+    //     })
+    //     .finally(()=>setLoading(false));
+    // }, [lectureList, size]);
+    const loadMoreList = useCallback(async ()=>{
+        //이미 로딩중이면 차단
+        if(loading === true) return;
         setLoading(true);
 
         const dataSize = lectureList.length;
-        const lastLectureNo = dataSize === 0 ? 0 : lectureList[dataSize-1].lectureNo;
+        const lastLectureNo = dataSize === 0 ? 
+                            0 : lectureList[dataSize-1].lectureNo;
 
-        axios({
-            url : "http://localhost:8080/api/lecture/listForReact",
-            method : "get",
-            params : {
-                lastLectureNo : lastLectureNo,
+        const response = await axios.get("http://localhost:8080/api/lecture/listForReact",{
+            params: {//GET방식일 때
+                lastLectureNo: lastLectureNo,
                 size : size
             }
-        })
-        .then(response=>{
-            setLectureList([...lectureList, ...response.data.list])
-            setLast(response.data.last);
-        })
-        .finally(()=>setLoading(false));
-    },[lectureList,size])
+        });
+        //덮어쓰기가 아니라 추가(이어쓰기)가 필요
+        setLectureList([...lectureList, ...response.data.list]);
+        setLast(response.data.last);
+        
+        setLoading(false);
+    }, [lectureList, size]);
 
     return (<>
-        <Jumbotron title="강의 목록" content="등록된 국가의 목록을 확인하세요"/>
-        {/* <Row className="mt-5">
-            <Col>
-                <Table nowrap>
-
-                </Table>
-            </Col>
-        </Row> */}
+        <Jumbotron title="강좌 목록" content="등록된 강좌들의 목록을 확인하세요"/>
+        
         <Row className="mt-4">
             <Col xs={6}>
                 <Form.Select value={size} onChange={e=>setSize(parseInt(e.target.value))}
@@ -64,52 +81,50 @@ export default function LectureList() {
             <Col xs={6} className="text-end">
                 <Button as={Link} to="/lecture/add" variant="success">
                     <FaPlus/>
-                    <span className="ms-2">신규등록</span>
+                    <span className="ms-2">신규 등록</span>
                 </Button>
             </Col>
         </Row>
 
         <Row className="mt-4">
-            <Col className="text-nowrap">
-                <div className="text-nowrap table-responsive">
-                    <Table hover responsive striped>
-                        <thead>
-                            <tr>
-                                <th>번호</th>
-                                <th>제목</th>
-                                <th>분류</th>
-                                <th className="text-end">시간</th>
-                                <th className="text-end">가격</th>
-                                <th>형태</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {lectureList.map(lecture=>(
-                                <tr key={lecture.lectureNo}>
-                                    <td>{lecture.lectureNo}</td>
-                                    <td>
-                                        <Link to={`/lecture/detail/${lecture.lectureNo}`}>
-                                            {lecture.lectureTitle}
-                                        </Link>
-                                    </td>
-                                    <td>{lecture.lectureCategory}</td>
-                                    <td>{lecture.lectureDuration}</td>
-                                    <td className="text-end">{lecture.lecturePrice.toLocaleString()}</td>
-                                    <td>{lecture.lectureType}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                </div>
+            <Col>
+                <Table responsive striped hover className="text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>종류</th>
+                            <th>제목</th>
+                            <th>시간</th>
+                            <th>수강료</th>
+                            <th>유형</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {lectureList.map(lecture=>(
+                        <tr key={lecture.lectureNo}>
+                            <td>{lecture.lectureNo}</td>
+                            <td>{lecture.lectureCategory}</td>
+                            <td>
+                                <Link to={`/lecture/detail/${lecture.lectureNo}`}>
+                                    {lecture.lectureTitle}
+                                </Link>
+                            </td>
+                            <td>{lecture.lectureDuration}H</td>
+                            <td>{lecture.lecturePrice.toLocaleString()}원</td>
+                            <td>{lecture.lectureType}</td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </Table>
             </Col>
         </Row>
 
-
+        {/* 더보기 버튼 */}
         { last === false && (
         <Row className="mt-2">
             <Col>
                 <Button variant="outline-success" size="lg" 
-                    className="w-100" onClick={loadMoreList}>
+                        onClick={loadMoreList} className="w-100">
                     <FaChevronDown/>
                     <span className="mx-2">더보기</span>
                     <FaChevronDown/>
@@ -117,6 +132,8 @@ export default function LectureList() {
             </Col>
         </Row>
         ) }
+
+        {/* 로딩화면 */}
         { loading === true && (
         <div className="position-fixed top-0 start-0 
                         w-100 h-100 bg-dark bg-opacity-25
@@ -128,5 +145,4 @@ export default function LectureList() {
         </div>
         ) }
     </>)
-
 }
