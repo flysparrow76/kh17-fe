@@ -132,7 +132,7 @@ export default function LectureAdd(){
         })
         .then(response=>{
             toast.success("강의가 등록이 완료되었습니다.");
-            navigate("/lecture/list");
+            navigate(`/lecture/detail/${response.data.lectureNo}`);
         })
     },[lecture]);
 

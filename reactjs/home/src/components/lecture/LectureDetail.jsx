@@ -69,7 +69,7 @@ export default function LectureDetail(){
                 강의명
             </Col>
             <Col sm={9}>
-                {lecture.lectureName}
+                {lecture.lectureTitle}
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
