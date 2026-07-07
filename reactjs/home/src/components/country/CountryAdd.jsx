@@ -22,7 +22,7 @@ export default function CountryAdd() {
         countryPopulation : ""
     });
 
-    //페이지 이동 도구 (location 대신 이용)
+    //페이지 이동 도구 (location 대신 사용)
     const navigate = useNavigate();
 
     //memo - state를 이용해서 추가적으로 계산해내는 데이터 (연관항목을 적어 실행 최소화)
@@ -72,7 +72,6 @@ export default function CountryAdd() {
             countryName : valid ? "is-valid" : "is-invalid"
         });
     }, [country.countryName, result]);
-    
     const checkCountryCapital = useCallback(()=>{
         const valid = country.countryCapital.length > 0;
         setResult({
@@ -80,7 +79,6 @@ export default function CountryAdd() {
             countryCapital : valid ? "is-valid" : "is-invalid"
         });
     }, [country.countryCapital, result]);
-
     const checkCountryPopulation = useCallback(()=>{
         const valid = country.countryPopulation > 0;
         setResult({
@@ -101,26 +99,12 @@ export default function CountryAdd() {
         checkCountryRegion();
     }, [country.countryRegion, result.countryRegion]);
 
-    //데이터 전송함수
-    const send = useCallback(()=>{
-        axios({
-            url: "http://localhost:8080/api/country/insert",
-            method :"post",
-            data : country
-        })
-        .then(response=>{
-            //과거예제에서는 등록이 완료되면 알림창 + 입력 데이터 및 클래스 청소를 했다
-            //지금은 페이지가 분할되어 있기 때문에 알림창 + 페이지 이동을 하면 된다
-            toast.success("국가 등록이 완료되었습니다.");
-
-            //리액트에서는 이동을 location.href로 할 수 없다 (안하는게 좋음)
-            //상단에 useNavigate()를 이용해서 도구를 생성하고 그 도구를 사용하여 이동
-            //navigate("이동할 페이지")
-            navigate("/country/list");
-        })
-        //.catch
-        //.finally
-    },[country]);
+    //데이터 전송 함수
+    const send = useCallback(async ()=>{
+        const response = await axios.post("http://localhost:8080/api/country/", country);
+        toast.success("국가 등록이 완료되었습니다");
+        navigate("/country/list");
+    }, [country]);
 
     return (<>
         <Jumbotron title="신규 국가 등록"/>
@@ -184,9 +168,9 @@ export default function CountryAdd() {
             </Form.Label>
             <Col sm={9}>
                 <Form.Control type="text" name="countryPopulation" value={country.countryPopulation}
-                        onChange={changeNumericValue} 
+                        onChange={changeNumericValue}
                         onBlur={checkCountryPopulation}
-                        className={`form-control ${result.countryPopulation}`}/>
+                        className={result.countryPopulation}/>
                 <div className="valid-feedback">인구가 설정되었습니다</div>
                 <div className="invalid-feedback">인구는 0보다 커야 합니다</div>
             </Col>

@@ -3,8 +3,8 @@ import Jumbotron from "../../templates/Jumbotron";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import { Button, Col, Row } from "react-bootstrap";
-import { FaList, FaPenToSquare, FaTrash } from "react-icons/fa6";
+import { Form, Button, Col, Row } from "react-bootstrap";
+import { FaCheck, FaList, FaPenToSquare, FaSquarePen, FaTrash, FaXmark } from "react-icons/fa6";
 import { useCallback } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -27,20 +27,19 @@ export default function CountryDetail() {
     //countryNo가 정상적인 숫자인 경우의 처리내용 작성
     const [country, setCountry] = useState(null);
     useEffect(()=>{
-        axios({
-            url:"http://localhost:8080/api/country/detail",
-            method : "get",
-            params: { countryNo : countryNo }
-        })
-        .then(response=>{
-            setCountry(response.data);
-        });
+        loadData();
     }, []);
 
-    const deleteCountry = useCallback(()=>{
+    const loadData = useCallback(async ()=>{
+        const response = await axios.get(`http://localhost:8080/api/country/${countryNo}`)
+        setCountry(response.data);
+        setBackup(response.data);
+    }, []);
+
+    const deleteCountry = useCallback(async ()=>{
         // const choice = window.confirm("정말 삭제하시겠습니까?\n삭제 후에는 복구가 안됩니다");
         // if(choice === false) return;
-        Swal.fire({
+        const result = await Swal.fire({
             title:"정말 삭제하시겠습니까?",
             text:"삭제한 데이터는 복구하실 수 없습니다",
             icon:"warning",
@@ -49,22 +48,46 @@ export default function CountryDetail() {
             cancelButtonText:"취소",
             confirmButtonColor:"#d63031",
             cancelButtonColor:"#b2bec3"
-        })
-        .then(result=>{
-            if(result.isConfirmed) {
-                axios({
-                    url:"http://localhost:8080/api/country/delete",
-                    method:"get",
-                    params:{ countryNo : countryNo }
-                })
-                .then(response=>{
-                    toast.error("국가 삭제가 완료되었습니다");
-                    navigate("/country/list");
-                });
-            }
         });
-        
+
+        if(result.isConfirmed === false) return;
+
+        const response = await axios.delete(`http://localhost:8080/api/country/${countryNo}`);
+        toast.error("국가 삭제가 완료되었습니다");
+        navigate("/country/list");
     }, [countryNo]);
+
+    //수정을 구현하기 위해서 논리형 state와 백업용 state 구현
+    const [backup, setBackup] = useState(null);
+    const [editMode, setEditMode] = useState({
+        countryName:false,
+        countryCapital:false,
+        countryRegion:false,
+        countryPopulation:false
+    });
+
+    const changeStringValue = useCallback(e=>{
+        const {name, value} = e.target;
+        setCountry({
+            ...country, 
+            [name] : value
+        });
+    }, [country]);
+
+    //국가명만 변경하는 함수
+    const updateCountryName = useCallback(async ()=>{
+        const response = await axios.patch(
+            `http://localhost:8080/api/country/${countryNo}`, 
+            {countryName : country.countryName}
+        );
+
+        //백업을 갱신
+        setBackup({...backup, countryName:country.countryName});
+        //수정모드를 취소
+        setEditMode({...editMode, countryName:false});
+        //알림(옵션)
+        toast.success("국가명이 변경되었습니다");
+    }, [country, backup, editMode]);
 
     return (<>
         <Jumbotron title="국가 상세 정보" content={`${countryNo}번 국가의 상세 정보 화면입니다`}/>
@@ -78,7 +101,26 @@ export default function CountryDetail() {
                 국가명
             </Col>
             <Col sm={9}>
-                {country.countryName}
+                { editMode.countryName !== true ? (<>
+
+                    <span>{country.countryName}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>{
+                                setEditMode({...editMode, countryName : true})
+                            }}/>
+
+                </>) : (<>
+                    <Form.Control type="text" className="w-auto d-inline-block"
+                        name="countryName" value={country.countryName}
+                        onChange={changeStringValue}/>
+                    <FaCheck className="text-success ms-2"
+                            onClick={updateCountryName}/>
+                    <FaXmark className="text-danger ms-2" 
+                            onClick={e=>{
+                                setCountry({...country, countryName: backup.countryName});
+                                setEditMode({...editMode, countryName : false});
+                            }}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -102,7 +144,7 @@ export default function CountryDetail() {
                 인구수
             </Col>
             <Col sm={9}>
-                {country.countryPopulation.toLocaleString()}명
+                {country.countryPopulation.toLocaleString()} 명
             </Col>
         </Row>
 

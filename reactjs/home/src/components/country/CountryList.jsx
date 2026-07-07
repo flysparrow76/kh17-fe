@@ -1,17 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
 import Jumbotron from "../../templates/Jumbotron";
-import axios from "axios"
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
 import { FaChevronDown, FaPlus } from "react-icons/fa6";
 import { ClockLoader } from "react-spinners";
-// import Row from "react-bootstrap/esm/Row";
-// import Col from "react-bootstrap/esm/Col";
-// import Form from "react-bootstrap/esm/Form";
-// import Table from "react-bootstrap/esm/Table";
-import { Row, Col, Table , Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function CountryList() {
-//state
+    //state
     const [countryList, setCountryList] = useState([]);
     const [last, setLast] = useState(false);
     const [size, setSize] = useState(10);
@@ -23,7 +19,7 @@ export default function CountryList() {
     }, []);
     
     //callback
-    const loadMoreList = useCallback(()=>{
+    const loadMoreList = useCallback(async ()=>{
         //이미 로딩중이면 차단
         if(loading === true) return;
         setLoading(true);
@@ -31,27 +27,22 @@ export default function CountryList() {
         const dataSize = countryList.length;
         const lastCountryNo = dataSize === 0 ? 0 : countryList[dataSize-1].countryNo;
 
-        axios({
-            url:"http://localhost:8080/api/country/listForReact",
-            method:"get",
-            params: {//GET방식일 때
-                lastCountryNo : lastCountryNo,
-                size : size
-            }
-        })
-        .then(response=>{
-            //덮어쓰기가 아니라 추가(이어쓰기)가 필요
-            //setCountryList(response.data.list);//덮어쓰기
-            setCountryList([...countryList, ...response.data.list]);//이어쓰기
-            setLast(response.data.last);
-        })
-        .finally(()=>setLoading(false));
+        // const response = await axios.get(
+        //     `http://localhost:8080/api/country/lastCountryNo/${lastCountryNo}/size/${size}`
+        // );
+        const response = await axios.post(
+            "http://localhost:8080/api/country/list-more",
+            { lastNo : lastCountryNo , size : size }
+        );
+        setCountryList([...countryList, ...response.data.list]);//이어쓰기
+        setLast(response.data.last);
+
+        setLoading(false);
     }, [countryList, size]);
 
-    //view
     return (<>
-        <Jumbotron title="국가 목록" content="등록된 국가의 목록을 확인하세요"/>
-
+        <Jumbotron title="국가 목록" content="등록된 국가들의 목록을 확인하세요"/>
+        
         <Row className="mt-4">
             <Col xs={6}>
                 <Form.Select value={size} onChange={e=>setSize(parseInt(e.target.value))}
@@ -63,46 +54,48 @@ export default function CountryList() {
                 </Form.Select>
             </Col>
             <Col xs={6} className="text-end">
-                {/* <Link to="/country/add" className="btn btn-success">
+                {/* 
+                <Link to="/country/add" className="btn btn-success">
                     <FaPlus/>
-                </Link> */}
+                    <span className="ms-2">신규 등록</span>
+                </Link> 
+                */}
+                
                 <Button as={Link} to="/country/add" variant="success">
                     <FaPlus/>
-                    <span className="ms-2">신규등록</span>
+                    <span className="ms-2">신규 등록</span>
                 </Button>
             </Col>
         </Row>
 
         <Row className="mt-4">
-            <Col className="text-nowrap">
-                <div className="text-nowrap table-responsive">
-                    <Table hover responsive striped>
-                        <thead>
-                            <tr>
-                                <th>번호</th>
-                                <th>국가</th>
-                                <th>대륙</th>
-                                <th>수도</th>
-                                <th className="text-end">인구</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {countryList.map(country=>(
-                            <tr key={country.countryNo}>
-                                <td>{country.countryNo}</td>
-                                <td>
-                                    <Link to={`/country/detail/${country.countryNo}`}>
-                                        {country.countryName}
-                                    </Link>
-                                </td>
-                                <td>{country.countryRegion}</td>
-                                <td>{country.countryCapital}</td>
-                                <td className="text-end">{country.countryPopulation.toLocaleString()}</td>
-                            </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                </div>
+            <Col>
+                <Table responsive striped hover className="text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>국가</th>
+                            <th>대륙</th>
+                            <th>수도</th>
+                            <th className="text-end">인구</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {countryList.map(country=>(
+                        <tr key={country.countryNo}>
+                            <td>{country.countryNo}</td>
+                            <td>
+                                <Link to={`/country/detail/${country.countryNo}`}>
+                                    {country.countryName}
+                                </Link>
+                            </td>
+                            <td>{country.countryRegion}</td>
+                            <td>{country.countryCapital}</td>
+                            <td className="text-end">{country.countryPopulation.toLocaleString()}</td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </Table>
             </Col>
         </Row>
 
@@ -111,7 +104,7 @@ export default function CountryList() {
         <Row className="mt-2">
             <Col>
                 <Button variant="outline-success" size="lg" 
-                    className="w-100" onClick={loadMoreList}>
+                        onClick={loadMoreList} className="w-100">
                     <FaChevronDown/>
                     <span className="mx-2">더보기</span>
                     <FaChevronDown/>
