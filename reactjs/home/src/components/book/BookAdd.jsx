@@ -129,7 +129,7 @@ export default function BookAdd(){
     //데이터 전송
     const send = useCallback(()=>{
         axios({
-            url: "http://localhost:8080/api/book/insert",
+            url: "/api/book/insert",
             method :"post",
             data : book
         })

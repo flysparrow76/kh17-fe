@@ -31,7 +31,9 @@ export default function CountryList() {
         //     `http://localhost:8080/api/country/lastCountryNo/${lastCountryNo}/size/${size}`
         // );
         const response = await axios.post(
-            "http://localhost:8080/api/country/list-more",
+            // "http://localhost:8080/api/country/list-more",
+            // `${import.meta.env.VITE_SERVER_URL}/api/country/list-more`,
+            "/api/country/list-more",
             { lastNo : lastCountryNo , size : size }
         );
         setCountryList([...countryList, ...response.data.list]);//이어쓰기

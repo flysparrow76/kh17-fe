@@ -28,7 +28,7 @@ export default function BookList() {
         const lastBookId = dataSize === 0 ? 0 : bookList[dataSize-1].bookId;
 
         axios({
-            url:"http://localhost:8080/api/book/listForReact",
+            url:"/api/book/listForReact",
             method:"get",
             params: {//GET방식일 때
                 lastBookId : lastBookId,

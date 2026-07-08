@@ -20,7 +20,7 @@ export default function BookDetail(){
     const [book, setBook] = useState(null);
     useEffect(()=>{
         axios({
-            url:"http://localhost:8080/api/book/detail",
+            url:"/api/book/detail",
             method : "get",
             params: { bookId : bookId }
         })
@@ -44,7 +44,7 @@ export default function BookDetail(){
         .then(result=>{
             if(result.isConfirmed) {
                 axios({
-                    url:"http://localhost:8080/api/book/delete",
+                    url:"/api/book/delete",
                     method:"get",
                     params:{ bookId : bookId }
                 })
