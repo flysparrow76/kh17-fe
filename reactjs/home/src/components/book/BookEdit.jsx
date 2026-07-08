@@ -1,15 +1,21 @@
-import { Button, Col, Form, Row } from "react-bootstrap";
-import Jumbotron from "../../templates/Jumbotron";
-import { FaAsterisk, FaPlus } from "react-icons/fa6";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import Jumbotron from "../../templates/Jumbotron";
+import { Button, Col, Row, Form } from "react-bootstrap";
+import { FaAsterisk, FaList, FaSquarePen, FaXmark } from "react-icons/fa6";
 
+export default function BookEdit(){
 
-export default function BookAdd(){
-    //state
-    const [book, setBook] = useState({
+    const { bookId } = useParams();
+    if(/^[0-9]+$/.test(bookId) === false) {//숫자가 아니면
+            return <Navigate to="/country/list" replace/>;
+        }
+
+    const navigate = useNavigate();
+
+    const [book , setBook] = useState({
         bookTitle:"",
         bookAuthor:"",
         bookPublisher:"",
@@ -18,52 +24,55 @@ export default function BookAdd(){
         bookPageCount:0,
         bookGenre:""
     });
+    useEffect(()=>{
+        loadData();
+    },[]);
+
+    const loadData = useCallback(async ()=>{
+        const response = await axios.get(`/api/book/${bookId}`)
+        setBook(response.data);
+    },[]);
 
     const [result, setResult] = useState({
-        bookTitle:null,
-        bookAuthor:null,
-        bookPublisher:null,
-        bookPublicationDate:null,
-        bookPrice:null,
-        bookPageCount:null,
-        bookGenre:null,
-        });
+        bookTitle:"",
+        bookAuthor:"",
+        bookPublisher:"",
+        bookPublicationDate:"",
+        bookPrice:"",
+        bookPageCount:"",
+        bookGenre:""
+    });
 
-    //페이지 이동 도구
-    const navigate = useNavigate(); 
-    
     const valid = useMemo(()=>{
-            if(result.bookTitle !== "is-valid") return false;
-            if(result.bookAuthor !== "is-valid") return false;
-            if(result.bookPublisher !== "is-valid") return false;
-            if(result.bookPublicationDate !== "is-valid") return false;
-            if(result.bookPrice !== "is-valid") return false;
-            if(result.bookPageCount !== "is-valid") return false;
-            if(result.bookGenre !== "is-valid") return false;
-            return true;
-        }, [result]);
-    
-    //callback - 호출 가능한 함수 (연관항목을 적어 갱신 최소화)
+        if(result.bookTitle !== "is-valid") return false;
+        if(result.bookAuthor !== "is-valid") return false;
+        if(result.bookPublisher !== "is-valid") return false;
+        if(result.bookPublicationDate !== "is-valid") return false;  
+        if(result.bookPrice !== "is-valid") return false;  
+        if(result.bookPageCount !== "is-valid") return false;  
+        if(result.bookGenre !== "is-valid") return false;  
+        return true;
+    },[result]);
+
     const changeStringValue = useCallback((e)=>{
-        const { name , value } = e.target;
+        const {name , value} = e.target;
 
         setBook({
-            ...book,//나머지는 그대로 유지하세요
+            ...book,
             [name] : value
         });
-    }, [book]);
-
+    },[book]);
     const changeNumericValue = useCallback((e)=>{
-            const { name , value } = e.target;
-            const regex = /[^0-9]/g;
-            const replacement = value.replace(regex, "");//숫자가 아닌 요소를 제거
-            const result = parseInt(replacement || 0);//숫자로 변환
-            
-            setBook({
-                ...book,//나머지 유지
-                [name] : result
-            });
-        }, [book]);
+        const { name , value } = e.target;
+        const regex = /[^0-9]/g;
+        const replacement = value.replace(regex,"");
+        const result = parseInt(replacement|| 0);
+
+        setBook({
+            ...book,
+            [name] : result
+        });
+    },[book]);
 
     //검사
     const checkBookTitle = useCallback(()=>{
@@ -122,19 +131,20 @@ export default function BookAdd(){
     useEffect(()=>{
         if(book.bookGenre === "" && result.bookGenre === "") return;
 
-        //검사함수를 실행하세요
         checkBookGenre();
-    }, [book.bookGenre, result.bookGenre]);
+    },[book.bookGenre, result.bookGenre]);
 
-    //데이터 전송
+    //데이터전송
     const send = useCallback(async()=>{
-        const response = await axios.post("/api/book/",book);
-        toast.success("도서 등록이 완료되었습니다");
-        navigate("/book/list");
+        const response = await axios.put(
+            `/api/book/${bookId}`,
+            book
+        );
+        toast.success("도서 정보 변경이 완료되었습니다");
+        navigate(`/book/detail/${bookId}`);
     },[book]);
-
     return(<>
-        <Jumbotron title="신규 도서 등록"/>
+    <Jumbotron title="도서 수정"/>
 
         <Row className="mt-4">
             <Form.Label column sm={3}>
@@ -207,7 +217,7 @@ export default function BookAdd(){
             <Col sm={9}>
                 <Form.Control type="text" name="bookPrice" 
                         value={book.bookPrice}
-                        onChange={changeStringValue} 
+                        onChange={changeNumericValue} 
                         onBlur={checkBookPrice}
                         className={result.bookPrice}/>
                 <div className="valid-feedback">가격이 설정되었습니다</div>
@@ -223,7 +233,7 @@ export default function BookAdd(){
             <Col sm={9}>
                 <Form.Control type="text" name="bookPageCount" 
                         value={book.bookPageCount}
-                        onChange={changeStringValue} 
+                        onChange={changeNumericValue} 
                         onBlur={checkBookPageCount}
                         className={result.bookPageCount}/>
                 <div className="valid-feedback">페이지수가 설정되었습니다</div>
@@ -255,11 +265,19 @@ export default function BookAdd(){
         </Row>
 
         <Row className="mt-5">
-            <Col>
-                <Button type="button" variant="success" className="w-100" 
+            <Col className="text-end">
+                <Button as={Link} to={`/book/list`} variant="secondary">
+                    <FaList className="me-2"/>
+                    <span>목록으로</span>
+                </Button>
+                <Button as={Link} to={`/book/detail/${bookId}`} variant="danger" className="ms-2">
+                    <FaXmark className="me-2"/>
+                    <span>취소하기</span>
+                </Button>
+                <Button type="button" variant="success" className="ms-2"
                     disabled={valid === false} onClick={send}>
-                    <FaPlus className="me-2"/>
-                    <span>등록하기</span>
+                    <FaSquarePen className="me-2"/>
+                    <span>수정하기</span>
                 </Button>
             </Col>
         </Row>

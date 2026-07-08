@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import axios from "axios";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { FaCheck, FaList, FaPenToSquare, FaSquarePen, FaTrash, FaXmark } from "react-icons/fa6";
 
 
 export default function LectureDetail() {
@@ -16,6 +17,7 @@ export default function LectureDetail() {
         return <Navigate to="/lecture/list" replace/>
     }
 
+    const navigate = useNavigate();
     //화면 처리
     const [lecture, setLecture] = useState(null);
     useEffect(()=>{
@@ -43,12 +45,12 @@ export default function LectureDetail() {
         //     url:`http://localhost:8080/api/lecture/detail/${lectureNo}`,
         //     method:"get"
         // });
-        const response = await axios.get(`/api/lecture/detail/${lectureNo}`);
+        const response = await axios.get(`/api/lecture/${lectureNo}`);
         setLecture(response.data);
+        setBackup(response.data);
     }, []);
 
     //삭제 함수 (async+await)
-    const navigate = useNavigate();
     const deleteLecture = useCallback(async ()=>{
         const result = await Swal.fire({
             title:"정말 삭제하시겠습니까?",
@@ -62,12 +64,62 @@ export default function LectureDetail() {
         });
         if(result.isConfirmed === false) return;
 
-        const response = await axios.get(`/api/lecture/delete/${lectureNo}`);
+        const response = await axios.delete(`/api/lecture/delete/${lectureNo}`);
         toast.error("강좌 삭제가 완료되었습니다");
         navigate("/lecture/list");
     }, [lectureNo]);
 
+    const [backup, setBackup] = useState(null);
+    const [editMode, setEditMode] = useState({
+        lectureCategory:false,
+        lectureTitle:false,
+        lectureDuration:false,
+        lecturePrice:false,
+        lectureType:false
+    });
 
+    const changeStringValue = useCallback(e=>{
+        const {name, value} = e.target;
+        setLecture({
+            ...lecture, 
+            [name] : value
+        });
+    }, [lecture]);
+    const changeNumericValue = useCallback(e=>{
+        const {name , value} = e.target;
+        const regex = /[^0-9]+/g;
+        const replacement = value.replace(regex,"");
+        const number = parseInt(replacement || 0 );
+        setLecture({
+            ...lecture, 
+            [name] : number
+        });
+    },[lecture])
+
+    const updateLecture = useCallback(async (field)=>{
+        const response = await axios.patch(
+            `/api/lecutre/${lectureNo}`, 
+            { [field] : lecture[field]}
+        );
+
+        //백업을 갱신
+        setBackup({...backup, [field]: lecture[field]});
+        //수정모드를 취소
+        setEditMode({...editMode, [field]:false});
+        //알림(옵션)
+        toast.success("강의이 변경되었습니다");
+    }, [lecture, backup, editMode]);
+
+    const cancelUpdate = useCallback((field)=>{
+        setLecture({...lecture, [field]: backup[field]});
+        setEditMode({...editMode, [field] : false});
+        toast.error("정보변경이 취소되었습니다.")
+
+    },[lecture, backup, editMode]);
+
+    const startUpdate = useCallback((field)=>{
+        setEditMode({...editMode,[field]:true})
+    },[editMode])
     return (<>
         <Jumbotron title="강좌 상세 정보"/>
 
@@ -79,7 +131,19 @@ export default function LectureDetail() {
                     분류
                 </Col>
                 <Col sm={9}>
-                    {lecture.lectureCategory}
+                    { editMode.lectureCategory !== true ? (<>
+                    <span>{lecture.lectureCategory}</span>
+                    <FaSquarePen className="text-warning ms-2" onClick={e=>startUpdate("lectureCategory")}/>
+                </>) : (<>
+                    <Form.Select className="w-auto d-inline-block" name="lectureCategory" 
+                        value={lecture.lectureCategory} onChange={changeStringValue}>
+                        <option>이론</option>
+                        <option>시험</option>
+                        <option>실습</option>
+                    </Form.Select>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateLecture("lectureCategory")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("lectureCategory")}/>
+                </>) }
                 </Col>
             </Row>
             <Row className="mt-4 fs-4">
@@ -87,7 +151,19 @@ export default function LectureDetail() {
                     강좌명
                 </Col>
                 <Col sm={9}>
-                    {lecture.lectureTitle}
+                    { editMode.lectureTitle !== true ? (<>
+
+                    <span>{lecture.lectureTitle}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("lectureTitle")}/>
+
+                </>) : (<>
+                    <Form.Control type="text" className="w-auto d-inline-block"
+                        name="lectureTitle" value={lecture.lectureTitle}
+                        onChange={changeStringValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateLecture("lectureTitle")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("lectureTitle")}/>
+                </>) }
                 </Col>
             </Row>
             <Row className="mt-4 fs-4">
@@ -95,7 +171,19 @@ export default function LectureDetail() {
                     강의시간
                 </Col>
                 <Col sm={9}>
-                    {lecture.lectureDuration} 시간
+                    { editMode.lectureDuration !== true ? (<>
+
+                    <span>{lecture.lectureDuration}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("lectureDuration")}/>
+
+                </>) : (<>
+                    <Form.Control type="text" className="w-auto d-inline-block"
+                        name="lectureDuration" value={lecture.lectureDuration}
+                        onChange={changeNumericValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateLecture("lectureDuration")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("lectureDuration")}/>
+                </>) }
                 </Col>
             </Row>
             <Row className="mt-4 fs-4">
@@ -103,7 +191,19 @@ export default function LectureDetail() {
                     수강료
                 </Col>
                 <Col sm={9}>
-                    {lecture.lecturePrice.toLocaleString()} KRW
+                    { editMode.lecturePrice !== true ? (<>
+
+                    <span>{lecture.lecturePrice}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("lecturePrice")}/>
+
+                </>) : (<>
+                    <Form.Control type="text" className="w-auto d-inline-block"
+                        name="lecturePrice" value={lecture.lecturePrice}
+                        onChange={changeNumericValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateLecture("lecturePrice")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("lecturePrice")}/>
+                </>) }
                 </Col>
             </Row>
             <Row className="mt-4 fs-4">
@@ -111,15 +211,38 @@ export default function LectureDetail() {
                     수업방식
                 </Col>
                 <Col sm={9}>
-                    {lecture.lectureType}
+                    { editMode.lectureType !== true ? (<>
+                    <span>{lecture.lectureType}</span>
+                    <FaSquarePen className="text-warning ms-2" onClick={e=>startUpdate("lectureType")}/>
+                </>) : (<>
+                    <Form.Select className="w-auto d-inline-block" name="lectureType" 
+                        value={lecture.lectureType} onChange={changeStringValue}>
+                        <option>이론</option>
+                        <option>시험</option>
+                        <option>실습</option>
+                    </Form.Select>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateLecture("lectureType")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("lectureType")}/>
+                </>) }
                 </Col>
             </Row>
 
             <Row className="mt-5">
                 <Col className="text-end">
-                    <Button className="ms-2" variant="danger" onClick={deleteLecture}>삭제하기</Button>
-                    <Button className="ms-2" variant="warning">수정하기</Button>
-                    <Button className="ms-2" variant="secondary" as={Link} to={"/lecture/list"}>목록으로</Button>
+                    <Button className="ms-2" variant="danger" onClick={deleteLecture}>
+                        <FaTrash className="me-2"/>
+                        <span>삭제하기</span>
+                    </Button>
+                    <Button className="ms-2" variant="warning"
+                        as={Link} to={`/lecture/edit/${lectureNo}`}>
+                        <FaPenToSquare className="me-2"/>
+                        <span>수정하기</span>
+                    </Button>
+                    <Button className="ms-2" variant="secondary"
+                            as={Link} to="/lecture/list">
+                        <FaList className="me-2"/>
+                        <span>목록으로</span>
+                    </Button>
                 </Col>
             </Row>
 

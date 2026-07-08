@@ -3,12 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Jumbotron from "../../templates/Jumbotron";
-import { Button, Col, Row } from "react-bootstrap";
-import { FaList, FaPenToSquare, FaTrash } from "react-icons/fa6";
+import { Button, Col, Form, Row } from "react-bootstrap";
+import { FaCheck, FaList, FaPenToSquare, FaSquarePen, FaTrash, FaXmark } from "react-icons/fa6";
 import Swal from "sweetalert2";
 
 
 export default function BookDetail(){
+
     const { bookId } = useParams();
 
     if(/^[0-9]+$/.test(bookId) === false) {//숫자가 아니면
@@ -19,19 +20,18 @@ export default function BookDetail(){
 
     const [book, setBook] = useState(null);
     useEffect(()=>{
-        axios({
-            url:"/api/book/detail",
-            method : "get",
-            params: { bookId : bookId }
-        })
-        .then(response=>{
-            setBook(response.data);
-        });
-    }, [bookId]);
+        loadData();
+    }, []);
 
-    const deleteBook = useCallback(()=>{
+    const loadData = useCallback(async ()=>{
+        const response = await axios.get(`/api/book/${bookId}`)
+        setBook(response.data);
+        setBackup(response.data);
+    },[]);
 
-        Swal.fire({
+    const deleteBook = useCallback(async()=>{
+
+        const result = await Swal.fire({
             title:"정말 삭제하시겠습니까?",
             text:"삭제한 데이터는 복구하실 수 없습니다",
             icon:"warning",
@@ -40,22 +40,67 @@ export default function BookDetail(){
             cancelButtonText:"취소",
             confirmButtonColor:"#d63031",
             cancelButtonColor:"#b2bec3"
-        })
-        .then(result=>{
-            if(result.isConfirmed) {
-                axios({
-                    url:"/api/book/delete",
-                    method:"get",
-                    params:{ bookId : bookId }
-                })
-                .then(response=>{
-                    toast.error("국가 삭제가 완료되었습니다");
-                    navigate("/book/list");
-                });
-            }
         });
+
+        if(result.isConfirmed === false) return;
         
+        const response = await axios.delete(`/api/book/${bookId}`);
+        toast.error("도서삭제 완료되었습니다");
+        navigate("/book/list");
+
     }, [bookId]);
+
+    const [backup, setBackup] = useState(null);
+    const [editMode, setEditMode] = useState({
+        bookTitle:false,
+        bookAuthor:false,
+        bookPublisher:false,
+        bookPublicationDate:false,
+        bookPrice:false,
+        bookPageCount:false,
+        bookGenre:false,
+    });
+    const changeStringValue = useCallback(e=>{
+        const {name, value} = e.target;
+        setBook({
+            ...book, 
+            [name] : value
+        });
+    }, [book]);
+    const changeNumericValue = useCallback(e=>{
+        const {name , value} = e.target;
+        const regex = /[^0-9]+/g;
+        const replacement = value.replace(regex,"");
+        const number = parseInt(replacement || 0 );
+        setBook({
+            ...book, 
+            [name] : number
+        });
+    },[book])
+
+    //개별 수정
+    const updateBook = useCallback(async (field)=>{
+        const response = await axios.patch(
+            `/api/book/${bookId}`, 
+            { [field] : book[field]}
+        );
+
+        setBackup({...backup, [field]: book[field]});
+        setEditMode({...editMode, [field]:false});
+        toast.success("변경되었습니다");
+    }, [book, backup, editMode]);
+
+    const cancelUpdate = useCallback((field)=>{
+        setBook({...book, [field]: backup[field]});
+        setEditMode({...editMode, [field] : false});
+        toast.error("정보변경이 취소되었습니다.")
+
+    },[book, backup, editMode]);
+
+    const startUpdate = useCallback((field)=>{
+        setEditMode({...editMode,[field]:true})
+    },[editMode])
+
     return(<>
         <Jumbotron title="도서 상세 정보" content={`${bookId}번 도서의 상세 정보 화면입니다`}/>
         { book === null ? (
@@ -66,7 +111,19 @@ export default function BookDetail(){
                 도서명
             </Col>
             <Col sm={9}>
-                {book.bookTitle}
+                { editMode.bookTitle !== true ? (<>
+
+                    <span>{book.bookTitle}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("bookTitle")}/>
+
+                </>) : (<>
+                    <Form.Control type="text" className="w-auto d-inline-block"
+                        name="bookTitle" value={book.bookTitle}
+                        onChange={changeStringValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookTitle")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookTitle")}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -74,7 +131,19 @@ export default function BookDetail(){
                 작가
             </Col>
             <Col sm={9}>
-                {book.bookAuthor}
+                { editMode.bookAuthor !== true ? (<>
+
+                    <span>{book.bookAuthor}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("bookAuthor")}/>
+
+                </>) : (<>
+                    <Form.Control type="text" className="w-auto d-inline-block"
+                        name="bookAuthor" value={book.bookAuthor}
+                        onChange={changeStringValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookAuthor")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookAuthor")}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -82,7 +151,19 @@ export default function BookDetail(){
                 출판사
             </Col>
             <Col sm={9}>
-                {book.bookPublisher}
+                { editMode.bookPublisher !== true ? (<>
+
+                    <span>{book.bookPublisher}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("bookPublisher")}/>
+
+                </>) : (<>
+                    <Form.Control type="type" className="w-auto d-inline-block"
+                        name="bookPublisher" value={book.bookPublisher}
+                        onChange={changeStringValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookPublisher")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookPublisher")}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -90,7 +171,19 @@ export default function BookDetail(){
                 출판일
             </Col>
             <Col sm={9}>
-                {book.bookPublicationDate}
+                { editMode.bookPublicationDate !== true ? (<>
+
+                    <span>{book.bookPublicationDate}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("bookPublicationDate")}/>
+
+                </>) : (<>
+                    <Form.Control type="date" className="w-auto d-inline-block"
+                        name="bookPublicationDate" value={book.bookPublicationDate}
+                        onChange={changeStringValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookPublicationDate")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookPublicationDate")}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -98,7 +191,19 @@ export default function BookDetail(){
                 가격
             </Col>
             <Col sm={9}>
-                {book.bookPrice.toLocaleString()}원
+                { editMode.bookPrice !== true ? (<>
+
+                    <span>{book.bookPrice}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("bookPrice")}/>
+
+                </>) : (<>
+                    <Form.Control type="type" className="w-auto d-inline-block"
+                        name="bookPrice" value={book.bookPrice}
+                        onChange={changeNumericValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookPrice")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookPrice")}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -106,7 +211,19 @@ export default function BookDetail(){
                 페이지 수
             </Col>
             <Col sm={9}>
-                {book.bookPageCount.toLocaleString()}페이지
+                { editMode.bookPageCount !== true ? (<>
+
+                    <span>{book.bookPageCount}</span>
+                    <FaSquarePen className="text-warning ms-2"
+                            onClick={e=>startUpdate("bookPageCount")}/>
+
+                </>) : (<>
+                    <Form.Control type="type" className="w-auto d-inline-block"
+                        name="bookPageCount" value={book.bookPageCount}
+                        onChange={changeNumericValue}/>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookPageCount")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookPageCount")}/>
+                </>) }
             </Col>
         </Row>
         <Row className="mt-4 fs-4">
@@ -114,7 +231,24 @@ export default function BookDetail(){
                 장르
             </Col>
             <Col sm={9}>
-                {book.bookGenre}
+                { editMode.bookGenre !== true ? (<>
+                    <span>{book.bookGenre}</span>
+                    <FaSquarePen className="text-warning ms-2" onClick={e=>startUpdate("bookGenre")}/>
+                </>) : (<>
+                    <Form.Select className="w-auto d-inline-block" name="bookGenre" 
+                        value={book.bookGenre} onChange={changeStringValue}>
+                        <option>판타지</option>
+                        <option>교양</option>
+                        <option>소설</option>
+                        <option>역사</option>
+                        <option>과학</option>
+                        <option>추리소설</option>
+                        <option>자기계발</option>
+                        <option>수험서</option>
+                    </Form.Select>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateBook("bookGenre")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("bookGenre")}/>
+                </>) }
             </Col>
         </Row>
 
@@ -124,7 +258,8 @@ export default function BookDetail(){
                     <FaTrash className="me-2"/>
                     <span>삭제하기</span>
                 </Button>
-                <Button className="ms-2" variant="warning">
+                <Button className="ms-2" variant="warning"
+                    as={Link} to={`/book/edit/${bookId}`}>
                     <FaPenToSquare className="me-2"/>
                     <span>수정하기</span>
                 </Button>

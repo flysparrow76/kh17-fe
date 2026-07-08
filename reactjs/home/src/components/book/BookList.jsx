@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Jumbotron from "../../templates/Jumbotron";
 import { Button, Col, Form, Row, Table } from "react-bootstrap";
-import { FaChevronDown, FaPlus } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { FaCheck, FaChevronDown, FaPlus, FaXmark } from "react-icons/fa6";
+import { Link, useNavigate } from "react-router-dom";
 import { ClockLoader } from "react-spinners";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 export default function BookList() {
     //state
@@ -13,13 +15,33 @@ export default function BookList() {
     const [size, setSize] = useState(10);
     const [loading, setLoading] = useState(false);
 
+    const navigate = useNavigate();
     //effect
     useEffect(()=>{
         loadMoreList();
     }, []);
 
+    const deleteBook = useCallback(async(bookId)=>{
+         const result = await Swal.fire({
+                    title:"정말 삭제하시겠습니까?",
+                    text:"삭제한 데이터는 복구하실 수 없습니다",
+                    icon:"warning",
+                    showCancelButton:true,
+                    confirmButtonText:"삭제",
+                    cancelButtonText:"취소",
+                    confirmButtonColor:"#d63031",
+                    cancelButtonColor:"#b2bec3"
+                });
+        
+        if(result.isConfirmed === false) return;
+
+        const response = await axios.delete(`/api/book/${bookId}`);
+        toast.error("도서삭제 완료되었습니다");
+        navigate("/book/list");
+    });
+
     //callback
-    const loadMoreList = useCallback(()=>{
+    const loadMoreList = useCallback(async()=>{
         //이미 로딩중이면 차단
         if(loading === true) return;
         setLoading(true);
@@ -27,19 +49,14 @@ export default function BookList() {
         const dataSize = bookList.length;
         const lastBookId = dataSize === 0 ? 0 : bookList[dataSize-1].bookId;
 
-        axios({
-            url:"/api/book/listForReact",
-            method:"get",
-            params: {//GET방식일 때
-                lastBookId : lastBookId,
-                size : size
-            }
-        })
-        .then(response=>{
-            setBookList([...bookList, ...response.data.list]);//이어쓰기
-            setLast(response.data.last);
-        })
-        .finally(()=>setLoading(false));
+        const response = await axios.post(
+            "/api/book/list-more",
+            { lastNo : lastBookId , size : size }
+        );
+        setBookList([...bookList, ...response.data.list]);//이어쓰기
+        setLast(response.data.last);
+
+        setLoading(false);
     }, [bookList, size]);
 
     return (<>
@@ -94,6 +111,12 @@ export default function BookList() {
                                 <td className="text-end">{book.bookPrice.toLocaleString()}원</td>
                                 <td className="text-end">{book.bookPageCount.toLocaleString()}페이지</td>
                                 <td>{book.bookGenre}</td>
+                                <td>
+                                    <FaCheck className="text-success ms-2" onClick={()=>()}/>
+                                </td>
+                                <td>
+                                    <FaXmark className="text-danger ms-2" onClick={()=>deleteBook(book.bookId)}/>
+                                </td>
                             </tr>
                             ))}
                         </tbody>
