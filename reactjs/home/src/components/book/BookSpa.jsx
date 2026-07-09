@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Badge, Button, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
-import { FaPlus, FaChevronDown, FaAsterisk, FaXmark, FaSquarePen } from "react-icons/fa6";
+import { FaPlus, FaChevronDown, FaAsterisk, FaXmark, FaPen, FaCheck, FaSquarePen } from "react-icons/fa6";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -71,55 +71,90 @@ export default function BookSpa() {
 
     const checkBookTitle = useCallback(()=>{
         const valid = book.bookTitle.length > 0;
-        setResult({
-            ...result,
+
+        //아래와 같이 setResult를 하면 여러개의 setResult가 실행될 때 순차실행이 안된다 (비동기 실행)
+        // setResult({
+        //     ...result,
+        //     bookTitle : valid ? "is-valid" : "is-invalid"
+        // })
+
+        //만약 동시다발적인 setResult가 발생할 수 있고 이 경우 순차적인 실행을 원한다면 (동기 실행)
+        setResult(prev=>({
+            ...prev,
             bookTitle : valid ? "is-valid" : "is-invalid"
-        })
+        }))
     }, [book, result]);
     const checkBookPublisher = useCallback(()=>{
-        setResult({
-            ...result,
-            bookPublisher : "is-valid"
-        })
+        // setResult({
+        //     ...result,
+        //     bookPublisher : "is-valid"
+        // })
+        setResult(prev=>({
+            ...prev,
+            bookPublisher: "is-valid"
+        }))        
     }, [book, result]);
     const checkBookAuthor = useCallback(()=>{
         const regex = /^[^!@#$]+$/;
-        const valid = book.bookAuthor.length === 0 
-                        || regex.test(book.bookAuthor);//없거나 형식에 맞거나
-        setResult({
-            ...result,
+        // const valid = book.bookAuthor?.length === 0 
+        //                 || regex.test(book.bookAuthor);//없거나 형식에 맞거나
+        const valid = !book.bookAuthor || regex.test(book.bookAuthor);//없거나 형식에 맞거나
+        // setResult({
+        //     ...result,
+        //     bookAuthor : valid ? "is-valid" : "is-invalid"
+        // })
+        setResult(prev=>({
+            ...prev,
             bookAuthor : valid ? "is-valid" : "is-invalid"
-        })
+        }));
     }, [book, result]);
     const checkBookPublicationDate = useCallback(()=>{
         const regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/;
-        const valid = book.bookPublicationDate.length === 0
-                        || regex.test(book.bookPublicationDate);
-        setResult({
-            ...result,
+        // const valid = book.bookPublicationDate?.length == 0
+        //                 || regex.test(book.bookPublicationDate);
+        const valid = !book.bookPublicationDate || regex.test(book.bookPublicationDate);
+
+        // setResult({
+        //     ...result,
+        //     bookPublicationDate : valid ? "is-valid" : "is-invalid"
+        // });
+        setResult(prev=>({
+            ...prev,
             bookPublicationDate : valid ? "is-valid" : "is-invalid"
-        });
+        }));
     }, [book, result]);
     const checkBookPrice = useCallback(()=>{
         const valid = book.bookPrice >= 0;
-        setResult({
-            ...result,
+        // setResult({
+        //     ...result,
+        //     bookPrice : valid ? "is-valid" : "is-invalid"
+        // });
+        setResult(prev=>({
+            ...prev,
             bookPrice : valid ? "is-valid" : "is-invalid"
-        });
+        }));
     }, [book, result]);
     const checkBookPageCount = useCallback(()=>{
         const valid = book.bookPageCount > 0;
-        setResult({
-            ...result,
+        // setResult({
+        //     ...result,
+        //     bookPageCount : valid ? "is-valid" : "is-invalid"
+        // });
+        setResult(prev=>({
+            ...prev,
             bookPageCount : valid ? "is-valid" : "is-invalid"
-        });
+        }));
     }, [book, result]);
     const checkBookGenre = useCallback(()=>{
         const valid = ["판타지","교양","소설","역사","과학","추리소설","자기계발","수험서"].includes(book.bookGenre);
-        setResult({
-            ...result,
+        // setResult({
+        //     ...result,
+        //     bookGenre: valid ? "is-valid" : "is-invalid"
+        // });
+        setResult(prev=>({
+            ...prev,
             bookGenre: valid ? "is-valid" : "is-invalid"
-        });
+        }));
     }, [book, result]);
 
     useEffect(()=>{
@@ -162,7 +197,7 @@ export default function BookSpa() {
     }, []);
 
     //전송
-    const send = useCallback(async ()=>{
+    const save = useCallback(async ()=>{
         const response = await axios.post("/api/book/", book);
         toast.success("신규 도서가 등록되었습니다");
         //setModal(false);//모달을 닫는건 맞지만...(권장하지 않음)
@@ -179,16 +214,64 @@ export default function BookSpa() {
         //- 값 변경을 함수 형태로 설정하면 과거값을 추적하지 않아도 사용 가능
         setBookList(prev=>([response.data, ...prev]));
     }, [book, /*bookList*/]);
-    
-    //수정용으로 모달을 띄우는 함수
+    const edit = useCallback(async ()=>{
+        const response = await axios.put(`/api/book/${book.bookId}`, book);
+        toast.success(`${book.bookId}번 도서 정보 변경완료`);
+        closeModal();
+        
+        //서버의 응답 결과(response.data)를 bookList에서 찾아서 덮어쓰기한다(목록이 갱신된 척한다)
+        // setBookList(bookList.map(...));
+        setBookList(prev=>prev.map(
+            book=>{
+                if(book.bookId === response.data.bookId){//내가 찾던책이면
+                    return {...response.data};
+                }
+                return {...book};
+            }))
+    }, [book]);
+
+    //만약 개별항목별로 수정이 가능하게 하려면 목록과 똑같은 상태배열이 있거나, 목록에 상태가 포함되어야 한다
+    const [editMode, setEditMode] = useState([]);
+    useEffect(()=>{
+        setEditMode(bookList.map(
+            book=>({
+                bookTitle : false,
+                bookAuthor : false,
+                bookPublisher : false,
+                bookPublicationDate : false,
+                bookPrice : false,
+                bookPageCount : false,
+                bookGenre : false
+            })
+        ));
+    }, [bookList]);
+
+    // 모달을 띄우는 함수
     const openModal = useCallback(()=>{
         setModal(true);
-    },[])
-    const openModalToEdit = useCallback((target)=>{
-        // setBook(target); //target이 쳐다보는 대상을 동일하게 쳐다보도록 설정해라(얕은 복사,shallow copy)
-        setBook({...target});// target의 모든 데이터를 복사해서 쳐다보도록 설정해라(깊은 복사,deep copy)
+    }, []);
+    const openModalToEdit = useCallback(target=>{
+        //setBook(target);//target이 쳐다보는 대상을 동일하게 쳐다보도록 설정해라 (얕은복사, shallow copy)
+        setBook({...target});//target의 모든 데이터를 복사해서 쳐다보도록 설정해라 (깊은복사, deep copy)
         openModal();
-    },[])
+    }, []);
+
+    const isAddMode = useMemo(()=>{
+        return book.bookId === undefined;
+    }, [book]);
+
+    //isAddMode가 true가 되면 수정이 시작되었다는 뜻이므로 검사를 미리 한번 수행해두자
+    useEffect(()=>{
+        if(isAddMode === true) return;
+
+        checkBookTitle();
+        checkBookAuthor();
+        checkBookPublisher();
+        checkBookPublicationDate();
+        checkBookPrice();
+        checkBookPageCount();
+        checkBookGenre();
+    }, [isAddMode]);
 
     return (<>
         <Jumbotron title="도서 CRUD 통합 구현" content="한 페이지에서 CRUD를 모두 처리해봅니다" />
@@ -196,7 +279,7 @@ export default function BookSpa() {
         {/* 등록을 위한 모달을 띄우는 버튼 */}
         <Row className="mt-4">
             <Col className="text-end">
-                <Button variant="success" onClick={e => openModal(true)}>
+                <Button variant="success" onClick={openModal}>
                     <FaPlus />
                     <span>신규 등록</span>
                 </Button>
@@ -231,7 +314,7 @@ export default function BookSpa() {
                             </p>
                             <div className="text-end">
                                 <FaSquarePen className="text-danger" size={36}
-                                    onClick={e=>openModalToEdit(book)}/>
+                                        onClick={e=>openModalToEdit(book)}/>
                             </div>
                         </div>
                     </ListGroup.Item>
@@ -259,7 +342,9 @@ export default function BookSpa() {
             keyboard={false}
         >
             <Modal.Header closeButton>
-                <Modal.Title>신규 도서 등록</Modal.Title>
+                <Modal.Title>
+                    {isAddMode ? "신규 도서 등록" : `${book.bookId}번 도서 정보 수정`}
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Container fluid>
@@ -359,14 +444,23 @@ export default function BookSpa() {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>
-                    <FaXmark/>
+                    <FaXmark className="me-2"/>
                     <span>취소하기</span>
                 </Button>
+
+                {isAddMode ? (
                 <Button variant="success" disabled={allValid === false}
-                        onClick={send}>
+                        onClick={save}>
                     <FaPlus/>
                     <span>등록하기</span>
                 </Button>
+                ) : (
+                <Button variant="warning" disabled={allValid === false}
+                        onClick={edit}>
+                    <FaPen/>
+                    <span>수정하기</span>
+                </Button>
+                )}
             </Modal.Footer>
         </Modal>
     </>)
