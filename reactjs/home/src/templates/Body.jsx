@@ -11,7 +11,8 @@ import LectureDetail from "@components/lecture/LectureDetail";
 import BookAdd from "@components/book/BookAdd";
 import BookDetail from "@components/book/BookDetail";
 import CountryEdit from "@components/country/CountryEdit";
-import BookEdit from "../components/book/BookEdit";
+import BookEdit from "@components/book/BookEdit";
+import BookSpa from "@components/book/BookSpa";
 
 
 export default function Body() {
@@ -31,9 +32,11 @@ export default function Body() {
         <Route path="/lecture/detail/:lectureNo" element={<LectureDetail/>}/>
 
         <Route path="/book/list" element={<BookList/>}/>
+        <Route path="/book/spa" element={<BookSpa/>}/>
         <Route path="/book/add" element={<BookAdd/>}/>
         <Route path="/book/detail/:bookId" element={<BookDetail/>}/>
         <Route path="/book/edit/:bookId" element={<BookEdit/>}/>
+
         {/* fallback route */}
         <Route path="*" element={<NotFound/>}/>
     </Routes>

@@ -15,30 +15,10 @@ export default function BookList() {
     const [size, setSize] = useState(10);
     const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
     //effect
     useEffect(()=>{
         loadMoreList();
     }, []);
-
-    const deleteBook = useCallback(async(bookId)=>{
-         const result = await Swal.fire({
-                    title:"정말 삭제하시겠습니까?",
-                    text:"삭제한 데이터는 복구하실 수 없습니다",
-                    icon:"warning",
-                    showCancelButton:true,
-                    confirmButtonText:"삭제",
-                    cancelButtonText:"취소",
-                    confirmButtonColor:"#d63031",
-                    cancelButtonColor:"#b2bec3"
-                });
-        
-        if(result.isConfirmed === false) return;
-
-        const response = await axios.delete(`/api/book/${bookId}`);
-        toast.error("도서삭제 완료되었습니다");
-        navigate("/book/list");
-    });
 
     //callback
     const loadMoreList = useCallback(async()=>{
@@ -101,7 +81,7 @@ export default function BookList() {
                             <tr key={book.bookId}>
                                 <td>{book.bookId}</td>
                                 <td>
-                                    <Link to={`/book/detail/${book.bookId}`}>
+                                    <Link to ={`/book/detail/${book.bookId}`}>
                                         {book.bookTitle}
                                     </Link>
                                 </td>
@@ -111,12 +91,6 @@ export default function BookList() {
                                 <td className="text-end">{book.bookPrice.toLocaleString()}원</td>
                                 <td className="text-end">{book.bookPageCount.toLocaleString()}페이지</td>
                                 <td>{book.bookGenre}</td>
-                                <td>
-                                    <FaCheck className="text-success ms-2" onClick={()=>()}/>
-                                </td>
-                                <td>
-                                    <FaXmark className="text-danger ms-2" onClick={()=>deleteBook(book.bookId)}/>
-                                </td>
                             </tr>
                             ))}
                         </tbody>

@@ -27,7 +27,7 @@ export default function BookAdd(){
         bookPrice:null,
         bookPageCount:null,
         bookGenre:null,
-        });
+    });
 
     //페이지 이동 도구
     const navigate = useNavigate(); 
@@ -233,7 +233,7 @@ export default function BookAdd(){
 
         <Row className="mt-4">
             <Form.Label column sm={3}>
-                <span>대륙명</span>
+                <span>장르</span>
                 <FaAsterisk className="text-danger"/>
             </Form.Label>
             <Col sm={9}>
