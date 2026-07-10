@@ -13,6 +13,7 @@ import BookDetail from "@components/book/BookDetail";
 import CountryEdit from "@components/country/CountryEdit";
 import BookEdit from "@components/book/BookEdit";
 import BookSpa from "@components/book/BookSpa";
+import CountrySearch from "@components/country/CountrySearch";
 
 
 export default function Body() {
@@ -26,6 +27,7 @@ export default function Body() {
         {/* 제일 마지막에 적혀있는 값을 countryNo라는 이름으로 관리하겠다 */}
         <Route path="/country/detail/:countryNo" element={<CountryDetail/>}/>
         <Route path="/country/edit/:countryNo" element={<CountryEdit/>}/>
+        <Route path="/country/search" element={<CountrySearch/>}/>
 
         <Route path="/lecture/list" element={<LectureList/>}/>
         <Route path="/lecture/add" element={<LectureAdd/>}/>
