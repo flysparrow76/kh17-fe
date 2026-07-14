@@ -16,6 +16,8 @@ import LectureDetail from "@components/lecture/LectureDetail";
 import BookList from "@components/book/BookList";
 import BookSpa from "@components/book/BookSpa";
 
+import AccountJoin from "@components/account/AccountJoin";
+
 
 export default function Body() {
 
@@ -37,6 +39,9 @@ export default function Body() {
         
         <Route path="/book/list" element={<BookList/>}/>
         <Route path="/book/spa" element={<BookSpa/>}/>
+
+        {/* 회원관련 */}
+        <Route path="/account/join" element={<AccountJoin/>}/>
 
         {/* fallback route */}
         <Route path="*" element={<NotFound/>}/>
