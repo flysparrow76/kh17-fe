@@ -1,8 +1,9 @@
 import Jumbotron from "@templates/Jumbotron";
-import { use, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { FaAsterisk, FaMagnifyingGlass, FaUserPlus, FaXmark } from "react-icons/fa6";
+import { FaAsterisk, FaEye, FaEyeSlash, FaMagnifyingGlass, FaUserPlus, FaXmark } from "react-icons/fa6";
+import axios from "axios";
 
 export default function AccountJoin() {
     //state
@@ -21,17 +22,23 @@ export default function AccountJoin() {
     });
 
     const [result, setResult] = useState({
-        accountId: null,
+        //accountId: null,
+        accountId : { clazz : null , code : null },
         accountPassword: null,
         accountPassword2: null,
         accountEmail: null,
-        accountNickname: null,
+        accountNickname: { clazz : null , code : null },
         accountBirth: null,
         accountContact: null,
         accountPost: null,
         accountAddress1: null,
         accountAddress2: null,
         accountMessage: null
+    });
+
+    const [visible, setVisible] = useState({
+        accountPassword : false,
+        accountPassword2 : false,
     });
 
     //callback
@@ -43,21 +50,26 @@ export default function AccountJoin() {
             [name] : value
         }));
     }, []);
-    // const changeNumericValue = useCallback(e=>{
-    //     const {name, value} =e.target;
-    //     const regex = /[^0-9]/g;
-    //     const replacement = value.replace(regex,"");
-    //     const result = parseInt(replacement || 0);
-        
-    //     setAccount(pre=>)
-    // },[])
 
     //- 검사
-    const checkAccountId = useCallback(e=>{
+    const checkAccountId = useCallback(async e=>{
         const regex = /^[a-z][a-z0-9]{4,19}$/;
         const valid = regex.test(account.accountId);
-        const clazz = valid ? "is-valid" : "is-invalid";
-        setResult(prev=>({...prev, accountId : clazz}));
+        if(valid === false) {//아이디 형식오류
+            setResult(prev=>({
+                ...prev, 
+                accountId : { clazz : "is-invalid" , code : "format" }
+            }));
+            return;
+        }
+        //형식 통과 → 중복 검사
+        const response = await axios.get(`/api/account/check-id/${account.accountId}`);
+        const clazz = response.data === true ? "is-valid" : "is-invalid";
+        const code = response.data === true ? null : "duplicate";
+        setResult(prev=>({
+            ...prev, 
+            accountId : { clazz : clazz , code : code }
+        }));
     }, [account]);
 
     const checkAccountPassword = useCallback(e=>{
@@ -89,13 +101,23 @@ export default function AccountJoin() {
         }));
     }, [account]);
 
-    const checkAccountNickname = useCallback(e=>{
+    const checkAccountNickname = useCallback(async e=>{
         const regex = /^[가-힣A-Za-z0-9]{1,10}$/;
         const valid = regex.test(account.accountNickname);
-        const clazz = valid ? "is-valid" : "is-invalid";
+        if(valid === false) {//형식위반
+            setResult(prev=>({
+                ...prev,
+                accountNickname : { clazz: "is-invalid" , code: "format" }
+            }));    
+            return;
+        }
+        //형식통과 → 중복검사
+        const { data } = await axios.get(`/api/account/check-nickname/${account.accountNickname}`);
+        const clazz = data ? "is-valid" : "is-invalid";
+        const code = data ? null : "duplicate";
         setResult(prev=>({
             ...prev,
-            accountNickname : clazz
+            accountNickname : { clazz : clazz , code : code }
         }));
     }, [account]);
 
@@ -115,9 +137,9 @@ export default function AccountJoin() {
         const clazz = valid ? "is-valid" : "is-invalid";
         setResult(prev=>({
             ...prev,
-            accountContact : clazz
+            accountContact: clazz
         }));
-    },[account]);
+    }, [account]);
 
     const checkAccountAddress = useCallback(e=>{
         const empty = account.accountPost === "" && account.accountAddress1 === "" && account.accountAddress2 === "";
@@ -126,28 +148,28 @@ export default function AccountJoin() {
         const clazz = valid ? "is-valid" : "is-invalid";
         setResult(prev=>({
             ...prev,
-            accountPost : clazz,
-            accountAddress1 : clazz,
-            accountAddress2 : clazz
+            accountPost: clazz,
+            accountAddress1: clazz,
+            accountAddress2: clazz
         }));
-    },[account])
+    }, [account]);
 
     const checkAccountMessage = useCallback(e=>{
         setResult(prev=>({
             ...prev,
-            accountMessage : "is-valid"
-        }))
-    },[account])
+            accountMessage: "is-valid"
+        }));
+    }, [account]);
 
     //memo
     const allValid = useMemo(()=>{
-        if(result.accountId !== "is-valid") return false;//필수
+        if(result.accountId.clazz !== "is-valid") return false;//필수
         if(result.accountPassword !== "is-valid") return false;//필수
         if(result.accountPassword2 !== "is-valid") return false;//필수
-        if(result.accountNickname !== "is-valid") return false;//필수
+        if(result.accountNickname.clazz !== "is-valid") return false;//필수
         if(result.accountEmail !== "is-valid") return false;//필수
         
-        if(result.accountBrith === "is-invalid") return false;//선택
+        if(result.accountBirth === "is-invalid") return false;//선택
         if(result.accountContact === "is-invalid") return false;//선택
         if(result.accountPost === "is-invalid") return false;//선택
         if(result.accountAddress1 === "is-invalid") return false;//선택
@@ -155,7 +177,8 @@ export default function AccountJoin() {
         if(result.accountMessage === "is-invalid") return false;//선택
 
         return true;
-    },[result])
+    }, [result]);
+
     //view
     return (<>
         <Jumbotron title="가입 정보 입력" content="부정확한 정보 입력이 확인된 경우 계정 이용이 제한될 수 있습니다"/>
@@ -170,9 +193,16 @@ export default function AccountJoin() {
                     value={account.accountId} onChange={changeStringValue}
                     placeholder="알파벳 소문자 시작, 숫자 포함 5-20자 이내"
                     onBlur={checkAccountId}
-                    className={result.accountId}/>
+                    className={result.accountId.clazz}/>
                 <div className="valid-feedback">아이디 설정이 완료되었습니다</div>
-                <div className="invalid-feedback">형식오류 or 사용중</div>
+                <div className="invalid-feedback">
+                    {result.accountId.code === "format" && (<>
+                        영문소문자로 시작하며 숫자 포함 5~20글자로 작성해야 합니다.
+                    </>) }
+                    {result.accountId.code === "duplicate" && (<>
+                        이미 사용중입니다. 다른 아이디를 작성하세요.
+                    </>) }
+                </div>
             </Col>
         </Row>
 
@@ -180,9 +210,21 @@ export default function AccountJoin() {
             <Form.Label column sm={3}>
                 <span>비밀번호</span>
                 <FaAsterisk className="text-danger"/>
+
+                { visible.accountPassword === true ? (
+                <FaEye className="text-danger ms-4" onClick={e=>{
+                    setVisible(prev=>({...prev, accountPassword:false }))
+                }}/>
+                ) : (
+                <FaEyeSlash className="text-secondary ms-4" onClick={e=>{
+                    setVisible(prev=>({...prev, accountPassword:true }))
+                }}/>
+                )}
             </Form.Label>
             <Col sm={9}>
-                <Form.Control type="password" name="accountPassword"
+                <Form.Control 
+                    type={visible.accountPassword ? "type" : "password"} 
+                    name="accountPassword"
                     value={account.accountPassword} onChange={changeStringValue}
                     placeholder="대문자,소문자,숫자,특수문자 포함 8-16자 이내"
                     onBlur={checkAccountPassword}
@@ -196,9 +238,21 @@ export default function AccountJoin() {
             <Form.Label column sm={3}>
                 <span>비밀번호 확인</span>
                 <FaAsterisk className="text-danger"/>
+
+                { visible.accountPassword2 === true ? (
+                <FaEye className="text-danger ms-4" onClick={e=>{
+                    setVisible(prev=>({...prev, accountPassword2:false }))
+                }}/>
+                ) : (
+                <FaEyeSlash className="text-secondary ms-4" onClick={e=>{
+                    setVisible(prev=>({...prev, accountPassword2:true }))
+                }}/>
+                )}
             </Form.Label>
             <Col sm={9}>
-                <Form.Control type="password" name="accountPassword2"
+                <Form.Control 
+                    type={visible.accountPassword2 ? "text" : "password"}
+                    name="accountPassword2"
                     value={account.accountPassword2} onChange={changeStringValue}
                     placeholder="비밀번호를 한 번 더 입력하세요"
                     onBlur={checkAccountPassword}
@@ -232,11 +286,18 @@ export default function AccountJoin() {
             <Col sm={9}>
                 <Form.Control type="text" name="accountNickname"
                     value={account.accountNickname} onChange={changeStringValue}
-                    placeholder="한글 또는 숫자 10자 이내"
+                    placeholder="한글, 영문, 숫자 10자 이내"
                     onBlur={checkAccountNickname}
-                    className={result.accountNickname}/>
+                    className={result.accountNickname.clazz}/>
                 <div className="valid-feedback">닉네임 설정이 완료되었습니다</div>
-                <div className="invalid-feedback">올바르지 않거나 사용중인 닉네임</div>
+                <div className="invalid-feedback">
+                    {result.accountNickname.code === "format" && (<>
+                        한글, 영문, 숫자 10글자 이내로 작성해야 합니다.
+                    </>) }
+                    {result.accountNickname.code === "duplicate" && (<>
+                        이미 사용중인 닉네입입니다.
+                    </>) }
+                </div>
             </Col>
         </Row>
 
@@ -262,10 +323,10 @@ export default function AccountJoin() {
             <Col sm={9}>
                 <Form.Control type="text" inputMode="tel" name="accountContact"
                     value={account.accountContact} onChange={changeStringValue}
-                    placeholder="숫자"
-                    onBlur={checkAccountNickname}
+                    onBlur={checkAccountContact}
                     className={result.accountContact}/>
-                <div className="invalid-feedback">형식이 올바르지않습니다.</div>
+                {/* <div className="valid-feedback"></div> */}
+                <div className="invalid-feedback">연락처 형식이 올바르지 않습니다</div>
             </Col>
         </Row>
 
@@ -274,67 +335,66 @@ export default function AccountJoin() {
                 <span>주소</span>
             </Form.Label>
             <Col sm={9}>
-            <div className="d-flex">
-                <Form.Control type="text" inputMode="numeric" 
-                    name="accountPost" value={account.accountPost}
-                    onChange={changeStringValue}
-                    className={`${result.accountPost} w-auto d-inline-block`}
-                    placeholder="우편번호"/>
-                <Button variant="success" className="ms-2">
-                    <FaMagnifyingGlass/>
-                    <span className="d-none d-md-inline-block">우편번호 검색</span>
-                </Button>
-                <Button variant="danger" className="ms-2">
-                    <FaXmark/>
-                    <span className="d-none d-md-inline-block">작성내역 지우기</span>
-                </Button>
-            </div>
+                <div className="d-flex">
+                    <Form.Control type="text" inputMode="numeric" 
+                        name="accountPost" value={account.accountPost} 
+                        onChange={changeStringValue}
+                        className={`${result.accountPost} w-auto d-inline-block`}
+                        placeholder="우편번호"/>
+                    <Button variant="success" className="ms-2">
+                        <FaMagnifyingGlass/>
+                        <span className="d-none d-md-inline-block">우편번호 검색</span>
+                    </Button>
+                    <Button variant="danger" className="ms-2">
+                        <FaXmark/>
+                        <span className="d-none d-md-inline-block">작성내역 지우기</span>
+                    </Button>
+                </div>
             </Col>
         </Row>
-
-        <Row className="mt-4">
-            <Col sm={ {span:9 , offset:3} } >
-                <Form.Control type="text" 
-                    name="accountAddress1" value={account.accountAddress1}
+        <Row className="mt-2">
+            {/* <Col sm={9} className="offset-sm-3" > */}
+            <Col sm={ {span:9 , offset:3} }>
+                <Form.Control type="text"
+                    name="accountAddress1" value={account.accountAddress1} 
                     onChange={changeStringValue}
                     className={result.accountAddress1}
                     placeholder="기본주소"/>
             </Col>
         </Row>
-
-        <Row className="mt-4">
-            <Col sm={ {span:9 , offset:3} } >
-                <Form.Control type="text" 
-                    name="accountAddress2" value={account.accountAddress2}
+        <Row className="mt-2">
+            <Col sm={ {span:9 , offset:3} }>
+                <Form.Control type="text"
+                    name="accountAddress2" value={account.accountAddress2} 
                     onChange={changeStringValue}
                     onBlur={checkAccountAddress}
                     className={result.accountAddress2}
                     placeholder="상세주소"/>
-                <div className="invalid-feedback">주소는 비우거나 모두 작성해야합니다</div>
+                <div className="invalid-feedback">주소는 비우거나 모두 작성해야 합니다</div>
             </Col>
         </Row>
-        
+
+
         <Row className="mt-4">
             <Form.Label column sm={3}>
                 <span>상태메세지</span>
             </Form.Label>
             <Col sm={9}>
-                <Form.Control as="textarea" name="accountMessage"
+                <Form.Control as="textarea" rows={5} name="accountMessage"
                     value={account.accountMessage} onChange={changeStringValue}
-                    onBlur={checkAccountMessage} rows={5}
+                    onBlur={checkAccountMessage}
                     className={result.accountMessage}/>
             </Col>
         </Row>
 
-        <Row className="mt-5">
+        <Row className="my-5">
             <Col>
-                <Button variant="success" size="lg" className="w-100"
-                            disabled={allValid === false}>
+                <Button variant="success" size="lg" className="w-100" 
+                                            disabled={allValid === false}>
                     <FaUserPlus/>
                     <span className="ms-2">회원 가입하기</span>
                 </Button>
             </Col>
         </Row>
-
     </>)
 }
