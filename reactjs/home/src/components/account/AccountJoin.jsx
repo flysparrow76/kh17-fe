@@ -1,11 +1,17 @@
 import Jumbotron from "@templates/Jumbotron";
 import { useCallback, useMemo } from "react";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { FaAsterisk, FaEye, FaEyeSlash, FaMagnifyingGlass, FaUserPlus, FaXmark } from "react-icons/fa6";
 import axios from "axios";
+import { useKakaoPostcodePopup } from "react-daum-postcode";
 
 export default function AccountJoin() {
+    //kakao post
+    const open = useKakaoPostcodePopup(
+        "//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+    );
+
     //state
     const [account, setAccount] = useState({
         accountId: "",
@@ -179,6 +185,55 @@ export default function AccountJoin() {
         return true;
     }, [result]);
 
+    //ref 
+    // - 태그 참조용 동기방식의 데이터
+    // - 태그를 제어하는 리모컨으로 사용
+    // - 언제 어디서나 일정한 값을 가져야하는 데이터에 사용(로딩중과 같은 상태 데이터)
+    // - 문법 : const 변수 = useRef(초기값);
+    const address2ref = useRef();
+
+    //우편번호 처리
+    const addressSearch = useCallback(()=>{
+        open( {
+            onComplete : (data)=>{
+                //console.log(data);
+                //-userSelectedType : 선택한 주소의 유형(R or J)
+                //-roadAddress : 도로명 주소(신주소)
+                //-jibunAddress : 지번 주소(구주소)
+                //-zonecode : 우편번호
+                const zonecode = data.zonecode;
+                const address = data.userSelectedType === "R" ?
+                                    data.roadAddress : data.jibunAddress;
+
+                //주소 변경
+                setAccount(prev=>({
+                    ...prev,
+                    accountPost : zonecode,
+                    accountAddress1 : address,
+                    accountAddress2 : "",
+
+                }))
+
+                //상세주소창에 포커스를 줄 수 있나?
+                //기존코드
+                //document.querySelector("[name=accountAddress2]").focus();
+                
+                //리엑트는? ref의 current필드를 사용
+                address2ref.current.focus();
+            }
+        } );
+    }, []);
+
+    const addressDelete = useCallback(e=>{
+        setAccount(prev=>({
+                    ...prev,
+                    accountPost : "",
+                    accountAddress1 : "",
+                    accountAddress2 : "",
+
+                }))
+    },[]);
+
     //view
     return (<>
         <Jumbotron title="가입 정보 입력" content="부정확한 정보 입력이 확인된 경우 계정 이용이 제한될 수 있습니다"/>
@@ -336,16 +391,19 @@ export default function AccountJoin() {
             </Form.Label>
             <Col sm={9}>
                 <div className="d-flex">
+                    {/* 우편번호 입력창 */}
                     <Form.Control type="text" inputMode="numeric" 
                         name="accountPost" value={account.accountPost} 
-                        onChange={changeStringValue}
+                        readOnly onClick={addressSearch}
                         className={`${result.accountPost} w-auto d-inline-block`}
                         placeholder="우편번호"/>
-                    <Button variant="success" className="ms-2">
+                    {/* 검색 버튼 */}
+                    <Button variant="success" className="ms-2" onClick={addressSearch}>
                         <FaMagnifyingGlass/>
                         <span className="d-none d-md-inline-block">우편번호 검색</span>
                     </Button>
-                    <Button variant="danger" className="ms-2">
+                    {/* 지우기 버튼 */}
+                    <Button variant="danger" className="ms-2" onClick={addressDelete}>
                         <FaXmark/>
                         <span className="d-none d-md-inline-block">작성내역 지우기</span>
                     </Button>
@@ -357,7 +415,7 @@ export default function AccountJoin() {
             <Col sm={ {span:9 , offset:3} }>
                 <Form.Control type="text"
                     name="accountAddress1" value={account.accountAddress1} 
-                    onChange={changeStringValue}
+                    readOnly onClick={addressSearch}
                     className={result.accountAddress1}
                     placeholder="기본주소"/>
             </Col>
@@ -369,7 +427,8 @@ export default function AccountJoin() {
                     onChange={changeStringValue}
                     onBlur={checkAccountAddress}
                     className={result.accountAddress2}
-                    placeholder="상세주소"/>
+                    placeholder="상세주소"
+                    ref={address2ref}/>
                 <div className="invalid-feedback">주소는 비우거나 모두 작성해야 합니다</div>
             </Col>
         </Row>
