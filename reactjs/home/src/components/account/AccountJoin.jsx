@@ -1,10 +1,12 @@
 import Jumbotron from "@templates/Jumbotron";
-import { useCallback, useMemo } from "react";
-import { useState,useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
+import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { FaAsterisk, FaEye, FaEyeSlash, FaMagnifyingGlass, FaUserPlus, FaXmark } from "react-icons/fa6";
+import { FaAsterisk, FaCheck, FaEye, FaEyeSlash, FaMagnifyingGlass, FaPaperPlane, FaRotateRight, FaSpinner, FaUserPlus, FaXmark } from "react-icons/fa6";
 import axios from "axios";
 import { useKakaoPostcodePopup } from "react-daum-postcode";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountJoin() {
     //kakao post
@@ -32,7 +34,7 @@ export default function AccountJoin() {
         accountId : { clazz : null , code : null },
         accountPassword: null,
         accountPassword2: null,
-        accountEmail: null,
+        accountEmail: { clazz : null , code : null },
         accountNickname: { clazz : null , code : null },
         accountBirth: null,
         accountContact: null,
@@ -56,6 +58,20 @@ export default function AccountJoin() {
             [name] : value
         }));
     }, []);
+    const changeAccountEmail = useCallback(e=>{
+        //인증이 완료되었는데 입력을 또 한 경우 → 인증완료를 없었던 일로 한다
+        if(result.accountEmail.clazz === "is-valid") {
+            setResult(prev=>({
+                ...prev,
+                accountEmail : { clazz : null , code : null }
+            }));
+        }
+
+        setAccount(prev=>({
+            ...prev,
+            accountEmail : e.target.value
+        }));
+    }, [result]);
 
     //- 검사
     const checkAccountId = useCallback(async e=>{
@@ -97,13 +113,23 @@ export default function AccountJoin() {
         }));
     }, [account]);
 
-    const checkAccountEmail = useCallback(e=>{
+    const checkAccountEmail = useCallback(async e=>{
         const regex = /^([a-z][a-z0-9]{4,19})@([A-Za-z0-9\-\.]{1,})(\.[a-z]{2,3})$/;
         const valid = regex.test(account.accountEmail);
-        const clazz = valid ? "is-valid" : "is-invalid";
+        if(valid === false) {//형식 위반
+            setResult(prev=>({
+                ...prev,
+                accountEmail : { clazz : "is-invalid" , code : "format" }
+            }));    
+            return;
+        }
+        //형식 통과 → 중복 검사
+        const { data } = await axios.get(`/api/account/check-email/${account.accountEmail}`);
+        const clazz = data ? "" : "is-invalid";//형식과 중복검사를 통과하더라도 아직 인증번호가 남아있음
+        const code = data ? null : "duplicate";
         setResult(prev=>({
             ...prev,
-            accountEmail : clazz
+            accountEmail : { clazz : clazz, code : code }
         }));
     }, [account]);
 
@@ -167,14 +193,140 @@ export default function AccountJoin() {
         }));
     }, [account]);
 
+    //ref 
+    // - 태그 참조용 동기방식의 데이터
+    // - 태그를 제어하는 리모컨으로 사용
+    // - 언제 어디서나 일정한 값을 가져야하는 데이터에 사용 (로딩중과 같은 상태 데이터)
+    // - 문법 : const 변수 = useRef(초기값);
+    const address2ref = useRef();    
+
+    //우편번호 처리
+    const addressSearch = useCallback((e)=>{
+        //if(이벤트 발생이 입력창이고 입력창에 이미 글자가 있다면) return;
+        const { tagName, value } = e.target;
+        if(tagName === "INPUT" && value !== "") return;
+
+        open({
+            onComplete : (data)=>{
+                //console.log(data);
+                //- userSelectedType : 선택한 주소의 유형 (R or J)
+                //- roadAddress : 도로명 주소(신주소)
+                //- jibunAddress : 지번 주소(구주소)
+                //- zonecode : 우편번호
+                const zonecode = data.zonecode;
+                const address = data.userSelectedType === "R" ? 
+                                        data.roadAddress : data.jibunAddress;
+                
+                //주소 변경
+                setAccount(prev=>({
+                    ...prev,
+                    accountPost : zonecode,
+                    accountAddress1 : address,
+                    accountAddress2 : "",
+                }));
+
+                //상세주소창에 포커스를 줄 수 있나?
+                
+                //기존코드 - 태그 선택 후 명령을 사용
+                //document.querySelector("[name=accountAddress2]").focus();
+
+                //리액트는? ref의 current필드를 사용
+                address2ref.current.focus();
+            }
+        });
+    }, []);
+
+    //주소 삭제
+    const clearAddress = useCallback(e=>{
+        //console.log(e.target);//실제 이벤트 발생 대상
+        //console.log(e.currentTarget);//기존의 this와 완전히 같은 역할
+        if(parseInt(e.currentTarget.style.opacity) === 0) return;
+
+        //입력값 초기화
+        setAccount(prev=>({
+            ...prev, 
+            accountPost: "", accountAddress1: "", accountAddress2: "",
+        }));
+        //검사결과 초기화
+        setResult(prev=>({
+            ...prev,
+            accountPost:null, accountAddress1:null, accountAddress2:null
+        }));
+    }, []);
+
+    //주소 삭제버튼이 나와야되는지 판정하기 위한 memo
+    const isAddressWritten = useMemo(()=>{
+        if(account.accountPost !== "") return true;
+        if(account.accountAddress1 !== "") return true;
+        if(account.accountAddress2 !== "") return true;
+        return false;
+    }, [
+        account.accountPost,
+        account.accountAddress1,
+        account.accountAddress2
+    ]);
+
+    //이메일 인증 관련 기능들
+    const sendCert = useCallback(async ()=>{
+        //다시보내기일 수도 있으니 result의 accountEmail의 상태를 초기화한다
+        setResult(prev=>({
+            ...prev,
+            accountEmail : { clazz : null , code : null }
+        }));
+        setCertNumberResult(null);
+        setCertNumber("");
+
+        try {
+            setSending(true);
+            const response = await axios.post(
+                "/service/cert/send", 
+                {certEmail : account.accountEmail}
+            );
+            console.log("이메일 발송 완료");
+        }
+        catch(e) {
+            toast.error("이메일 발송 오류 발생");
+        }
+        finally {
+            setSending(false);//오류 여부와 관계없이 상태 원위치
+        }
+    }, [account.accountEmail]);
+
+    const [certNumber, setCertNumber] = useState("");//인증번호
+    const [certNumberResult, setCertNumberResult] = useState(null);//인증번호 판정결과 클래스
+    const [sending, setSending] = useState(null);//이메일 발송중 여부 (null / true / false)
+
+    const changeCertNumber = useCallback(e=>{
+        const replacement = e.target.value.replace(/[^0-9]+/g, "");
+        setCertNumber(replacement);
+    }, []);
+
+    const checkCert = useCallback(async ()=>{
+        const { data } = await axios.post(
+            "/service/cert/check",
+            { certEmail : account.accountEmail , certNumber: certNumber }
+        );
+        //console.log("결과 : ", data.valid);
+        setCertNumberResult(data.valid ? "is-valid" : "is-invalid");
+        if(data.valid) {//인증결과가 성공이라면
+            //result에 있는 accountEmail의 clazz에 is-valid를 넣어라
+            setResult(prev=>({
+                ...prev,
+                accountEmail : { clazz : "is-valid" , code : null }
+            }));
+        }
+    }, [account.accountEmail, certNumber]);
+
     //memo
     const allValid = useMemo(()=>{
         if(result.accountId.clazz !== "is-valid") return false;//필수
         if(result.accountPassword !== "is-valid") return false;//필수
         if(result.accountPassword2 !== "is-valid") return false;//필수
         if(result.accountNickname.clazz !== "is-valid") return false;//필수
-        if(result.accountEmail !== "is-valid") return false;//필수
         
+        if(result.accountEmail.clazz !== "is-valid") return false;//필수
+        if(certNumberResult !== "is-valid") return false;//인증번호
+
         if(result.accountBirth === "is-invalid") return false;//선택
         if(result.accountContact === "is-invalid") return false;//선택
         if(result.accountPost === "is-invalid") return false;//선택
@@ -183,83 +335,24 @@ export default function AccountJoin() {
         if(result.accountMessage === "is-invalid") return false;//선택
 
         return true;
-    }, [result]);
-
-    //ref 
-    // - 태그 참조용 동기방식의 데이터
-    // - 태그를 제어하는 리모컨으로 사용
-    // - 언제 어디서나 일정한 값을 가져야하는 데이터에 사용(로딩중과 같은 상태 데이터)
-    // - 문법 : const 변수 = useRef(초기값);
-    const address2ref = useRef();
-
-    //우편번호 처리
-    const addressSearch = useCallback((e)=>{
-        const {tagName , value} = e.target;
-
-        if(tagName === "INPUT" && value !== "")return;
-        open( {
-            onComplete : (data)=>{
-                //console.log(data);
-                //-userSelectedType : 선택한 주소의 유형(R or J)
-                //-roadAddress : 도로명 주소(신주소)
-                //-jibunAddress : 지번 주소(구주소)
-                //-zonecode : 우편번호
-                const zonecode = data.zonecode;
-                const address = data.userSelectedType === "R" ?
-                                    data.roadAddress : data.jibunAddress;
-
-                //주소 변경
-                setAccount(prev=>({
-                    ...prev,
-                    accountPost : zonecode,
-                    accountAddress1 : address,
-                    accountAddress2 : "",
-
-                }))
-
-                //상세주소창에 포커스를 줄 수 있나?
-                //기존코드
-                //document.querySelector("[name=accountAddress2]").focus();
-                
-                //리엑트는? ref의 current필드를 사용
-                address2ref.current.focus();
-            }
-        } );
-    }, []);
-
-    //주소 삭제
-    const clearAddress = useCallback(e=>{
-        
-        // console.log(e.target);//실제 이벤트 발생 대상
-        //console.log(ecurrentTarget);//기존의 this와 완전히 같은 역할
-        if(parseInt(e.currentTarget.style.opacity) ===0 )return;
-        setAccount(prev=>({
-                    ...prev,
-                    accountPost : "",
-                    accountAddress1 : "",
-                    accountAddress2 : "",
-                }))
-        //검사결과 초기화
-        setResult(prev=>({
-            ...prev,
-            accountPost : null,
-            accountAddress1 : null,
-            accountAddress2 : null
-        }))
-    },[]);
-
-    //주소 삭제버튼이 나와야되는지 판정하기 위한 memo
-    const isAddressWritten = useMemo(()=>{
-        if(account.accountPost !== "")return true;
-        if(account.accountAddress1 !== "")return true;
-        if(account.accountAddress2 !== "")return true;
-        
-        return false
-    },[
-        account.accountPost,
-        account.accountAddress1,
-        account.accountAddress2
-    ])
+    }, [result, certNumberResult]);
+    
+    //최종가입
+    const navigate = useNavigate();
+    const sendJoin = useCallback(async()=>{
+        try{
+            //const copy = {...account};
+            //delete copy.accountPassword2;
+            const {accountPassword2,...copy} = account;
+            const response = await axios.post("/api/account/",account);
+            toast.success("회원가입이 완료되었습니다.")
+            navigate("/account/joinSuccess")
+        }
+        catch(e){
+            toast.error("회원 가입 과정에서 오류가 발생했습니다.")
+            navigate("/account/joinFail")
+        }
+    },[account])
 
     //view
     return (<>
@@ -344,21 +437,74 @@ export default function AccountJoin() {
             </Col>
         </Row>
 
+        {/* 이메일은 인증번호 처리가 추가로 필요 */}
         <Row className="mt-4">
             <Form.Label column sm={3}>
                 <span>이메일</span>
                 <FaAsterisk className="text-danger"/>
             </Form.Label>
             <Col sm={9}>
-                <Form.Control type="text" inputMode="email" name="accountEmail"
-                    value={account.accountEmail} onChange={changeStringValue}
-                    placeholder="test@email.com"
-                    onBlur={checkAccountEmail}
-                    className={result.accountEmail}/>
-                <div className="valid-feedback">이메일 인증 완료</div>
-                <div className="invalid-feedback">올바르지 않거나 사용중인 이메일</div>
+                <div className="d-flex flex-wrap">
+                    <Form.Control type="text" inputMode="email" name="accountEmail"
+                        value={account.accountEmail} 
+                        onChange={changeAccountEmail}
+                        placeholder="test@email.com"
+                        onBlur={checkAccountEmail}
+                        className={`${result.accountEmail.clazz} w-auto d-inline-block`}
+                        readOnly={sending}/>
+                    {/* 인증번호 발송버튼 */}
+                    <Button variant={sending === false ? "danger" : "info"} 
+                            className="ms-2" onClick={sendCert}
+                            disabled={
+                                result.accountEmail.clazz === null//처음상태
+                                || result.accountEmail.clazz === "is-invalid"//형식오류or중복 문제 발생시
+                                || sending === true//보내는 중일 때
+                            }>
+                        { sending === null && (<>
+                        <FaPaperPlane/>
+                        <span className="ms-2 d-none d-sm-inline">인증번호 보내기</span>
+                        </>) }
+                        { sending === false && (<>
+                        <FaRotateRight/>
+                        <span className="ms-2 d-none d-sm-inline">메일 다시 보내기</span>
+                        </>) }
+                        { sending === true && (<>
+                        <FaSpinner className="spin"/>
+                        <span className="ms-2 d-none d-sm-inline">인증메일 발송중</span>
+                        </>) }
+                    </Button>
+                    <div className="valid-feedback">이메일 인증 완료</div>
+                    <div className="invalid-feedback">
+                        { result.accountEmail.code === "format" && (<>
+                            올바르지 않은 이메일 형식입니다.
+                        </>) }
+                        { result.accountEmail.code === "duplicate" && (<>
+                            이미 사용중인 이메일입니다.
+                        </>) }  
+                    </div>
+                </div>
             </Col>
         </Row>
+
+        {/* 인증번호 입력화면은 발송이 완료된 경우 + 인증완료가 안된 상황에서만 나와야 함 */}
+        { ( certNumberResult !== "is-valid" && sending === false ) && (
+        <Row className="mt-2">
+            <Col sm={ {span:9, offset:3} }>
+                <div className="d-flex flex-wrap">
+                    <Form.Control type="text" placeholder="인증번호"
+                        value={certNumber} onChange={changeCertNumber}
+                        className={`w-auto ${certNumberResult}`}/>
+                    {/* 인증번호 확인버튼 */}
+                    <Button variant="success" className="ms-2" onClick={checkCert}>
+                        <FaCheck/>
+                        <span className="ms-2 d-none d-sm-inline">인증번호 확인</span>
+                    </Button>
+                    <div className="valid-feedback">인증번호 확인이 완료되었습니다</div>
+                    <div className="invalid-feedback">인증번호가 일치하지 않습니다</div>
+                </div>
+            </Col>
+        </Row>
+        ) }
 
         <Row className="mt-4">
             <Form.Label column sm={3}>
@@ -430,12 +576,14 @@ export default function AccountJoin() {
                         <span className="d-none d-md-inline-block">우편번호 검색</span>
                     </Button>
                     {/* 지우기 버튼 */}
-                    {/* { isAddressWritten === true && (
-                        <Button variant="danger" className="ms-2" onClick={clearAddress}>
-                            <FaXmark/>
-                            <span className="d-none d-md-inline-block">작성내역 지우기</span>
-                        </Button>
-                    )} */}
+                    {/* 
+                    { isAddressWritten === true && (
+                    <Button variant="danger" className="ms-2" onClick={clearAddress}>
+                        <FaXmark/>
+                        <span className="d-none d-md-inline-block">작성내역 지우기</span>
+                    </Button>
+                    ) }
+                    */}
                     <Button variant="danger" className="ms-2" onClick={clearAddress}
                             style={
                                 {
@@ -446,7 +594,6 @@ export default function AccountJoin() {
                         <FaXmark/>
                         <span className="d-none d-md-inline-block">작성내역 지우기</span>
                     </Button>
-
                 </div>
             </Col>
         </Row>
@@ -468,7 +615,8 @@ export default function AccountJoin() {
                     onBlur={checkAccountAddress}
                     className={result.accountAddress2}
                     placeholder="상세주소"
-                    ref={address2ref}/>
+                    ref={address2ref}
+                    />
                 <div className="invalid-feedback">주소는 비우거나 모두 작성해야 합니다</div>
             </Col>
         </Row>
@@ -489,7 +637,7 @@ export default function AccountJoin() {
         <Row className="my-5">
             <Col>
                 <Button variant="success" size="lg" className="w-100" 
-                                            disabled={allValid === false}>
+                               onClick={sendJoin} disabled={allValid === false}>
                     <FaUserPlus/>
                     <span className="ms-2">회원 가입하기</span>
                 </Button>
