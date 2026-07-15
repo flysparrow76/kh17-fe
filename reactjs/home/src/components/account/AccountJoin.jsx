@@ -193,7 +193,10 @@ export default function AccountJoin() {
     const address2ref = useRef();
 
     //우편번호 처리
-    const addressSearch = useCallback(()=>{
+    const addressSearch = useCallback((e)=>{
+        const {tagName , value} = e.target;
+
+        if(tagName === "INPUT" && value !== "")return;
         open( {
             onComplete : (data)=>{
                 //console.log(data);
@@ -224,15 +227,39 @@ export default function AccountJoin() {
         } );
     }, []);
 
-    const addressDelete = useCallback(e=>{
+    //주소 삭제
+    const clearAddress = useCallback(e=>{
+        
+        // console.log(e.target);//실제 이벤트 발생 대상
+        //console.log(ecurrentTarget);//기존의 this와 완전히 같은 역할
+        if(parseInt(e.currentTarget.style.opacity) ===0 )return;
         setAccount(prev=>({
                     ...prev,
                     accountPost : "",
                     accountAddress1 : "",
                     accountAddress2 : "",
-
                 }))
+        //검사결과 초기화
+        setResult(prev=>({
+            ...prev,
+            accountPost : null,
+            accountAddress1 : null,
+            accountAddress2 : null
+        }))
     },[]);
+
+    //주소 삭제버튼이 나와야되는지 판정하기 위한 memo
+    const isAddressWritten = useMemo(()=>{
+        if(account.accountPost !== "")return true;
+        if(account.accountAddress1 !== "")return true;
+        if(account.accountAddress2 !== "")return true;
+        
+        return false
+    },[
+        account.accountPost,
+        account.accountAddress1,
+        account.accountAddress2
+    ])
 
     //view
     return (<>
@@ -403,10 +430,23 @@ export default function AccountJoin() {
                         <span className="d-none d-md-inline-block">우편번호 검색</span>
                     </Button>
                     {/* 지우기 버튼 */}
-                    <Button variant="danger" className="ms-2" onClick={addressDelete}>
+                    {/* { isAddressWritten === true && (
+                        <Button variant="danger" className="ms-2" onClick={clearAddress}>
+                            <FaXmark/>
+                            <span className="d-none d-md-inline-block">작성내역 지우기</span>
+                        </Button>
+                    )} */}
+                    <Button variant="danger" className="ms-2" onClick={clearAddress}
+                            style={
+                                {
+                                    opacity : isAddressWritten === true ? 100 : 0,
+                                    transition : "opacity 0.1s ease-out",
+                                }
+                            }>
                         <FaXmark/>
                         <span className="d-none d-md-inline-block">작성내역 지우기</span>
                     </Button>
+
                 </div>
             </Col>
         </Row>
