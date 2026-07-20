@@ -18,7 +18,8 @@ export default function MyPage() {
     }, []);
 
     const loadData = useCallback(async ()=>{
-        const {data} = await axios.get(`/api/account/${accountId}`);
+        // const {data} = await axios.get(`/api/account/${accountId}`);
+        const {data} = await axios.get(`/api/account/me`);
         setAccount(data);
     }, [accountId]);
 
@@ -28,8 +29,8 @@ export default function MyPage() {
         if(account.accountPost === null) return "";
         if(account.accountAddress1 === null) return "";
         if(account.accountAddress2 === null) return "";
-        return `[${account.accountPost}] ${account.accountAddress1}, ${account.accountAddress2}`
-    },[account])
+        return `[${account.accountPost}] ${account.accountAddress1} ${account.accountAddress2}`;
+    }, [account]);
 
     return (<>
         <Jumbotron title={`${account?.accountNickname}님의 개인 정보`}/>
@@ -61,9 +62,7 @@ export default function MyPage() {
 
         <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">주소</Col>
-            <Col sm={9} className="text-secondary">
-                {unionAddress}
-            </Col>
+            <Col sm={9} className="text-secondary">{unionAddress}</Col>
         </Row>
 
         <Row className="mt-4">
