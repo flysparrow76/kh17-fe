@@ -1,21 +1,25 @@
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link } from "react-router-dom";
-import { loginUserState } from "@utils/storage" 
+import { loginUserState } from "@utils/storage";
 import { useCallback, useMemo } from "react";
+import { RESET } from "jotai/utils";
+import { isLoginState, isAdminState } from "@utils/storage";
+import { logoutActionState } from "@utils/storage";
 
 export default function Menu() {
+    //메뉴에서는 로그인 상태 데이터가 필요하다
     const [loginUser, setLoginUser] = useAtom(loginUserState);
-    const isLogin = useMemo (()=>{
-        return loginUser !== null;
-    },[loginUser])
+    
+    //읽기전용 atom을 불러오는법
+    //const [isLogin] = useAtom(isLoginState);
+    const isLogin = useAtomValue(isLoginState);
+    const isAdmin = useAtomValue(isAdminState);
 
-    const logout = useCallback(()=>{
-        setLoginUser(null);
-    },[])
+    const logoutAction = useSetAtom(logoutActionState);
 
     return (<>
         <Navbar expand="md" className="bg-body-tertiary sticky-top"
@@ -47,18 +51,24 @@ export default function Menu() {
                             <NavDropdown.Item as={Link} to="/book/list">도서정보</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/book/spa">도서정보(SPA)</NavDropdown.Item>
                         </NavDropdown>
-
                         <Nav.Link as={Link} to="/session/test">세션테스트</Nav.Link>
                     </Nav>
                     <Nav>
                         { isLogin === true && (<>
-                        <Nav.Link as={Link} to="">마이페이지</Nav.Link>
-                        <Nav.Link onClick={logout}>로그아웃</Nav.Link>
+                        
+                        { isAdmin === true && (<>
+                        <Nav.Link as={Link} to="">관리메뉴</Nav.Link>
                         </>)}
-                        { isLogin === false && (<>
+                        { isAdmin === false && (<>
+                        <Nav.Link as={Link} to="/account/mypage">내정보</Nav.Link>
+                        </>)}
+
+                        <Nav.Link onClick={logoutAction}>로그아웃</Nav.Link>
+                        </>) }
+                        { isLogin !== true && (<>
                         <Nav.Link as={Link} to="/account/join">회원가입</Nav.Link>
                         <Nav.Link as={Link} to="/account/login">로그인</Nav.Link>
-                        </>)}
+                        </>) }
                     </Nav>
                 </Navbar.Collapse>
             </Container>

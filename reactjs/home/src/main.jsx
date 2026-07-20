@@ -8,12 +8,11 @@ import "bootswatch/dist/flatly/bootstrap.min.css";
 
 import './index.css'
 import App from './App.jsx'
+
+//axios 개조 코드 작성 (만약 너무 길어지면 별도의 모듈로 분리할 예정)
 import axios from "axios";
-
-//axios 개조 코드 작성(만약에 너무 길어지면 별도의 모듈로 분리할 예정)
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
-axios.defaults.timeout = 10000;//통신의 최대 대기 시간(ms),상황에 따라 조절 가능
-
+axios.defaults.timeout = 10000;//통신의 최대 대기 시간(ms), 상황에 따라 조절 가능
 
 /*
   React Router v6의 라우팅 방식 종류 및 특징
@@ -33,7 +32,7 @@ axios.defaults.timeout = 10000;//통신의 최대 대기 시간(ms),상황에 �
   - [단점] 사용자가 봤을 때 거부감이 있음 (피싱사이트인가?)
 */
 
-// jotai에서 제공하는 개발도구(jotai-devtools)를 적용하기 위한 코드
+//jotai에서 제공하는 개발도구(jotai-devtools)를 적용하기 위한 코드
 import { DevTools } from "jotai-devtools";
 import "jotai-devtools/styles.css";
 import { Provider } from "jotai";
@@ -42,13 +41,12 @@ createRoot(document.getElementById('root')).render(
   // <StrictMode>
   <BrowserRouter>
     <Provider>
-
-      {/* 개발모드일 때만 표시되도록 조건 설정 */}
-      { import.meta.env.DEV &&(
+      {/* 개발 모드일 때만 표시되도록 조건 설정 */}
+      { import.meta.env.DEV && (
         <DevTools position="bottom-right"/>
-      )}
-      <App />
+      ) }
 
+      <App />
     </Provider>
   </BrowserRouter>
   // </StrictMode>,
