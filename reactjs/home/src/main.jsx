@@ -42,12 +42,12 @@ createRoot(document.getElementById('root')).render(
   // <StrictMode>
   <BrowserRouter>
     <Provider>
-      <App />
 
       {/* 개발모드일 때만 표시되도록 조건 설정 */}
       { import.meta.env.DEV &&(
         <DevTools position="bottom-right"/>
       )}
+      <App />
 
     </Provider>
   </BrowserRouter>
