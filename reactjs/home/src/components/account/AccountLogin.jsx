@@ -44,7 +44,7 @@ export default function AccountLogin() {
 
         try {
             //const {data} = await axios.post("/service/auth/login", account);
-            const {date} = await authClient.post("/login",account);
+            const {data} = await authClient.post("/login", account);
             //로그인 성공 → data를 jotai storage에 저장하자!
             //console.log(data);
             //setLoginUser(data);//jotai storage에 저장 완료

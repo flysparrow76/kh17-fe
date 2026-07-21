@@ -25,8 +25,8 @@ export const countState = atom(0);
 // 객체 데이터를 저장하면서 localStorage, sessionStorage를 선택하고싶다면 직렬화 도구를 직접 생성해야함
 const localStorageWrapper = createJSONStorage(()=>window.localStorage);
 const sessionStorageWrapper = createJSONStorage(()=>window.sessionStorage);
-// export const loginUserState = atomWithStorage("loginUserState", null, localStorageWrapper);
-export const loginUserState = atomWithStorage("loginUserState", null, sessionStorageWrapper);
+export const loginUserState = atomWithStorage("loginUserState", null, localStorageWrapper);
+// export const loginUserState = atomWithStorage("loginUserState", null, sessionStorageWrapper);
 
 // 파생 atom - 다른 atom을 이용해서 계산을 처리한 결과를 만들어내는 atom (=useMemo 훅)
 // 생성방법 - atom(초기값) 이 아니라 atom(GETTER, SETTER) 중 필요한걸 넣어서 처리하도록 구현
@@ -44,7 +44,7 @@ export const isAdminState = atom(get=>{
     return loginUser?.accountLevel === "마스터";
 });
 
-//atom을 변경하기 위한 파생 atom
+//atom을 변경하기 위한 파생 atom - atom(null, (get,set,파라미터...)=>{});
 // [1] 로그인 처리를 수행하는 atom
 export const loginActionState = atom(null, (get,set,data)=>{
     //set(변수명, 값);
@@ -59,6 +59,6 @@ export const logoutActionState = atom(null, (get,set)=>{
 
 //마지막에 개발자 도구에 표시될 라벨을 설정 (위치 무관)
 countState.debugLabel = "연습용 카운트";
-loginUserState.debugLabel = "loginUserState";
+loginUserState.debugLabel = "로그인 유저의 정보";
 isLoginState.debugLabel = "로그인 상태";
 isAdminState.debugLabel = "관리자 여부";
