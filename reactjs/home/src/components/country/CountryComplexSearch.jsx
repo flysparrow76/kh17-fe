@@ -7,6 +7,7 @@ import { TbTilde } from "react-icons/tb";
 import axios from "axios";
 import { useMemo } from "react";
 import { toast } from "react-toastify";
+import { apiClient } from "@utils/reaxios";
 
 export default function CountryComplexSearch() {
     //state
@@ -43,7 +44,7 @@ export default function CountryComplexSearch() {
     }, []);
 
     const send = useCallback(async ()=>{
-        const response = await apiClientpost("/api/country/complexSearch", condition);
+        const response = await apiClient.post("/country/complexSearch", condition);
         //console.log(response.data);
         setCountryList(response.data.list);
         setLast(response.data.last);
@@ -54,8 +55,8 @@ export default function CountryComplexSearch() {
         return countryList[countryList.length-1].countryNo;
     }, [countryList]);
     const loadMoreList = useCallback(async ()=>{
-        const response = await apiClientpost(
-            "/api/country/complexSearch", 
+        const response = await apiClient.post(
+            "/country/complexSearch", 
             //condition의 모든내용 + lastCountryNo 추가하여 전송
             {...condition , lastCountryNo : lastCountryNo }
         );
@@ -177,15 +178,15 @@ export default function CountryComplexSearch() {
 
     const checkAll = useCallback(e=>{
         const isAll = condition.countryRegions.length === 6;
-        if(isAll){//전체선택중인 상태
-            setCondition({...condition,countryRegions:[]});//비워!
+        if(isAll) {//전체 선택중인 상태
+            setCondition({...condition, countryRegions:[]});//비워!
         }
-        else{//전체 선택중이 아닌상태
-             setCondition({...condition,countryRegions:[
-                "아시아","아프리카","북에미라카","남아메리카","유럽","오세아니아"
-        ]});
+        else {//전체 선택중이 아닌 상태
+            setCondition({...condition, countryRegions:[
+                "아시아","아프리카","북아메리카","남아메리카","유럽","오세아니아"
+            ]});//채워!
         }
-    },[condition]);
+    }, [condition]);
 
     //view
     return (<>
@@ -195,8 +196,9 @@ export default function CountryComplexSearch() {
         <Row className="mt-4">
             <Form.Label column sm={3}>대륙</Form.Label>
             <Col sm={9}>
-                <Form.Check type="checkbox" label="전체선택" onChange={checkAll} 
-                checked={condition.countryRegions.length === 6}/>
+                <Form.Check type="checkbox" label="전체 선택" 
+                        onChange={checkAll}
+                        checked={condition.countryRegions.length === 6}/>
                 <hr/>
                 <Form.Check type="checkbox" value={"아시아"} label="아시아" onChange={checkCountryRegion} checked={condition.countryRegions.includes("아시아")}/>
                 <Form.Check type="checkbox" value={"아프리카"} label="아프리카" onChange={checkCountryRegion} checked={condition.countryRegions.includes("아프리카")}/>

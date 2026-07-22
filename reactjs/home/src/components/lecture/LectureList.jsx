@@ -1,10 +1,11 @@
-import Jumbotron from "../../templates/Jumbotron";
+import Jumbotron from "@templates/Jumbotron";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { FaChevronDown, FaPlus } from "react-icons/fa6";
 import { ClockLoader } from "react-spinners";
 import { Row, Col, Form, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { apiClient } from "@utils/reaxios";
 
 export default function LectureList() {
     //state
@@ -52,9 +53,10 @@ export default function LectureList() {
         const lastLectureNo = dataSize === 0 ? 
                             0 : lectureList[dataSize-1].lectureNo;
 
-        const response = await apiClientpost("/api/lecture/list-more",
-            {lastLectureNo: lastLectureNo,size : size}
-        );
+        const response = await apiClient.post("/lecture/list-more",{
+            lastNo: lastLectureNo,
+            size : size
+        });
         //덮어쓰기가 아니라 추가(이어쓰기)가 필요
         setLectureList([...lectureList, ...response.data.list]);
         setLast(response.data.last);

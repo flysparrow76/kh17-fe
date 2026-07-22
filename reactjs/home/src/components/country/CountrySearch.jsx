@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
 import { Col, Form, ListGroup, Row } from "react-bootstrap";
-import axios from "axios";
 import { throttle, debounce } from "lodash-es";
+import { apiClient } from "../../utils/reaxios";
 
 export default function CountrySearch() {
     //state
@@ -20,22 +20,21 @@ export default function CountrySearch() {
         searchKeyword(keyword);
     }, [keyword]);
 
-    //throttle 설정 시 주의사항,debounce 설정 시 주의사항
-
-    //throttle(함수,실행주기) ->새로운 함수가 생성됨
-    //debounce(함수,실행주기) ->새로운 함수가 생성됨
-    //-(주의) 함수를 만들 때 연관항목을 설정하지 말아야 한다(함수가 재생성이 안되어야 함)
-    //- 일반적으로 실행주기는 250ms~350ms정도가 적당 (1초3~4번)
+    //throttle, debounce 설정 시 주의사항
+    //- throttle(함수, 실행주기) → 새로운 함수가 생성됨
+    //- debounce(함수, 실행주기) → 새로운 함수가 생성됨
+    //- (주의) 함수를 만들 때 연관항목을 설정하지 말아야 한다 (함수가 재생성이 안되야 함)
+    //- 일반적으로 실행주기는 250ms ~ 350ms 정도가 적당 (1초에 3~4번)
     const searchKeyword = useCallback(throttle(async (keyword)=>{
-        console.log("searchKeyword 실행")
         if(keyword.length === 0) {
             setSearchList([]);
             return;
         }
-        const response = await apiClientget(`/api/country/countryName/${keyword}`);
+        console.log("searchKeyword 실행");
+        
+        const response = await apiClient.get(`/country/countryName/${keyword}`);
         setSearchList(response.data);
-
-    },1000),[]);
+    }, 350), []);
 
     return (<>
         <Jumbotron title="국가명 검색 샘플"/>

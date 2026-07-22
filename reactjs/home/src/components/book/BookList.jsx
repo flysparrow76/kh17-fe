@@ -7,6 +7,7 @@ import { ClockLoader } from "react-spinners";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { apiClient } from "@utils/reaxios";
 
 export default function BookList() {
     //state
@@ -29,8 +30,8 @@ export default function BookList() {
         const dataSize = bookList.length;
         const lastBookId = dataSize === 0 ? 0 : bookList[dataSize-1].bookId;
 
-        const response = await apiClientpost(
-            "/api/book/list-more",
+        const response = await apiClient.post(
+            "/book/list-more",
             { lastNo : lastBookId , size : size }
         );
         setBookList([...bookList, ...response.data.list]);//이어쓰기
