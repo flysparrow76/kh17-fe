@@ -29,7 +29,7 @@ export default function BookEdit(){
     },[]);
 
     const loadData = useCallback(async ()=>{
-        const response = await axios.get(`/api/book/${bookId}`)
+        const response = await apiClientget(`/api/book/${bookId}`)
         setBook(response.data);
     },[]);
 
@@ -136,7 +136,7 @@ export default function BookEdit(){
 
     //데이터전송
     const send = useCallback(async()=>{
-        const response = await axios.put(
+        const response = await apiClientput(
             `/api/book/${bookId}`,
             book
         );

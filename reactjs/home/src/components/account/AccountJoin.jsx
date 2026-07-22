@@ -85,7 +85,7 @@ export default function AccountJoin() {
             return;
         }
         //형식 통과 → 중복 검사
-        const response = await axios.get(`/api/account/check-id/${account.accountId}`);
+        const response = await apiClientget(`/api/account/check-id/${account.accountId}`);
         const clazz = response.data === true ? "is-valid" : "is-invalid";
         const code = response.data === true ? null : "duplicate";
         setResult(prev=>({
@@ -124,7 +124,7 @@ export default function AccountJoin() {
             return;
         }
         //형식 통과 → 중복 검사
-        const { data } = await axios.get(`/api/account/check-email/${account.accountEmail}`);
+        const { data } = await apiClientget(`/api/account/check-email/${account.accountEmail}`);
         const clazz = data ? "" : "is-invalid";//형식과 중복검사를 통과하더라도 아직 인증번호가 남아있음
         const code = data ? null : "duplicate";
         setResult(prev=>({
@@ -144,7 +144,7 @@ export default function AccountJoin() {
             return;
         }
         //형식통과 → 중복검사
-        const { data } = await axios.get(`/api/account/check-nickname/${account.accountNickname}`);
+        const { data } = await apiClientget(`/api/account/check-nickname/${account.accountNickname}`);
         const clazz = data ? "is-valid" : "is-invalid";
         const code = data ? null : "duplicate";
         setResult(prev=>({
@@ -278,7 +278,7 @@ export default function AccountJoin() {
 
         try {
             setSending(true);
-            const response = await axios.post(
+            const response = await apiClientpost(
                 "/service/cert/send", 
                 {certEmail : account.accountEmail}
             );
@@ -302,7 +302,7 @@ export default function AccountJoin() {
     }, []);
 
     const checkCert = useCallback(async ()=>{
-        const { data } = await axios.post(
+        const { data } = await apiClientpost(
             "/service/cert/check",
             { certEmail : account.accountEmail , certNumber: certNumber }
         );
@@ -336,23 +336,23 @@ export default function AccountJoin() {
 
         return true;
     }, [result, certNumberResult]);
-    
-    //최종가입
+
+    // 최종 가입
     const navigate = useNavigate();
-    const sendJoin = useCallback(async()=>{
-        try{
+    const sendJoin = useCallback(async ()=>{
+        try {
             //const copy = {...account};
             //delete copy.accountPassword2;
-            const {accountPassword2,...copy} = account;
-            const response = await axios.post("/api/account/",account);
-            toast.success("회원가입이 완료되었습니다.")
-            navigate("/account/joinSuccess")
+            const { accountPassword2, ...copy } = account;
+            const response = await apiClientpost("/api/account/", copy);
+            //toast.success("회원 가입이 완료되었습니다");
+            navigate("/account/joinSuccess");
         }
-        catch(e){
-            toast.error("회원 가입 과정에서 오류가 발생했습니다.")
-            navigate("/account/joinFail")
+        catch(e) {
+            //toast.error("회원 가입 과정에서 오류가 발생했습니다");
+            navigate("/account/joinFail");
         }
-    },[account])
+    }, [account]);
 
     //view
     return (<>
@@ -637,7 +637,7 @@ export default function AccountJoin() {
         <Row className="my-5">
             <Col>
                 <Button variant="success" size="lg" className="w-100" 
-                               onClick={sendJoin} disabled={allValid === false}>
+                        disabled={allValid === false} onClick={sendJoin}>
                     <FaUserPlus/>
                     <span className="ms-2">회원 가입하기</span>
                 </Button>

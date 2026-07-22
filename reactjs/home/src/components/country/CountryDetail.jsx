@@ -8,6 +8,7 @@ import { FaCheck, FaList, FaPenToSquare, FaSquarePen, FaTrash, FaXmark } from "r
 import { useCallback } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { apiClient } from "@utils/reaxios";
 
 export default function CountryDetail() {
     // Route에 선언된 파라미터 변수를 읽으려면 useParams()를 사용해야 한다
@@ -31,7 +32,7 @@ export default function CountryDetail() {
     }, []);
 
     const loadData = useCallback(async ()=>{
-        const response = await axios.get(`/api/country/${countryNo}`)
+        const response = await apiClient.get(`/country/${countryNo}`)
         setCountry(response.data);
         setBackup(response.data);
     }, []);
@@ -52,7 +53,7 @@ export default function CountryDetail() {
 
         if(result.isConfirmed === false) return;
 
-        const response = await axios.delete(`/api/country/${countryNo}`);
+        const response = await apiClient.delete(`/country/${countryNo}`);
         toast.error("국가 삭제가 완료되었습니다");
         navigate("/country/list");
     }, [countryNo]);
@@ -65,7 +66,8 @@ export default function CountryDetail() {
         countryRegion:false,
         countryPopulation:false
     });
-    //입력함수
+
+    //입력 함수
     const changeStringValue = useCallback(e=>{
         const {name, value} = e.target;
         setCountry({
@@ -74,46 +76,48 @@ export default function CountryDetail() {
         });
     }, [country]);
     const changeNumericValue = useCallback(e=>{
-        const {name , value} = e.target;
+        const {name, value} = e.target;
         const regex = /[^0-9]+/g;
-        const replacement = value.replace(regex,"");
-        const number = parseInt(replacement || 0 );
+        const replacement = value.replace(regex, "");
+        const number = parseInt(replacement || 0);
         setCountry({
-            ...country, 
-            [name] : number
+            ...country,
+            [name]:number
         });
-    },[country])
+    }, [country]);
 
-    //개별 수정
+    //국가명만 변경하는 함수
     const updateCountry = useCallback(async (field)=>{
-        const response = await axios.patch(
-            `/api/country/${countryNo}`, 
+        const response = await apiClient.patch(
+            `/country/${countryNo}`, 
             // {countryName : country.countryName}
-            { [field] : country[field]}
+            { [field] : country[field] }
         );
 
         //백업을 갱신
-        // setBackup({...backup, countryName:country.countryName});
-        setBackup({...backup, [field]: country[field]});
+        //setBackup({...backup, countryName:country.countryName});
+        setBackup({...backup, [field]: country[field] });
         //수정모드를 취소
-        // setEditMode({...editMode, countryName:false});
+        //setEditMode({...editMode, countryName:false});
         setEditMode({...editMode, [field]:false});
         //알림(옵션)
-        toast.success("국가명이 변경되었습니다");
+        toast.success("정보가 변경되었습니다");
     }, [country, backup, editMode]);
 
     const cancelUpdate = useCallback((field)=>{
-        // setCountry({...country, countryName: backup.countryName});
+        //setCountry({...country, countryName: backup.countryName});
         setCountry({...country, [field]: backup[field]});
-        // setEditMode({...editMode, countryName : false});
+        //setEditMode({...editMode, countryName : false});
         setEditMode({...editMode, [field] : false});
-        toast.error("정보변경이 취소되었습니다.")
 
-    },[country, backup, editMode]);
+        toast.error("정보 변경이 취소되었습니다");
+    }, [country, backup, editMode]);
 
     const startUpdate = useCallback((field)=>{
-        setEditMode({...editMode,[field]:true})
-    },[editMode])
+        //setEditMode({...editMode, countryName : true})
+        setEditMode({...editMode, [field] : true})
+    }, [editMode]);
+
     return (<>
         <Jumbotron title="국가 상세 정보" content={`${countryNo}번 국가의 상세 정보 화면입니다`}/>
 
@@ -127,11 +131,8 @@ export default function CountryDetail() {
             </Col>
             <Col sm={9}>
                 { editMode.countryName !== true ? (<>
-
                     <span>{country.countryName}</span>
-                    <FaSquarePen className="text-warning ms-2"
-                            onClick={e=>startUpdate("countryName")}/>
-
+                    <FaSquarePen className="text-warning ms-2" onClick={e=>startUpdate("countryName")}/>
                 </>) : (<>
                     <Form.Control type="text" className="w-auto d-inline-block"
                         name="countryName" value={country.countryName}
@@ -174,11 +175,8 @@ export default function CountryDetail() {
             </Col>
             <Col sm={9}>
                 { editMode.countryCapital !== true ? (<>
-
                     <span>{country.countryCapital}</span>
-                    <FaSquarePen className="text-warning ms-2"
-                            onClick={e=>startUpdate("countryCapital")}/>
-
+                    <FaSquarePen className="text-warning ms-2" onClick={e=>startUpdate("countryCapital")}/>
                 </>) : (<>
                     <Form.Control type="text" className="w-auto d-inline-block"
                         name="countryCapital" value={country.countryCapital}
@@ -194,11 +192,8 @@ export default function CountryDetail() {
             </Col>
             <Col sm={9}>
                 { editMode.countryPopulation !== true ? (<>
-
-                    <span>{country.countryPopulation}</span>
-                    <FaSquarePen className="text-warning ms-2"
-                            onClick={e=>startUpdate("countryPopulation")}/>
-
+                    <span>{country.countryPopulation.toLocaleString()} 명</span>
+                    <FaSquarePen className="text-warning ms-2" onClick={e=>startUpdate("countryPopulation")}/>
                 </>) : (<>
                     <Form.Control type="text" className="w-auto d-inline-block"
                         name="countryPopulation" value={country.countryPopulation}
@@ -216,7 +211,7 @@ export default function CountryDetail() {
                     <span>삭제하기</span>
                 </Button>
                 <Button className="ms-2" variant="warning"
-                    as={Link} to={`/country/edit/${countryNo}`}>
+                        as={Link} to={`/country/edit/${countryNo}`}>
                     <FaPenToSquare className="me-2"/>
                     <span>수정하기</span>
                 </Button>

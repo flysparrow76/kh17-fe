@@ -52,7 +52,7 @@ export default function LectureList() {
         const lastLectureNo = dataSize === 0 ? 
                             0 : lectureList[dataSize-1].lectureNo;
 
-        const response = await axios.post("/api/lecture/list-more",
+        const response = await apiClientpost("/api/lecture/list-more",
             {lastLectureNo: lastLectureNo,size : size}
         );
         //덮어쓰기가 아니라 추가(이어쓰기)가 필요

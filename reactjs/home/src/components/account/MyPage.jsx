@@ -1,16 +1,18 @@
 import Jumbotron from "@templates/Jumbotron";
 import { useAtom, useAtomValue } from "jotai";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { loginUserState } from "@utils/storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { apiClient } from "@utils/reaxios";
+import { Link } from "react-router-dom";
+import { FaList, FaPenToSquare } from "react-icons/fa6";
 
 export default function MyPage() {
     //jotai state에 저장된 내 정보를 가져와서 서버에 나머지 정보를 요청해야함
     //const [loginUser, setLoginUser] = useAtom(loginUserState);
     //const loginUser = useAtomValue(loginUserState);
-    const { accountId, accountNickname, accoutLevel } = useAtomValue(loginUserState);
+    const { accountId, accountNickname, accountLevel } = useAtomValue(loginUserState);
 
     const [ account, setAccount ] = useState(null);
 
@@ -19,8 +21,8 @@ export default function MyPage() {
     }, []);
 
     const loadData = useCallback(async ()=>{
-        // const {data} = await axios.get(`/api/account/${accountId}`);
-        //const {data} = await axios.get(`/api/account/me`);
+        // const {data} = await apiClientget(`/api/account/${accountId}`);
+        //const {data} = await apiClientget(`/api/account/me`);
         const {data} = await apiClient.get(`/account/me`);
         setAccount(data);
     }, [accountId]);
@@ -98,5 +100,20 @@ export default function MyPage() {
             <Col sm={3} className="fw-bold text-info">상태메세지</Col>
             <Col sm={9} className="text-secondary">{account?.accountMessage}</Col>
         </Row>
+
+        <Row className="mt-5">
+                    <Col className="text-end">
+                        <Button className="ms-2" variant="warning"
+                                as={Link} to={`/account/change/${account?.accountId}`}>
+                            <FaPenToSquare className="me-2"/>
+                            <span>수정하기</span>
+                        </Button>
+                        <Button className="ms-2" variant="secondary"
+                                as={Link} to="/account/password">
+                            <FaList className="me-2"/>
+                            <span>비밀번호 변경</span>
+                        </Button>
+                    </Col>
+                </Row>
     </>)
 }

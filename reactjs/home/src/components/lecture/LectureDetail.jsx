@@ -45,7 +45,7 @@ export default function LectureDetail() {
         //     url:`http://localhost:8080/api/lecture/detail/${lectureNo}`,
         //     method:"get"
         // });
-        const response = await axios.get(`/api/lecture/${lectureNo}`);
+        const response = await apiClientget(`/api/lecture/${lectureNo}`);
         setLecture(response.data);
         setBackup(response.data);
     }, []);
@@ -64,7 +64,7 @@ export default function LectureDetail() {
         });
         if(result.isConfirmed === false) return;
 
-        const response = await axios.delete(`/api/lecture/delete/${lectureNo}`);
+        const response = await apiClientdelete(`/api/lecture/delete/${lectureNo}`);
         toast.error("강좌 삭제가 완료되었습니다");
         navigate("/lecture/list");
     }, [lectureNo]);
@@ -97,7 +97,7 @@ export default function LectureDetail() {
     },[lecture])
 
     const updateLecture = useCallback(async (field)=>{
-        const response = await axios.patch(
+        const response = await apiClientpatch(
             `/api/lecutre/${lectureNo}`, 
             { [field] : lecture[field]}
         );

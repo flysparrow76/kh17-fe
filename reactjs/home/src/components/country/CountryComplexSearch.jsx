@@ -43,7 +43,7 @@ export default function CountryComplexSearch() {
     }, []);
 
     const send = useCallback(async ()=>{
-        const response = await axios.post("/api/country/complexSearch", condition);
+        const response = await apiClientpost("/api/country/complexSearch", condition);
         //console.log(response.data);
         setCountryList(response.data.list);
         setLast(response.data.last);
@@ -54,7 +54,7 @@ export default function CountryComplexSearch() {
         return countryList[countryList.length-1].countryNo;
     }, [countryList]);
     const loadMoreList = useCallback(async ()=>{
-        const response = await axios.post(
+        const response = await apiClientpost(
             "/api/country/complexSearch", 
             //condition의 모든내용 + lastCountryNo 추가하여 전송
             {...condition , lastCountryNo : lastCountryNo }
