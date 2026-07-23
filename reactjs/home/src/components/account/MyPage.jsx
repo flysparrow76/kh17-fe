@@ -111,9 +111,9 @@ export default function MyPage() {
                 </Button>
 
                 <Button className="ms-2" variant="warning"
-                        as={Link} to={`/account/change/${account?.accountId}`}>
+                        as={Link} to="/account/change">
                     <FaPenToSquare className="me-2"/>
-                    <span>수정하기</span>
+                    <span>개인정보 변경</span>
                 </Button>
             </Col>
         </Row>
