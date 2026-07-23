@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { apiClient } from "@utils/reaxios";
 import { Link } from "react-router-dom";
-import { FaList, FaPenToSquare } from "react-icons/fa6";
+import { FaList, FaLock, FaPenToSquare } from "react-icons/fa6";
 
 export default function MyPage() {
     //jotai state에 저장된 내 정보를 가져와서 서버에 나머지 정보를 요청해야함
@@ -101,19 +101,21 @@ export default function MyPage() {
             <Col sm={9} className="text-secondary">{account?.accountMessage}</Col>
         </Row>
 
+        {/* 각종 다른 기능으로 이동할 수 있는 링크들 */}
         <Row className="mt-5">
-                    <Col className="text-end">
-                        <Button className="ms-2" variant="warning"
-                                as={Link} to={`/account/change/${account?.accountId}`}>
-                            <FaPenToSquare className="me-2"/>
-                            <span>수정하기</span>
-                        </Button>
-                        <Button className="ms-2" variant="secondary"
-                                as={Link} to="/account/password">
-                            <FaList className="me-2"/>
-                            <span>비밀번호 변경</span>
-                        </Button>
-                    </Col>
-                </Row>
+            <Col className="text-end">
+                <Button className="ms-2" variant="danger"
+                        as={Link} to="/account/password">
+                    <FaLock className="me-2"/>
+                    <span>비밀번호 변경</span>
+                </Button>
+
+                <Button className="ms-2" variant="warning"
+                        as={Link} to={`/account/change/${account?.accountId}`}>
+                    <FaPenToSquare className="me-2"/>
+                    <span>수정하기</span>
+                </Button>
+            </Col>
+        </Row>
     </>)
 }

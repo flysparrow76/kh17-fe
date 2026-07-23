@@ -23,7 +23,7 @@ import AccountLogin from "@components/account/AccountLogin";
 
 import MyPage from "@components/account/MyPage";
 // import Change from "@components/account/Change";
-import Password from "@components/account/Password";
+import AccountPassword from "@components/account/AccountPassword";
 
 
 import TestMain from "@components/session/TestMain";
@@ -58,7 +58,7 @@ export default function Body() {
         <Route path="/account/login" element={<AccountLogin/>}/>
         <Route path="/account/mypage" element={<Private><MyPage/></Private>}/>
         {/* <Route path="/account/change/:accountId" element={<Change/>}/> */}
-        <Route path="/account/password" element={<Password/>}/>
+        <Route path="/account/password" element={<Private><AccountPassword/></Private>}/>
 
         {/* 세션테스트 */}
         <Route path="/session/test" element={<TestMain/>}/>
