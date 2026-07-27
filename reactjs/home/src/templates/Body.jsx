@@ -24,6 +24,7 @@ import AccountPassword from "@components/account/AccountPassword";
 import AccountChange from "@components/account/AccountChange";
 
 import AdminUsers from "@components/admin/AdminUsers";
+import AdminUsersScroll from "@components/admin/AdminUsersScroll";
 
 import MyPage from "@components/account/MyPage";
 // import Change from "@components/account/Change";
@@ -66,6 +67,8 @@ export default function Body() {
 
         {/* 관리자관련 */}
         <Route path="/admin/users" element={<Admin><AdminUsers/></Admin>}/>
+        {/* 관리자관련 */}
+        <Route path="/admin/users2" element={<Admin><AdminUsersScroll/></Admin>}/>
 
         {/* 세션테스트 */}
         <Route path="/session/test" element={<TestMain/>}/>

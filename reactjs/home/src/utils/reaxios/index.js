@@ -56,13 +56,13 @@ apiClient.interceptors.response.use(
 
     //최초 요청인 경우를 제외하고는 모두 통과시켜서 재요청이 발생하지 않도록 한다
     if(originalRequest._retry) {//표식이 존재한다면
-        console.log("retry 표식을 발견함");
+        //console.log("retry 표식을 발견함");
         moveToLoginPage();
         return Promise.reject(error);//차단해!
     }
 
     originalRequest._retry = true;
-    console.log("retry 표식을 남겼음");
+    //console.log("retry 표식을 남겼음");
 
     console.log("액세스 토큰 만료됨 → 갱신 요청 시작");
     try {
