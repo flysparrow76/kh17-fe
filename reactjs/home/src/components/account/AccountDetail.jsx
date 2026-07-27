@@ -1,43 +1,52 @@
 import Jumbotron from "@templates/Jumbotron";
-import { useAtom, useAtomValue } from "jotai";
-import { Button, Col, Row } from "react-bootstrap";
-import { loginUserState } from "@utils/storage";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { apiClient } from "@utils/reaxios";
-import { Link } from "react-router-dom";
-import { FaList, FaLock, FaPenToSquare } from "react-icons/fa6";
+import { useCallback, useEffect, useState } from "react";
+import { Col, Form, Row } from "react-bootstrap";
+import { apiClient} from "@utils/reaxios"
+import { useParams } from "react-router-dom";
+import { FaCheck, FaSquarePen, FaXmark } from "react-icons/fa6";
 
-export default function MyPage() {
-    //jotai state에 저장된 내 정보를 가져와서 서버에 나머지 정보를 요청해야함
-    //const [loginUser, setLoginUser] = useAtom(loginUserState);
-    //const loginUser = useAtomValue(loginUserState);
-    const { accountId, accountNickname, accountLevel } = useAtomValue(loginUserState);
+export default function AccountDetail(){
+    const { accountId } = useParams();
 
-    const [ account, setAccount ] = useState(null);
-
+    const [account, setAccount] = useState(null);
     useEffect(()=>{
         loadData();
-    }, []);
-
+    },[]);
+    
     const loadData = useCallback(async ()=>{
-        // const {data} = await apiClientget(`/api/account/${accountId}`);
-        //const {data} = await apiClientget(`/api/account/me`);
-        const {data} = await apiClient.get(`/account/me`);
+        const {data} = await apiClient.get(`/account/${accountId}`);
         setAccount(data);
-    }, [accountId]);
-
-    //주소를 완성해서 반환하는 메모
-    const unionAddress = useMemo(()=>{
-        if(account === null) return "";
-        if(account.accountPost === null) return "";
-        if(account.accountAddress1 === null) return "";
-        if(account.accountAddress2 === null) return "";
-        return `[${account.accountPost}] ${account.accountAddress1} ${account.accountAddress2}`;
+    },[accountId])
+    
+    const [backup, setBackup] = useState(null);
+    const [edit, setEditMode] = useState({
+        accountBlock:false
+    });
+    //입력 함수
+    const changeStringValue = useCallback(e=>{
+        const {name, value} = e.target;
+        setAccount({
+            ...account, 
+                [name] : value
+            });
     }, [account]);
 
-    return (<>
-        <Jumbotron title={`${account?.accountNickname}님의 개인 정보`}/>
+    const updateAccount = useCallback(async (field)=>{
+        const response = await apiClient.patch(
+            `/account/block/${accountId}`,
+            {[field] : account[field]}
+        )
+    });
+
+    const cancelUpdate = useCallback((field)=>{
+            setAccount({...account, [field]: backup[field]});
+            setEditMode({...editMode, [field] : false});
+    
+            toast.error("정보 변경이 취소되었습니다");
+        }, [country, backup, editMode]);
+
+    return(<>
+        <Jumbotron title={`${account?.accountId}님의 개인 정보`}/>
 
         <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">아이디</Col>
@@ -66,7 +75,7 @@ export default function MyPage() {
 
         <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">주소</Col>
-            <Col sm={9} className="text-secondary">{unionAddress}</Col>
+            <Col sm={9} className="text-secondary"></Col>
         </Row>
 
         <Row className="mt-4">
@@ -100,22 +109,26 @@ export default function MyPage() {
             <Col sm={3} className="fw-bold text-info">상태메세지</Col>
             <Col sm={9} className="text-secondary">{account?.accountMessage}</Col>
         </Row>
-        
-        {/* 각종 다른 기능으로 이동할 수 있는 링크들 */}
-        <Row className="mt-5">
-            <Col className="text-end">
-                <Button className="ms-2" variant="danger"
-                        as={Link} to="/account/password">
-                    <FaLock className="me-2"/>
-                    <span>비밀번호 변경</span>
-                </Button>
 
-                <Button className="ms-2" variant="warning"
-                        as={Link} to="/account/change">
-                    <FaPenToSquare className="me-2"/>
-                    <span>개인정보 변경</span>
-                </Button>
+        <Row className="mt-4">
+            <Col sm={3} className="fw-bold text-info">차단상태</Col>
+            <Col sm={9} className="text-secondary">
+                {editMode.accountBlock !== true ? (<>
+                <span>{account.accountBlock}</span>
+                    <FaSquarePen className="text-warning ms-2" 
+                    onClick={e=>startUpdate("accountBlock")}/>
+                </>) : (<>
+                    <Form.Select className="w-auto d-inline-block" name="accountBlock"
+                    value={account.accountBlock} onChange={changeStringValue}>
+                        <option>Y</option>
+                        <option>N</option>
+                    </Form.Select>
+                    <FaCheck className="text-success ms-2" onClick={e=>updateAccount("accountBlock")}/>
+                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("accountBlock")}/>
+                </>)}
+                {account?.accountBlock}
             </Col>
         </Row>
+
     </>)
 }

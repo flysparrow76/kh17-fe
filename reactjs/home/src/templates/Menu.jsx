@@ -81,6 +81,7 @@ export default function Menu() {
                         </NavDropdown>
                         <Nav.Link as={Link} to="/session/test">세션테스트</Nav.Link>
                         <Nav.Link as={Link} to="/admin/users">회원검색</Nav.Link>
+                        <Nav.Link as={Link} to="/account/detail">회원정보</Nav.Link>
                     </Nav>
                     <Nav>
                         { isLogin === true && (<>
@@ -88,6 +89,7 @@ export default function Menu() {
                         { isAdmin === true && (<>
                         <Nav.Link as={Link} to="/admin/users">관리메뉴</Nav.Link>
                         <Nav.Link as={Link} to="/admin/users2">관리메뉴2</Nav.Link>
+                        <Nav.Link as={Link} to="/account/mypage">내정보</Nav.Link>
                         </>)}
                         { isAdmin === false && (<>
                         <Nav.Link as={Link} to="/account/mypage">내정보</Nav.Link>

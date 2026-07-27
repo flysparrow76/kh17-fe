@@ -22,6 +22,7 @@ import AccountJoinSuccess from "@components/account/AccountJoinSuccess";
 import AccountLogin from "@components/account/AccountLogin";
 import AccountPassword from "@components/account/AccountPassword";
 import AccountChange from "@components/account/AccountChange";
+import AccountDetail from "@components/account/AccountDetail";
 
 import AdminUsers from "@components/admin/AdminUsers";
 import AdminUsersScroll from "@components/admin/AdminUsersScroll";
@@ -61,6 +62,7 @@ export default function Body() {
         <Route path="/account/joinFail" element={<AccountJoinFail/>}/>
         <Route path="/account/login" element={<AccountLogin/>}/>
         <Route path="/account/mypage" element={<Private><MyPage/></Private>}/>
+        <Route path="/account/detail/:accountId" element={<AccountDetail/>}/>
         {/* <Route path="/account/change/:accountId" element={<Change/>}/> */}
         <Route path="/account/password" element={<Private><AccountPassword/></Private>}/>
         <Route path="/account/change" element={<Private><AccountChange/></Private>}/>
