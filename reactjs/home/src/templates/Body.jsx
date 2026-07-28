@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "@components/Home";
+
 import NotFound from "@error/NotFound";
+import AccountBlock from "@error/AccountBlock";
 
 import CountryList from "@components/country/CountryList";
 import CountryAdd from "@components/country/CountryAdd";
@@ -17,23 +19,23 @@ import BookList from "@components/book/BookList";
 import BookSpa from "@components/book/BookSpa";
 
 import AccountJoin from "@components/account/AccountJoin";
-import AccountJoinFail from "@components/account/AccountJoinFail";
 import AccountJoinSuccess from "@components/account/AccountJoinSuccess";
+import AccountJoinFail from "@components/account/AccountJoinFail";
 import AccountLogin from "@components/account/AccountLogin";
 import AccountPassword from "@components/account/AccountPassword";
 import AccountChange from "@components/account/AccountChange";
+import AccountNeedUpdate from "@components/account/AccountNeedUpdate";
+
+import MyPage from "@components/account/MyPage";
 
 import AdminUsers from "@components/admin/AdminUsers";
 import AdminUsersScroll from "@components/admin/AdminUsersScroll";
 import AdminUserDetail from "@components/admin/AdminUserDetail";
 
-import MyPage from "@components/account/MyPage";
-// import Change from "@components/account/Change";
-
 import TestMain from "@components/session/TestMain";
+
 import Private from "@guard/Private";
 import Admin from "@guard/Admin";
-
 
 export default function Body() {
 
@@ -56,23 +58,26 @@ export default function Body() {
         <Route path="/book/list" element={<BookList/>}/>
         <Route path="/book/spa" element={<BookSpa/>}/>
 
-        {/* 회원관련 */}
+        {/* 회원 관련 */}
         <Route path="/account/join" element={<AccountJoin/>}/>
         <Route path="/account/joinSuccess" element={<AccountJoinSuccess/>}/>
         <Route path="/account/joinFail" element={<AccountJoinFail/>}/>
         <Route path="/account/login" element={<AccountLogin/>}/>
         <Route path="/account/mypage" element={<Private><MyPage/></Private>}/>
-        {/* <Route path="/account/change/:accountId" element={<Change/>}/> */}
         <Route path="/account/password" element={<Private><AccountPassword/></Private>}/>
         <Route path="/account/change" element={<Private><AccountChange/></Private>}/>
+        <Route path="/account/needUpdate" element={<Private><AccountNeedUpdate/></Private>}/>
 
-        {/* 관리자관련 */}
-        <Route path="/admin/users" element={<Admin><AdminUsers/></Admin>}/>
-        <Route path="/admin/users2" element={<Admin><AdminUsersScroll/></Admin>}/>
-        <Route path="/admin/detail/:accountId" element={<Admin><AdminUserDetail/></Admin>}/>
+        {/* 관리자 기능 */}
+        <Route path="/admin/users" element={<Admin><AdminUsers/></Admin>}></Route>
+        <Route path="/admin/users2" element={<Admin><AdminUsersScroll/></Admin>}></Route>
+        <Route path="/admin/detail/:accountId" element={<Admin><AdminUserDetail/></Admin>}></Route>
 
         {/* 세션테스트 */}
         <Route path="/session/test" element={<TestMain/>}/>
+
+        {/* error */}
+        <Route path="/account/block" element={<AccountBlock/>}/>
 
         {/* fallback route */}
         <Route path="*" element={<NotFound/>}/>

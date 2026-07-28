@@ -1,69 +1,107 @@
-import Jumbotron from "@templates/Jumbotron";
+import Jumbotron from "@templates/Jumbotron"
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Col, Form, Placeholder, Row } from "react-bootstrap";
-import { apiClient} from "@utils/reaxios"
-import { useParams } from "react-router-dom";
-import { FaCheck, FaSquarePen, FaXmark } from "react-icons/fa6";
-import LoadingText from "@templates/loadingText";
+import { useParams } from "react-router-dom"
+import { apiClient } from "@utils/reaxios";
+import { Button, Col, Placeholder, Row } from "react-bootstrap";
+import LoadingText from "@templates/LoadingText";
+import { FaLock, FaSpinner, FaUnlock, FaUserLock } from "react-icons/fa6";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { MdOutlinePassword } from "react-icons/md";
+import { certClient } from "../../utils/reaxios";
 
-export default function AccountDetail(){
-    //딱 한번만 최초 시점에 그 누구보다 빠르게 불러오는 처리 담당(변경불가)
+export default function AdminUserDetail() {
+    
+    //딱 한번만 최초 시점에 그 누구보다 빠르게 불러오는 처리 담당 (변경 불가)
     const { accountId } = useParams();
 
     const [account, setAccount] = useState(null);
-    
     useEffect(()=>{
         loadData();
-    },[]);
-    
+    }, []);
+
     const loadData = useCallback(async ()=>{
-        const {data} = await apiClient.get(`/account/${accountId}`);
+        const { data } = await apiClient.get(`/admin/${accountId}`);
         setAccount(data);
-    },[])
+    }, []);
 
     //주소를 완성해서 반환하는 메모
-        const unionAddress = useMemo(()=>{
-            if(account === null) return undefined;
-            if(account.accountPost === null) return "";
-            if(account.accountAddress1 === null) return "";
-            if(account.accountAddress2 === null) return "";
-            return `[${account.accountPost}] ${account.accountAddress1} ${account.accountAddress2}`;
-        }, [account]);
+    const unionAddress = useMemo(()=>{
+        if(account === null) return undefined;
+        if(account.accountPost === null) return "";
+        if(account.accountAddress1 === null) return "";
+        if(account.accountAddress2 === null) return "";
+        return `[${account.accountPost}] ${account.accountAddress1} ${account.accountAddress2}`;
+    }, [account]);
 
-    //로딩중일 경우의 화면을 따로 보여줄 때
-    // if(account === null){
-    //     return(<><h1>로딩중인 화면</h1></>)
+
+    const block = useCallback(async ()=>{
+        //확인창
+        const result = await Swal.fire({
+            title:`정말 ${account.accountBlock === "N" ? "차단" : "차단 해제"}하시겠습니까?`,
+            icon:"warning",
+            showCancelButton:true,
+            confirmButtonText:"확인",
+            cancelButtonText:"취소",
+            confirmButtonColor:"#d63031",
+            cancelButtonColor:"#b2bec3"
+        });
+        if(result.isConfirmed === false) return;//취소
+
+        const { data } = await apiClient.patch(`/admin/block/${accountId}`);
+        //console.log(data);
+        setAccount(data);
+
+        //알림 처리
+        if(data.accountBlock === "Y") {
+            toast.error("회원 차단이 완료되었습니다");
+        }
+        else {
+            toast.success("회원 차단이 해제되었습니다");
+        }
+    }, [account]);
+
+    // const sending = useRef(false);
+    const [sending, setSending] = useState(false);
+
+    const createTempPassword = useCallback(async ()=>{
+        //확인창
+        const result = await Swal.fire({
+            title:`임시 비밀번호로 변경하시겠습니까?`,
+            icon:"warning",
+            showCancelButton:true,
+            confirmButtonText:"확인",
+            cancelButtonText:"취소",
+            confirmButtonColor:"#d63031",
+            cancelButtonColor:"#b2bec3"
+        });
+        if(result.isConfirmed === false) return;//취소
+
+        if(sending === true) return;
+        setSending(true);
+
+        try {
+            const { data } = await apiClient.post(`/admin/tempPassword/${accountId}`);
+            toast.success("임시 비밀번호가 발송되었습니다");
+        }
+        catch(e) {
+            toast.error("이메일 발송에 실패하였습니다");
+        }
+
+        setSending(false);
+    }, []);
+
+
+    //로딩중인 화면을 따로 보여줄 때
+    // if(account === null) {
+    //     return (<h1>로딩중인 화면</h1>)
     // }
-    
-    // const [backup, setBackup] = useState(null);
-    // const [edit, setEditMode] = useState({
-    //     accountBlock:false
-    // });
-    // //입력 함수
-    // const changeStringValue = useCallback(e=>{
-    //     const {name, value} = e.target;
-    //     setAccount({
-    //         ...account, 
-    //             [name] : value
-    //         });
-    // }, [account]);
 
-    // const updateAccount = useCallback(async (field)=>{
-    //     const response = await apiClient.patch(
-    //         `/account/block/${accountId}`,
-    //         {[field] : account[field]}
-    //     )
-    // });
 
-    // const cancelUpdate = useCallback((field)=>{
-    //         setAccount({...account, [field]: backup[field]});
-    //         setEditMode({...editMode, [field] : false});
-    
-    //         toast.error("정보 변경이 취소되었습니다");
-    //     }, [account, backup, editMode]);
-
-    return(<>
-        <Jumbotron title={`${account?.accountId}님의 개인 정보`}/>
+    //로딩완료시 화면
+    return (<>
+        
+        <Jumbotron title={`${account?.accountNickname ?? ""}님의 개인 정보`}/>
 
         <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">아이디</Col>
@@ -89,7 +127,7 @@ export default function AccountDetail(){
         <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">생년월일</Col>
             <Col sm={9} className="text-secondary">
-               <LoadingText value={account?.accountBirth} width={100}/>
+                <LoadingText value={account?.accountBirth} width={100}/>
             </Col>
         </Row>
 
@@ -123,6 +161,13 @@ export default function AccountDetail(){
         </Row>
 
         <Row className="mt-4">
+            <Col sm={3} className="fw-bold text-info">차단상태</Col>
+            <Col sm={9} className="text-secondary">
+                <LoadingText value={account?.accountBlock} width={50}/>
+            </Col>
+        </Row>
+
+        <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">가입일</Col>
             <Col sm={9} className="text-secondary">
                 <LoadingText value={account?.accountJoin} width={240}/>
@@ -146,29 +191,39 @@ export default function AccountDetail(){
         <Row className="mt-4">
             <Col sm={3} className="fw-bold text-info">상태메세지</Col>
             <Col sm={9} className="text-secondary">
-                <LoadingText value={account?.accountMessage} width="100%" line={3}/>
+                <LoadingText value={account?.accountMessage} width={"100%"} line={3}/>
             </Col>
         </Row>
 
-        {/* <Row className="mt-4">
-            <Col sm={3} className="fw-bold text-info">차단상태</Col>
-            <Col sm={9} className="text-secondary">
-                {editMode.accountBlock !== true ? (<>
-                <span>{account.accountBlock}</span>
-                    <FaSquarePen className="text-warning ms-2" 
-                    onClick={e=>startUpdate("accountBlock")}/>
-                </>) : (<>
-                    <Form.Select className="w-auto d-inline-block" name="accountBlock"
-                    value={account.accountBlock} onChange={changeStringValue}>
-                        <option>Y</option>
-                        <option>N</option>
-                    </Form.Select>
-                    <FaCheck className="text-success ms-2" onClick={e=>updateAccount("accountBlock")}/>
-                    <FaXmark className="text-danger ms-2" onClick={e=>cancelUpdate("accountBlock")}/>
-                </>)}
-                {account?.accountBlock}
+        {/* 관리자 제어용 버튼들 */}
+        <Row className="mt-5">
+            <Col className="text-end">
+                {/* 차단/해제 버튼 : account.accountBlock 상태에 따라 달라짐 */}
+                <Button variant="danger" className="w-md-auto mb-2 mb-md-auto me-md-2" 
+                        onClick={block}>
+                    {account?.accountBlock === "Y" ? (<>
+                        <FaUnlock/>
+                        <span className="ms-2">차단 해제하기</span>
+                    </>) : (<>
+                        <FaLock/>
+                        <span className="ms-2">차단 설정하기</span>
+                    </>)}
+                </Button>
+
+                {/* 임시 비밀번호 발급 */}
+                <Button variant="warning" className="w-md-auto" onClick={createTempPassword}
+                        disabled={sending === true}>
+                    {sending === false && (<>
+                        <MdOutlinePassword />
+                        <span className="ms-2">비밀번호 변경하기</span>
+                    </>)}
+                    {sending === true && (<>
+                        <FaSpinner className="spin"/>
+                        <span className="ms-2">변경메일 발송중..</span>
+                    </>)}
+                </Button>
             </Col>
-        </Row> */}
+        </Row>
 
     </>)
 }
