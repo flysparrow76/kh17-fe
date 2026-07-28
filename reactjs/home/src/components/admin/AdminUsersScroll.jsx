@@ -520,7 +520,7 @@ export default function AdminUsersScroll() {
                         {list.map(account=>(
                         <tr key={account.accountId}>
                             <td>
-                                <Link to ={`/account/detail/${account.accountId}`}>
+                                <Link to ={`/admin/detail/${account.accountId}`}>
                                     {account.accountId}
                                 </Link>
                             </td>
