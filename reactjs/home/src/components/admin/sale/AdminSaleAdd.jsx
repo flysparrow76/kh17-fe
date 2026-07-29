@@ -115,7 +115,10 @@ export default function AdminSaleAdd() {
         form.append("thumbnail", thumbnail);//썸네일 추가
 
         //같은 종류의 데이터가 여러개일 경우 같은이름으로 계속 첨부(배열을 한번에 첨부하는게 아님) ->List
-        detailImages.forEach(img=>{
+        //->FileList는 상황에 따라 배열 전용명령이 없을 수 있으므로 정상적인 배열로 변환하여 쓰세요
+        //->Array.from(fileList)
+
+        Array.from(detailImages).forEach(img=>{
             form.append("detailImages",img);
         });
 
@@ -123,6 +126,7 @@ export default function AdminSaleAdd() {
 
         toast.success("상품 등록이 완료되었습니다");
 
+        //데이터 초기화
         setSale({
             saleName : "",
             saleCategory : "",
@@ -131,6 +135,9 @@ export default function AdminSaleAdd() {
             saleContent : "",
             saleStock : ""
         });
+
+        clearThumbnail();
+        clearDetailImages();
         
         //console.log(data);
     }, [sale, discount, thumbnail,detailImages]);
