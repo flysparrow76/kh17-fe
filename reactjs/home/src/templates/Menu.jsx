@@ -85,9 +85,12 @@ export default function Menu() {
                         { isLogin === true && (<>
                         
                         { isAdmin === true && (<>
-                        <Nav.Link as={Link} to="/admin/users">관리메뉴</Nav.Link>
-                        <Nav.Link as={Link} to="/admin/users2">관리메뉴2</Nav.Link>
-                        <Nav.Link as={Link} to="/account/mypage">내정보</Nav.Link>
+                        <NavDropdown title="관리메뉴" id="basic-nav-dropdown">
+                            <NavDropdown.Item as={Link} to="/admin/user">회원관리</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/admin/user2">회원관리2</NavDropdown.Item>
+                            <NavDropdown.Divider/>
+                            <NavDropdown.Item as={Link} to="/admin/saleAdd">상품등록</NavDropdown.Item>
+                        </NavDropdown>
                         </>)}
                         { isAdmin === false && (<>
                         <Nav.Link as={Link} to="/account/mypage">내정보</Nav.Link>
