@@ -1,6 +1,6 @@
 import Jumbotron from "@templates/Jumbotron";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { apiClient } from "@utils/reaxios";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -10,6 +10,12 @@ import NoImage from "@assets/images/no-image.png";
 import Badge from "react-bootstrap/esm/Badge";
 import Button from "react-bootstrap/esm/Button";
 import { purifyHtml } from "@utils/purify";
+import { useAtomValue } from "jotai";
+import { isAdminState } from "@utils/storage";
+import { FaSquarePen, FaTrash } from "react-icons/fa6";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function SaleDetail() {
     //parameter
@@ -37,7 +43,28 @@ export default function SaleDetail() {
         return `${import.meta.env.VITE_SERVER_URL}/api/attach/${thumbnail.attachNo}`;
     }, [thumbnail]);
 
+    
+    //관리자 권한 확인
+    const isAdmin = useAtomValue(isAdminState);
 
+    const deleteByAdmin = useCallback(async ()=>{
+        //확인창
+        const result = await Swal.fire({
+            title:`정말 상품 정보를 삭제하시겠습니까?`,
+            icon:"warning",
+            showCancelButton:true,
+            confirmButtonText:"확인",
+            cancelButtonText:"취소",
+            confirmButtonColor:"#d63031",
+            cancelButtonColor:"#b2bec3"
+        });
+        if(result.isConfirmed === false) return;//취소
+
+        //삭제 요청
+        const { data } = await apiClient.delete(`/sale/${saleNo}`);
+        toast.success("상품 삭제 완료");
+        navigate("/sale/list");
+    }, []);
 
     //sale은 절대로 null이면 안된다
     //→ sale이 null이면 기다려야 한다
@@ -126,6 +153,27 @@ export default function SaleDetail() {
             확인을 누르면 서버로 신호를 보내 삭제 
             그 후 목록으로 이동
             서버의 주소 : /api/sale/{saleNo} [DELETE]
+
+            * 백엔드도 관리자만 통과해야함
         */}
+        { isAdmin && (
+        <Row className="mt-5">
+            <Col className="text-end">
+                {/* 삭제버튼 */}
+                <Button variant="danger" size="lg" onClick={deleteByAdmin}>
+                    <FaTrash/>
+                    <span className="ms-2">상품 정보 삭제</span>
+                </Button>
+
+                {/* 수정링크 */}
+                <Button variant="warning" size="lg" as={Link} to={`/admin/saleEdit/${saleNo}`}
+                            className="ms-2">
+                    <FaSquarePen/>
+                    <span className="ms-2">상품 정보 수정</span>
+                </Button>
+            </Col>
+        </Row>
+        )}
+
     </>)
 }

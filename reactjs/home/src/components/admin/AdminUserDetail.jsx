@@ -93,9 +93,9 @@ export default function AdminUserDetail() {
 
 
     //로딩중인 화면을 따로 보여줄 때
-    // if(account === null) {
-    //     return (<h1>로딩중인 화면</h1>)
-    // }
+    if(account === null) {
+        return (<h1>로딩중인 화면</h1>)
+    }
 
 
     //로딩완료시 화면
