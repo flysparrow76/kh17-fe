@@ -37,6 +37,9 @@ import AdminSaleEdit from "@components/admin/sale/AdminSaleEdit";
 import SaleList from "@components/sale/SaleList";
 import SaleDetail from "@components/sale/SaleDetail";
 
+import KakaopayBuyVersion1 from "@components/pay/v1/KakaopayBuyVersion1";
+import KakaopaySuccessVersion1 from "@components/pay/v1/KakaopaySuccessVersion1";
+
 import TestMain from "@components/session/TestMain";
 
 import Private from "@guard/Private";
@@ -87,6 +90,10 @@ export default function Body() {
 
         {/* 세션테스트 */}
         <Route path="/session/test" element={<TestMain/>}/>
+
+        {/* 결제 관련 */}
+         <Route path="/pay/v1/buy" element={<KakaopayBuyVersion1/>}/>
+         <Route path="/pay/v1/buy/success" element={<KakaopaySuccessVersion1/>}/>
 
         {/* error */}
         <Route path="/account/block" element={<AccountBlock/>}/>
