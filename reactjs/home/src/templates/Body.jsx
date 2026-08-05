@@ -38,7 +38,15 @@ import SaleList from "@components/sale/SaleList";
 import SaleDetail from "@components/sale/SaleDetail";
 
 import KakaopayBuyVersion1 from "@components/pay/v1/KakaopayBuyVersion1";
-import KakaopaySuccessVersion1 from "@components/pay/v1/KakaopaySuccessVersion1";
+import KakaopayBuySuccessVersion1 from "@components/pay/v1/KakaopayBuySuccessVersion1";
+import KakaopayBuyCancelVersion1 from "@components/pay/v1/KakaopayBuyCancelVersion1";
+import KakaopayBuyFailVersion1 from "@components/pay/v1/KakaopayBuyFailVersion1";
+
+import KakaopayBuyVersion2 from "@components/pay/v1/KakaopayBuyVersion2";
+import KakaopayBuySuccessVersion2 from "@components/pay/v1/KakaopayBuySuccessVersion2";
+import KakaopayBuyCancelVersion2 from "@components/pay/v1/KakaopayBuyCancelVersion2";
+import KakaopayBuyFailVersion2 from "@components/pay/v1/KakaopayBuyFailVersion2";
+
 
 import TestMain from "@components/session/TestMain";
 
@@ -93,7 +101,14 @@ export default function Body() {
 
         {/* 결제 관련 */}
          <Route path="/pay/v1/buy" element={<KakaopayBuyVersion1/>}/>
-         <Route path="/pay/v1/buy/success" element={<KakaopaySuccessVersion1/>}/>
+         <Route path="/pay/v1/buy/success" element={<KakaopayBuySuccessVersion1/>}/>
+         <Route path="/pay/v1/buy/cancel" element={<KakaopayBuyCancelVersion1/>}/>
+         <Route path="/pay/v1/buy/fail" element={<KakaopayBuyFailVersion1/>}/>
+
+         <Route path="/pay/v2/buy" element={<KakaopayBuyVersion2/>}/>
+         <Route path="/pay/v2/buy/success" element={<KakaopayBuySuccessVersion2/>}/>
+         <Route path="/pay/v2/buy/cancel" element={<KakaopayBuyCancelVersion2/>}/>
+         <Route path="/pay/v2/buy/fail" element={<KakaopayBuyFailVersion2/>}/>
 
         {/* error */}
         <Route path="/account/block" element={<AccountBlock/>}/>
