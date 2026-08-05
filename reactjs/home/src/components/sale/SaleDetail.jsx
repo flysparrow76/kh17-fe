@@ -1,6 +1,6 @@
 import Jumbotron from "@templates/Jumbotron";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiClient } from "@utils/reaxios";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -15,7 +15,6 @@ import { isAdminState } from "@utils/storage";
 import { FaSquarePen, FaTrash } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 export default function SaleDetail() {
     //parameter
@@ -25,6 +24,7 @@ export default function SaleDetail() {
     const [sale, setSale] = useState(null);
     const [thumbnail, setThumbnail] = useState(null);
     const [detailImages, setDetailImages] = useState([]);
+    const [quantity, setQuantity] = useState(1);
 
     const loadData = useCallback(async ()=>{
         const { data } = await apiClient.get(`/sale/${saleNo}`);
@@ -46,6 +46,7 @@ export default function SaleDetail() {
     
     //관리자 권한 확인
     const isAdmin = useAtomValue(isAdminState);
+    const navigate = useNavigate();
 
     const deleteByAdmin = useCallback(async ()=>{
         //확인창
@@ -62,14 +63,21 @@ export default function SaleDetail() {
 
         //삭제 요청
         const { data } = await apiClient.delete(`/sale/${saleNo}`);
+        //console.log(data);
+
         toast.success("상품 삭제 완료");
         navigate("/sale/list");
     }, []);
 
+    //구매 확인 페이지로 주소를 잘 만들어서 전달
+    const purchase = useCallback(()=>{
+        navigate(`/pay/v2/buy?sale=${saleNo}:${quantity}`);
+    }, [saleNo, quantity]);
+
     //sale은 절대로 null이면 안된다
     //→ sale이 null이면 기다려야 한다
     if(sale === null) {
-        return <h1>기다려</h1>
+        return <h1>로딩중...</h1>
     }
 
     return (<>
@@ -109,9 +117,14 @@ export default function SaleDetail() {
                     현재 <b>{sale.saleStock.toLocaleString()}</b>개 남음
                 </div>
                 <div className="mt-2 d-flex">
+                    {/* 수량 선택창과 구매버튼 */}
                     <Form.Control type="number" className="d-inline-block" 
-                            style={{width:80}} value={1}/>
-                    <Button variant="success" className="ms-2">구매</Button>
+                            style={{width:80}} value={quantity}
+                            onChange={e=>{
+                                const number = parseInt(e.target.value) || 1;
+                                setQuantity(number);
+                            }}/>
+                    <Button variant="success" className="ms-2" onClick={purchase}>구매</Button>
                     <Button variant="secondary" className="ms-2">담기</Button>
                 </div>
             </Col>
@@ -164,7 +177,6 @@ export default function SaleDetail() {
                     <FaTrash/>
                     <span className="ms-2">상품 정보 삭제</span>
                 </Button>
-
                 {/* 수정링크 */}
                 <Button variant="warning" size="lg" as={Link} to={`/admin/saleEdit/${saleNo}`}
                             className="ms-2">
@@ -173,7 +185,7 @@ export default function SaleDetail() {
                 </Button>
             </Col>
         </Row>
-        )}
+        ) }
 
     </>)
 }

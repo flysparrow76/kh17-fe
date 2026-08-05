@@ -100,18 +100,20 @@ export default function KakaopayBuyVersion2() {
     }, []);
 
     //구매
-    //- 서버에서 알려줘야 할 정보 : 상품번호 + 구매수량
+    //- 서버에 알려줘야 할 정보 : 상품번호 + 구매수량
     const navigate = useNavigate();
     const purchase = useCallback(async ()=>{
-        const {data} = await apiClient.post(
-            "/kakaopay/v2/buy",
-            orders.map(order=>({
-               saleNo : order.saleNo,
-               quantity: order.quantity
-            }))
+        const { data } = await apiClient.post(
+            "/kakaopay/v2/buy", 
+            { 
+                orders : orders.map(order => ({
+                            saleNo : order.saleNo, 
+                            quantity : order.quantity
+                        }))
+            }
         );
         navigate(data.url);
-    },[orders]);
+    }, [orders]);
 
     return (<>
         <Jumbotron title="상품 결제 확인" content="구매하실 상품의 정보를 확인하세요"/>
