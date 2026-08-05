@@ -42,10 +42,10 @@ import KakaopayBuySuccessVersion1 from "@components/pay/v1/KakaopayBuySuccessVer
 import KakaopayBuyCancelVersion1 from "@components/pay/v1/KakaopayBuyCancelVersion1";
 import KakaopayBuyFailVersion1 from "@components/pay/v1/KakaopayBuyFailVersion1";
 
-import KakaopayBuyVersion2 from "@components/pay/v1/KakaopayBuyVersion2";
-import KakaopayBuySuccessVersion2 from "@components/pay/v1/KakaopayBuySuccessVersion2";
-import KakaopayBuyCancelVersion2 from "@components/pay/v1/KakaopayBuyCancelVersion2";
-import KakaopayBuyFailVersion2 from "@components/pay/v1/KakaopayBuyFailVersion2";
+import KakaopayBuyVersion2 from "@components/pay/v2/KakaopayBuyVersion2";
+import KakaopayBuySuccessVersion2 from "@components/pay/v2/KakaopayBuySuccessVersion2";
+import KakaopayBuyCancelVersion2 from "@components/pay/v2/KakaopayBuyCancelVersion2";
+import KakaopayBuyFailVersion2 from "@components/pay/v2/KakaopayBuyFailVersion2";
 
 
 import TestMain from "@components/session/TestMain";
