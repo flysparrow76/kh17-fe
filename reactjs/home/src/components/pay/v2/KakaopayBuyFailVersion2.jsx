@@ -1,7 +1,7 @@
 import Jumbotron from "@templates/Jumbotron";
 
 
-export default function KakaopayBuyFailVersion1(){
+export default function KakaopayBuyFailVersion2(){
 
     return(<>
     

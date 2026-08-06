@@ -46,6 +46,7 @@ import KakaopayBuyVersion2 from "@components/pay/v2/KakaopayBuyVersion2";
 import KakaopayBuySuccessVersion2 from "@components/pay/v2/KakaopayBuySuccessVersion2";
 import KakaopayBuyCancelVersion2 from "@components/pay/v2/KakaopayBuyCancelVersion2";
 import KakaopayBuyFailVersion2 from "@components/pay/v2/KakaopayBuyFailVersion2";
+import KakaopayBuyDetailVersion2 from "@components/pay/v2/KakaopayBuyDetailVersion2";
 
 
 import TestMain from "@components/session/TestMain";
@@ -109,6 +110,7 @@ export default function Body() {
          <Route path="/pay/v2/buy/success/:purchaseNo" element={<Private><KakaopayBuySuccessVersion2/></Private>}/>
          <Route path="/pay/v2/buy/cancel" element={<Private><KakaopayBuyCancelVersion2/></Private>}/>
          <Route path="/pay/v2/buy/fail" element={<Private><KakaopayBuyFailVersion2/></Private>}/>
+         <Route path="/pay/v2/buy/detail/:purchaseNo" element={<Private><KakaopayBuyDetailVersion2/></Private>}/>
 
         {/* error */}
         <Route path="/account/block" element={<AccountBlock/>}/>
