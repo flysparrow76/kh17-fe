@@ -26,6 +26,8 @@ import AccountPassword from "@components/account/AccountPassword";
 import AccountChange from "@components/account/AccountChange";
 import AccountNeedUpdate from "@components/account/AccountNeedUpdate";
 
+import AccountCart from "@components/account/AccountCart";
+
 import MyPage from "@components/account/MyPage";
 
 import AdminUsers from "@components/admin/AdminUsers";
@@ -49,7 +51,7 @@ import KakaopayBuyFailVersion2 from "@components/pay/v2/KakaopayBuyFailVersion2"
 import KakaopayBuyDetailVersion2 from "@components/pay/v2/KakaopayBuyDetailVersion2";
 
 
-import TestMain from "@components/session/TestMain";
+// import TestMain from "@components/session/TestMain";
 
 import Private from "@guard/Private";
 import Admin from "@guard/Admin";
@@ -84,6 +86,7 @@ export default function Body() {
         <Route path="/account/password" element={<Private><AccountPassword/></Private>}/>
         <Route path="/account/change" element={<Private><AccountChange/></Private>}/>
         <Route path="/account/needUpdate" element={<Private><AccountNeedUpdate/></Private>}/>
+        <Route path="/account/cart" element={<Private><AccountCart/></Private>}/>
 
         {/* 관리자 기능 */}
         <Route path="/admin/users" element={<Admin><AdminUsers/></Admin>}></Route>
@@ -98,7 +101,7 @@ export default function Body() {
 
 
         {/* 세션테스트 */}
-        <Route path="/session/test" element={<TestMain/>}/>
+        {/* <Route path="/session/test" element={<TestMain/>}/> */}
 
         {/* 결제 관련 */}
          <Route path="/pay/v1/buy" element={<KakaopayBuyVersion1/>}/>
