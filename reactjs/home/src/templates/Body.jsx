@@ -49,12 +49,12 @@ import KakaopayBuySuccessVersion2 from "@components/pay/v2/KakaopayBuySuccessVer
 import KakaopayBuyCancelVersion2 from "@components/pay/v2/KakaopayBuyCancelVersion2";
 import KakaopayBuyFailVersion2 from "@components/pay/v2/KakaopayBuyFailVersion2";
 import KakaopayBuyDetailVersion2 from "@components/pay/v2/KakaopayBuyDetailVersion2";
-
-
 // import TestMain from "@components/session/TestMain";
 
 import Private from "@guard/Private";
 import Admin from "@guard/Admin";
+
+import WebSocketV1BasicClient from "@components/websocket/WebSocketV1BasicClient";
 
 export default function Body() {
 
@@ -98,8 +98,6 @@ export default function Body() {
         <Route path="/sale/list" element={<SaleList/>}></Route>
         <Route path="/sale/detail/:saleNo" element={<SaleDetail/>}></Route>
 
-
-
         {/* 세션테스트 */}
         {/* <Route path="/session/test" element={<TestMain/>}/> */}
 
@@ -114,6 +112,8 @@ export default function Body() {
          <Route path="/pay/v2/buy/cancel" element={<Private><KakaopayBuyCancelVersion2/></Private>}/>
          <Route path="/pay/v2/buy/fail" element={<Private><KakaopayBuyFailVersion2/></Private>}/>
          <Route path="/pay/v2/buy/detail/:purchaseNo" element={<Private><KakaopayBuyDetailVersion2/></Private>}/>
+
+        <Route path="/websocket/v1" element={<WebSocketV1BasicClient/>}/>
 
         {/* error */}
         <Route path="/account/block" element={<AccountBlock/>}/>
