@@ -55,6 +55,7 @@ import Private from "@guard/Private";
 import Admin from "@guard/Admin";
 
 import WebSocketV1BasicClient from "@components/websocket/WebSocketV1BasicClient";
+import WebSocketV2AdvancedClient from "@components/websocket/WebSocketV2AdvancedClient";
 
 export default function Body() {
 
@@ -114,6 +115,7 @@ export default function Body() {
          <Route path="/pay/v2/buy/detail/:purchaseNo" element={<Private><KakaopayBuyDetailVersion2/></Private>}/>
 
         <Route path="/websocket/v1" element={<WebSocketV1BasicClient/>}/>
+        <Route path="/websocket/v2" element={<WebSocketV2AdvancedClient/>}/>
 
         {/* error */}
         <Route path="/account/block" element={<AccountBlock/>}/>

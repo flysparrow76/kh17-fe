@@ -89,6 +89,7 @@ export default function Menu() {
                         {/* <Nav.Link as={Link} to="/session/test">세션테스트</Nav.Link> */}
                         <NavDropdown title="웹소켓" id="basic-nav-dropdown">
                             <NavDropdown.Item as={Link} to="/websocket/v1">기본 웹소켓</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/websocket/v2">헤더추가 웹소켓</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <Nav>
