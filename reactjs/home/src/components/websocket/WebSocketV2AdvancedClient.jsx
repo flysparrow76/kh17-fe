@@ -6,19 +6,21 @@ import { FaPaperPlane } from "react-icons/fa6";
 import SockJS from "sockjs-client";
 import { v4 as uuidv4 } from "uuid";//랜덤한 UUID 한 개 생성
 
-import "./WebSocketV2AdvancedClient.css";
-
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 dayjs.locale("ko");//한국어로 설정
 
-export default function WebSocketV2AdvancedClient(){
+import "./WebSocketV2AdvancedClient.css";
+
+export default function WebSocketV2AdvancedClient() {
 
     const [client, setClient] = useState(null);//서버와의 연결정보를 가진 객체
-    const [ uuid ] = useState(()=>uuidv4());//현재 사용자의 식별번호
-    const [ history, setHistory] = useState([]);
+    const [uuid] = useState(()=>uuidv4());//현재 사용자의 식별번호
+    const [history, setHistory] = useState([]);//메세지 저장소
     const [input, setInput] = useState("");//사용자의 입력
 
+    //WebSocket 연결은 들어오자마자 해야하며, 나갈 때 반드시 해제해야 한다
+    //→ 연관항목이 없는 useEffect를 사용하고 Clean-Up 함수를 생성해야 한다
     useEffect(()=>{
         //최초 1회 실행해야할 작업
         const client = connectToServer();
@@ -41,16 +43,15 @@ export default function WebSocketV2AdvancedClient(){
             //연결 객체를 생성하는 함수
             webSocketFactory : () => socket , 
             //(+추가) 서버로 전달될 헤더 설정
-            connectHeaders : {
+            connectHeaders: {
                 uuid : uuid
             },
-            
+
             //웹소켓의 상황별 Callback 지정
             onConnect: ()=>{//연결되었을 때
-                client.subscribe("/public/advanced",(message)=>{
-                    const json = JSON.parse(message.body);//json 해석해서
-                    setHistory(prev=>[...prev,json])//히스토리에 추가
-
+                client.subscribe("/public/advanced", (message)=>{
+                    const json = JSON.parse(message.body);//JSON 해석해서
+                    setHistory(prev=>[...prev, json]);//히스토리에 추가
                 });
             },
             //디버깅 설정(옵션)
@@ -61,7 +62,7 @@ export default function WebSocketV2AdvancedClient(){
         client.activate();
 
         return client;
-    }, []);
+    }, [uuid]);
     //연결 종료 함수
     const disconnectFromServer = useCallback((client)=>{
         if(client) {//client가 존재한다면
@@ -69,7 +70,8 @@ export default function WebSocketV2AdvancedClient(){
         }
     }, []);
 
-     //메세지 전송 함수
+
+    //메세지 전송 함수
     const sendMessage = useCallback(()=>{
         //보낼 수 있는 상태인지를 검증
         if(isConnect === false) return;
@@ -81,7 +83,7 @@ export default function WebSocketV2AdvancedClient(){
         //STOMP 규격에 맞는 메세지 생성
         const stompMessage = {
             destination: "/app/advanced",//서버로 보낼 목적지
-            headers : {uuid : uuid},//(+추가)헤더를 key=value 형태로 전달
+            headers: {uuid : uuid},//(+추가) 헤더를 key=value 형태로 전달
             body: JSON.stringify(json),//전송할 내용 (직렬화된 JSON)
         };
 
@@ -96,7 +98,9 @@ export default function WebSocketV2AdvancedClient(){
         if(client.active === false) return false;//deactivate() 상태인 경우
         return true;
     }, [client]);
-    return(<>
+
+
+    return (<>
         <Jumbotron title="WebSocket Version 2" content="STOMP 메세지에 헤더를 추가해서 사용하기"/>
 
         <Row className="mt-5">
@@ -125,38 +129,37 @@ export default function WebSocketV2AdvancedClient(){
             </Col>
         </Row>
 
-        {/* 메세지 출력 (+부트스트랩 디자인)*/}
+        {/* 메세지를 출력 (+부트스트랩 디자인) */}
         <Row className="mt-5">
             <Col>
-                {/* 메세지 영역 생성 */}
                 <div className="message-wrapper">
-                    {history.map((message,index)=>{
+                    {history.map((message, index)=>{
                         //추가 계산 코드 작성
-                        const my = uuid ===message.sender;
-                        return(
-                            <div className= {`message-outer ${my ? "my" : ""}`}  key={index}>
-                                <div className="message-inner">
-                                    {/* 가로로 3칸을 나눠 순서대로 프로필/작성자+내영/작성시각으로 구현 */}
-                                    {my === false &&(
-                                        <div className="profile-wrapper">
-                                            <img src="https://picsum.photos/100"/>
-                                        </div>
+                        const my = uuid === message.sender;
+                        return (
+                        <div className={`message-outer ${my ? "my" : ""}`} key={index}>
+                            <div className="message-inner">
+                                {/* 가로로 3칸을 나눠 순서대로 프로필/작성자+내용/작성시각으로 구현 */}
+                                {my === false && (
+                                <div className="profile-wrapper">
+                                    <img src="https://picsum.photos/100"/>
+                                </div>
+                                )}
+                                <div className="content-wrapper">
+                                    {my === false && (
+                                    <div className="sender">{message.sender}</div>
                                     )}
-                                    <div className="content-wrapper">
-                                        <div className="sender">피카츄</div>
-                                        <div className="content">
-                                            <div className="body">{message.content}</div>
-                                            <div className="time">
-                                                {dayjs(message.time).format("a h:mm")}
-                                            </div>
+                                    <div className="content">
+                                        <div className="body">{message.content}</div>
+                                        <div className="time">
+                                            {dayjs(message.time).format("a h:mm")}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
                         )
-                    )}
-                    )}
+                    })}
                 </div>
             </Col>
         </Row>
