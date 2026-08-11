@@ -3,15 +3,17 @@ import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import { loginUserState } from "@utils/storage";
-import { Button, Col, Row, Form, Badge } from "react-bootstrap";
-import { FaPaperPlane } from "react-icons/fa6";
+import { Button, Col, Row, Form, Badge, ListGroup, ListGroupItem } from "react-bootstrap";
+import { FaCircleInfo, FaPaperPlane, FaUsers } from "react-icons/fa6";
 import Jumbotron from "@templates/Jumbotron";
+import { LuMessageCircleMore } from "react-icons/lu";
 
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 dayjs.locale("ko");//한국어로 설정
 
 import "./WebSocketV2AdvancedClient.css";
+import { toast } from "react-toastify";
 
 export default function WebSocketV3MemberClient() {
 
@@ -19,6 +21,8 @@ export default function WebSocketV3MemberClient() {
     const loginUser = useAtomValue(loginUserState);
     const [history, setHistory] = useState([]);//메세지 이력
     const [input, setInput] = useState("");//사용자의 입력
+    const inputRef = useRef();//입력창 제어용 리모컨
+    const [users, setUsers] = useState([]);//접속한 사용자의 목록
 
     useEffect(()=>{
         //최초 1회 실행해야할 작업
@@ -49,9 +53,28 @@ export default function WebSocketV3MemberClient() {
                     const json = JSON.parse(message.body);
                     setHistory(prev=>[...prev, json]);
                 });
+                client.subscribe("/public/system", (message)=>{
+                    const json = JSON.parse(message.body);
+                    setHistory(prev=>[...prev, json]);
+                });
+                client.subscribe("/public/users", (message)=>{
+                    //여기서의 메세지는 List<TokenParseResponseVO>이다. 즉, 배열이다.
+                    const jsonArray = JSON.parse(message.body);
+                    setUsers(jsonArray);
+                });
                 client.subscribe(`/private/dm/${loginUser.accountId}`, (message)=>{
                     const json = JSON.parse(message.body);
                     setHistory(prev=>[...prev, json]);
+                });
+                client.subscribe(`/private/system/${loginUser.accountId}`, (message)=>{
+                    const json = JSON.parse(message.body);
+                    setHistory(prev=>[...prev, json]);
+                    //toast.error(json.content);
+                });
+                client.subscribe(`/private/users/${loginUser.accountId}`, (message)=>{
+                    //여기서의 메세지는 List<TokenParseResponseVO>이다. 즉, 배열이다.
+                    const jsonArray = JSON.parse(message.body);
+                    setUsers(jsonArray);
                 });
             },
             //디버깅 설정(옵션)
@@ -150,6 +173,7 @@ export default function WebSocketV3MemberClient() {
                                 //엔터를 누르면 전송버튼과 동일한 기능을 실행
                                 if(e.key === "Enter") sendMessage();
                             }}
+                            ref={inputRef}
                     />
 
                     <Button variant="success" className="text-nowrap ms-2" 
@@ -165,7 +189,13 @@ export default function WebSocketV3MemberClient() {
 
         {/* 메세지를 출력 (+부트스트랩 디자인) */}
         <Row className="mt-5">
-            <Col>
+            <Col xs={12} className="fs-4">
+                <FaUsers className="me-2"/>
+                <span>{users.length}명</span>
+            </Col>
+
+            {/* 메세지 이력 */}
+            <Col sm={9}>
                 <div className="message-wrapper" ref={messageWrapperRef}>
                     {history.map((message, index)=>{
                         //내 메세지인지 판정
@@ -211,7 +241,7 @@ export default function WebSocketV3MemberClient() {
 
                             {/* DM 메세지 */}
                             { message.type === "dm" && (
-                            <div className="message-inner">
+                            <div className="message-inner dm">
                                 {/* 프로필 출력 */}
                                 { !my && (
                                 <div className="profile-wrapper">
@@ -222,7 +252,7 @@ export default function WebSocketV3MemberClient() {
                                 ) }
                                 {/* 컨텐츠(작성자), 내용, 시간 등 출력 */}
                                 <div className="content-wrapper">
-                                    { (!my && isDiffSender) && (
+                                    { isDiffSender && (
                                     <div className="sender">
                                         {/* 
                                             DM은  
@@ -230,6 +260,8 @@ export default function WebSocketV3MemberClient() {
                                             - 수신자에게는 발신자의 정보가 
                                             나와야함
                                         */}
+                                        <LuMessageCircleMore className="me-2"/>
+
                                         { my ? (<>
                                             {`To.${message.receiverNickname}`}
                                             <Badge bg="primary" className="ms-2">
@@ -256,10 +288,39 @@ export default function WebSocketV3MemberClient() {
                             </div>
                             ) }
                             
+                            {/* 시스템 메세지 */}
+                            { message.type === "system" && (
+                            <div className={`system-message text-${message.level} bg-${message.level} border-${message.level}`}
+                                    style={{ "--bs-bg-opacity" : ".10" }}>
+                                {message.content}
+                            </div>
+                            ) }
                         </div>
                         );
                     })}
                 </div>
+            </Col>
+
+            {/* 사용자 목록 */}
+            <Col sm={3}>
+                <ListGroup>
+                    {users.map((user,index)=>(
+                    <ListGroupItem key={index} 
+                        className={user.accountId === loginUser.accountId ? "active" : ""}
+                        onClick={e=>{
+                            setInput(`/w ${user.accountId} `);
+                            inputRef.current.focus();
+                        }}
+                        style={{"cursor":"pointer"}}>
+                        
+                        <span>{user.accountId}</span>
+
+                        { user.accountId === loginUser.accountId && (
+                            <span className="ms-1 fw-bold">(나)</span>
+                        ) }
+                    </ListGroupItem>
+                    ))}
+                </ListGroup>
             </Col>
         </Row>
     </>);
