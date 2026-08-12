@@ -57,6 +57,7 @@ import Admin from "@guard/Admin";
 import WebSocketV1BasicClient from "@components/websocket/WebSocketV1BasicClient";
 import WebSocketV2AdvancedClient from "@components/websocket/WebSocketV2AdvancedClient";
 import WebSocketV3MemberClient from "@components/websocket/WebSocketV3MemberClient";
+import WebSocketV4RoomListClient from "@components/websocket/WebSocketV4RoomListClient";
 
 export default function Body() {
 
@@ -118,6 +119,8 @@ export default function Body() {
         <Route path="/websocket/v1" element={<WebSocketV1BasicClient/>}/>
         <Route path="/websocket/v2" element={<WebSocketV2AdvancedClient/>}/>
         <Route path="/websocket/v3" element={<Private><WebSocketV3MemberClient/></Private>}/>
+        <Route path="/websocket/v4" element={<WebSocketV4RoomListClient/>}/>
+        {/* // <Route path="/websocket/v4/방번호" element={<WebSocketV4RoomListClient/>} */}
 
         {/* error */}
         <Route path="/account/block" element={<AccountBlock/>}/>

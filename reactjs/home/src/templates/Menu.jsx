@@ -91,6 +91,7 @@ export default function Menu() {
                             <NavDropdown.Item as={Link} to="/websocket/v1">기본 웹소켓</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/websocket/v2">헤더추가 웹소켓</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/websocket/v3">회원전용 웹소켓</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/websocket/v4">그룹 채팅 예제</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <Nav>
