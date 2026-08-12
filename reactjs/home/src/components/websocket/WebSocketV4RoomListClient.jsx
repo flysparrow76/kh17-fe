@@ -6,20 +6,24 @@ import { FaPlus, FaXmark } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { useAtomValue } from "jotai";
 import { isLoginState, loginUserState } from "@utils/storage";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function WebSocketV4RoomList() {
 
     const loginUser = useAtomValue(loginUserState);
     const isLogin = useAtomValue(isLoginState);
     const [rooms, setRooms] = useState([]);//채팅방 목록
+    const [roomCount, setRoomCount] = useState(0);//채팅방 개수
     
     useEffect(()=>{
         loadRooms();//시작하자마자 방 목록을 불러온다
     }, []);
     const loadRooms = useCallback(async ()=>{
         const { data } = await apiClient.get("/room/")
-        setRooms(data);
+        setRooms(data.rooms);
+        setRoomCount(data.count);
+        // console.log(data);
     }, []);
 
 
@@ -78,12 +82,28 @@ export default function WebSocketV4RoomList() {
 
     //방 참여 신청 후 이동
     const navigate = useNavigate();
-    const joinRoom = useCallback(async(target)=>{
-        //방 신청 요청
+    const joinRoom = useCallback(async (target)=>{
+        try {
+            //방 신청 요청
+            const { data } = await apiClient.post("/room/enter", { roomNo : target.roomNo });
+            if(data.result === false) {//입장이 불가능한 상황 (인원초과, 차단, ...)
+                await Swal.fire({
+                    title: "방 입장 불가",
+                    text: data.message,
+                    icon: "error",
+                    confirmButtonText: "확인",
+                });
+                return;
+            }
 
-        //방 페이지로 이동
-        navigate(`/websocket/v4/${target.roomNo}`);
-    },[])
+            //방 페이지로 이동
+            navigate(`/websocket/v4/${target.roomNo}`);
+        }
+        catch(e) {
+            toast.error("일시적인 오류가 발생했습니다");
+            console.error(e);
+        }
+    }, []);
 
     return (<>
         <Jumbotron title="채팅방 목록" content="그룹 채팅 예제"/>
@@ -91,7 +111,7 @@ export default function WebSocketV4RoomList() {
         {/* 방 목록 출력 */}
         <Row className="mt-5">
             <Col xs={8}>
-                <h4>현재 개설된 채팅방은 총 {rooms.length}개 입니다</h4>
+                <h4>현재 개설된 채팅방은 총 {roomCount}개 입니다</h4>
             </Col>
             <Col xs={4} className="text-end">
                 {isLogin && (
@@ -111,10 +131,14 @@ export default function WebSocketV4RoomList() {
                         ${(isLogin && loginUser.accountId === room.roomOwner)  
                             ? "border border-info" : ""}
                     `}>
-                        <Badge className="me-2">{room.roomNo}</Badge>
-                        <h4>{room.roomName}</h4>
+                        <h4>
+                            <Badge className="me-2">{room.roomNo}</Badge>
+                            <span>{room.roomName}</span>
+                        </h4>
                         <div>방장 : {room.roomOwner ?? "없음"}</div>
-                        <div>인원 : {room.roomLimit ?? "제한 없음"}</div>
+                        <div>
+                            인원 : {room.cnt} / {room.roomLimit ?? "제한 없음"}
+                        </div>
                         <div className="text-end">
                             {/* 내 소유의 방이라면 삭제 버튼을 생성 */}
                             { (isLogin && loginUser.accountId === room.roomOwner) && (
@@ -124,10 +148,19 @@ export default function WebSocketV4RoomList() {
                             </Button>
                             ) }
 
+                            {/* 참여여부(enter)에 따라 버튼을 다르게 표시 */}
+                            { room.enter === 'Y' && (
+                            <Button variant="info" disabled={!isLogin}
+                                    onClick={e=>joinRoom(room)}>
+                                입장
+                            </Button>    
+                            ) }
+                            { room.enter === 'N' && (
                             <Button variant="success" disabled={!isLogin}
                                     onClick={e=>joinRoom(room)}>
                                 참여
                             </Button>
+                            ) }
                         </div>
                     </div>
                 </div>
