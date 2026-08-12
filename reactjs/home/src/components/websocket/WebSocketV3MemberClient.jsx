@@ -160,6 +160,7 @@ export default function WebSocketV3MemberClient() {
             </Col>
         </Row>
 
+        {/* 입력창 */}
         <Row className="mt-5">
             <Form.Label column sm={3}>메세지 입력</Form.Label>
             <Col sm={9}>
