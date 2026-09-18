@@ -1,15 +1,14 @@
 name: Deploy React App
 
-on.push.paths=main
-on.push.paths=reactjs/demo01/**
 on: 
-  push:
+  push: 
     branches:
-      - main 
-      paths: 
-        - 'reactjs/demo01/**'
+      - main
+    paths: 
+      - 'reactjs/demo01/**'
+      - '.github/workflows/deploy.yml'
 
-permissions:
+permissions: 
   contents: write
 
 jobs:
@@ -20,10 +19,10 @@ jobs:
         working-directory: ./reactjs/demo01
     steps:
       - name: Checkout
-        run: action/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        run: actions/setup-node@v4
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
@@ -35,9 +34,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Depoly
-        run: peaceiris/action-gh-pages@v4
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./reactjs/demo01/dist
+
+
+
+
+
+
+
+
       

@@ -8,4 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  base: '/kh17-fe/',//깃허브 페이지의 주소 규칙에 맞추기 위해 적음
 })
